@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet & Web Applications — Lecture 1 ULTIMATE SUMMARY</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a40;
+    --accent: #00ffcc;
+    --accent2: #ff3cac;
+    --accent3: #ffcb47;
+    --accent4: #7b61ff;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --good: #00ffcc;
+    --warn: #ffcb47;
+    --danger: #ff3cac;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #0d1a2e 0%, var(--bg) 70%);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent4), var(--accent2), transparent);
+  }
+
+  .lecture-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.4rem 1.2rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    animation: pulse-border 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,204,0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(0,255,204,0); }
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    letter-spacing: 0.05em;
+    line-height: 0.9;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--accent4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin-bottom: 3rem;
+  }
+
+  .progress-ring {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ring-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ring-item:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* MAIN CONTENT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    margin-top: 4rem;
+  }
+
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--border);
+    line-height: 1;
+    min-width: 60px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* CARDS GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media(max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+  }
+
+  .card.accent2::before { background: var(--accent2); }
+  .card.accent3::before { background: var(--accent3); }
+  .card.accent4::before { background: var(--accent4); }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(0,255,204,0.08);
+  }
+  .card.accent2:hover { border-color: var(--accent2); box-shadow: 0 10px 40px rgba(255,60,172,0.08); }
+  .card.accent3:hover { border-color: var(--accent3); box-shadow: 0 10px 40px rgba(255,203,71,0.08); }
+  .card.accent4:hover { border-color: var(--accent4); box-shadow: 0 10px 40px rgba(123,97,255,0.08); }
+
+  .card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .card.accent2 .card-label { color: var(--accent2); }
+  .card.accent3 .card-label { color: var(--accent3); }
+  .card.accent4 .card-label { color: var(--accent4); }
+
+  .card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--text);
+  }
+
+  .card p, .card li {
+    font-size: 0.92rem;
+    color: #b0b0c8;
+    line-height: 1.7;
+  }
+
+  .card ul { padding-left: 1.2rem; }
+  .card li { margin-bottom: 0.3rem; }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(0,255,204,0.05), rgba(123,97,255,0.05));
+    border: 1px solid rgba(0,255,204,0.2);
+    border-radius: 6px;
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+
+  .highlight-box .hb-label {
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+
+  /* COMPARE TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+
+  .compare-table th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-align: left;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .compare-table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    color: #b0b0c8;
+    vertical-align: top;
+  }
+
+  .compare-table tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    margin: 0.1rem;
+  }
+
+  .tag-g { background: rgba(0,255,204,0.1); color: var(--accent); border: 1px solid rgba(0,255,204,0.3); }
+  .tag-p { background: rgba(123,97,255,0.1); color: var(--accent4); border: 1px solid rgba(123,97,255,0.3); }
+  .tag-r { background: rgba(255,60,172,0.1); color: var(--accent2); border: 1px solid rgba(255,60,172,0.3); }
+  .tag-y { background: rgba(255,203,71,0.1); color: var(--accent3); border: 1px solid rgba(255,203,71,0.3); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #090910;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.2rem 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: #a8d8c0;
+    overflow-x: auto;
+    margin: 1rem 0;
+    line-height: 1.8;
+    white-space: pre;
+  }
+
+  .code-comment { color: #555577; }
+  .code-tag { color: #ff79c6; }
+  .code-attr { color: #50fa7b; }
+  .code-val { color: #f1fa8c; }
+  .code-key { color: #8be9fd; }
+
+  /* TRICK BOX */
+  .trick-box {
+    background: linear-gradient(135deg, rgba(255,203,71,0.06), rgba(255,60,172,0.06));
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 4px 4px 0;
+    padding: 1rem 1.5rem;
+    margin: 1.2rem 0;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .trick-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .trick-text { font-size: 0.88rem; color: #c8c8e0; }
+  .trick-text strong { color: var(--accent3); }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin: 1rem 0;
+  }
+
+  .flow-step {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .flow-arrow {
+    color: var(--accent);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  /* QUIZ SECTION */
+  .quiz-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .quiz-card:hover { border-color: var(--accent4); }
+
+  .quiz-q {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .quiz-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent4);
+    min-width: 2.5rem;
+    padding-top: 0.1rem;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding-left: 3.3rem;
+  }
+
+  @media(max-width:600px) { .quiz-options { grid-template-columns: 1fr; } }
+
+  .quiz-opt {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #b0b0c8;
+  }
+
+  .quiz-opt:hover { border-color: var(--accent4); color: var(--text); }
+  .quiz-opt.correct { border-color: var(--accent); background: rgba(0,255,204,0.08); color: var(--accent); }
+  .quiz-opt.wrong { border-color: var(--accent2); background: rgba(255,60,172,0.08); color: var(--accent2); }
+
+  .quiz-explanation {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    background: rgba(123,97,255,0.08);
+    border: 1px solid rgba(123,97,255,0.2);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #b0b0c8;
+    padding-left: 3.3rem;
+  }
+
+  .quiz-explanation.show { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* BIG COMPARISON */
+  .web-versions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  @media(max-width:700px) { .web-versions { grid-template-columns: 1fr; } }
+
+  .web-v {
+    border-radius: 6px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .web-v::after {
+    content: attr(data-v);
+    position: absolute;
+    bottom: -1rem;
+    right: -0.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    opacity: 0.05;
+    line-height: 1;
+  }
+
+  .web-v.v1 { background: linear-gradient(135deg, rgba(0,255,204,0.04), transparent); }
+  .web-v.v2 { background: linear-gradient(135deg, rgba(123,97,255,0.04), transparent); }
+  .web-v.v3 { background: linear-gradient(135deg, rgba(255,203,71,0.04), transparent); }
+
+  .web-v-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+  }
+  .web-v.v1 .web-v-title { color: var(--accent); }
+  .web-v.v2 .web-v-title { color: var(--accent4); }
+  .web-v.v3 .web-v-title { color: var(--accent3); }
+
+  .web-v-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; font-family: 'Space Mono', monospace; }
+  .web-v p { font-size: 0.88rem; color: #b0b0c8; margin-bottom: 0.5rem; }
+
+  /* STICKY NAV */
+  .sticky-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 2rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    transform: translateY(-100%);
+    transition: transform 0.3s;
+    overflow-x: auto;
+  }
+
+  .sticky-nav.visible { transform: translateY(0); }
+
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--accent);
+    white-space: nowrap;
+    margin-right: 1rem;
+  }
+
+  .nav-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--accent); }
+
+  /* SCORE COUNTER */
+  .score-bar {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    z-index: 50;
+    box-shadow: 0 0 20px rgba(0,255,204,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .footer .big { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: var(--accent); display: block; }
+
+  /* SEPARATOR */
+  .sep {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 3rem 0;
+  }
+
+  /* INLINE CODE */
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82em;
+    background: rgba(0,255,204,0.08);
+    color: var(--accent);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+    border: 1px solid rgba(0,255,204,0.15);
+  }
+
+  /* FULL WIDTH CARD */
+  .full-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2rem;
+    margin: 1rem 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav" id="stickyNav">
+  <span class="nav-brand">IWA L1</span>
+  <a class="nav-link" href="#web">Web Evolution</a>
+  <a class="nav-link" href="#xml">XML</a>
+  <a class="nav-link" href="#namespace">Namespaces</a>
+  <a class="nav-link" href="#validation">Validation</a>
+  <a class="nav-link" href="#processing">Processing</a>
+  <a class="nav-link" href="#xhtml">XHTML</a>
+  <a class="nav-link" href="#content-type">Content Type</a>
+  <a class="nav-link" href="#js">JavaScript</a>
+  <a class="nav-link" href="#css">CSS</a>
+  <a class="nav-link" href="#quiz">Quiz</a>
+</nav>
+
+<!-- SCORE BAR -->
+<div class="score-bar" id="scoreBar">
+  🎯 Score: <span id="scoreNum">0</span> / <span id="totalNum">0</span>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="lecture-tag">INTERNET & WEB APPLICATIONS · LECTURE 1</div>
+  <h1>ULTIMATE<br>CHEAT SHEET</h1>
+  <p class="hero-sub">Every word. Every concept. Every trick. Zero fluff.<br>Built to make you ace this exam. 🔥</p>
+  <div class="progress-ring">
+    <div class="ring-item" onclick="scrollTo('#web')">🌐 Web 1-2-3</div>
+    <div class="ring-item" onclick="scrollTo('#xml')">📄 XML</div>
+    <div class="ring-item" onclick="scrollTo('#validation')">✅ Validation</div>
+    <div class="ring-item" onclick="scrollTo('#processing')">⚙️ DOM vs SAX</div>
+    <div class="ring-item" onclick="scrollTo('#xhtml')">🏷️ XHTML</div>
+    <div class="ring-item" onclick="scrollTo('#content-type')">📦 MIME Types</div>
+    <div class="ring-item" onclick="scrollTo('#js')">⚡ JavaScript</div>
+    <div class="ring-item" onclick="scrollTo('#css')">🎨 CSS</div>
+    <div class="ring-item" onclick="scrollTo('#quiz')">🧠 Quiz Me!</div>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 1 — COURSE OVERVIEW -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header">
+  <span class="section-num">01</span>
+  <h2 class="section-title">COURSE MAP</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="grid-2">
+  <div class="card accent4">
+    <div class="card-label">Category A</div>
+    <h3>🌐 Network Applications</h3>
+    <ul>
+      <li><strong>BitTorrent</strong> — P2P file distribution</li>
+      <li><strong>Git</strong> — Version management over network</li>
+      <li><strong>Web Search Engines</strong></li>
+    </ul>
+  </div>
+  <div class="card accent2">
+    <div class="card-label">Category B</div>
+    <h3>🖥️ Web Applications</h3>
+    <ul>
+      <li><strong>Weblogs</strong> (Blogs)</li>
+      <li><strong>Web Feeds</strong> (RSS, Atom)</li>
+      <li><strong>Wikis, Web Crawling, CDN, etc.</strong></li>
+    </ul>
+  </div>
+</div>
+
+<div class="trick-box">
+  <span class="trick-icon">💡</span>
+  <p class="trick-text"><strong>EXAM TRICK:</strong> The lecture covers a SUBSET of important applications, mechanisms, protocols, and languages — not everything. Both categories share the same stack: HTTP, HTML/XML, URIs.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 2 — WEB EVOLUTION -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="web">
+  <span class="section-num">02</span>
+  <h2 class="section-title">WEB EVOLUTION</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="web-versions">
+  <div class="web-v v1" data-v="1.0">
+    <div class="web-v-title">Web 1.0</div>
+    <div class="web-v-sub">THE ORIGINAL WWW</div>
+    <p>Static hypertext documents viewable by browser</p>
+    <p>Three pillars:</p>
+    <p><span class="tag tag-g">HTTP</span> — Application protocol</p>
+    <p><span class="tag tag-g">HTML</span> — Document description format</p>
+    <p><span class="tag tag-g">URI</span> — Document addressing mechanism</p>
+    <p style="margin-top:0.8rem; font-size:0.8rem; color: var(--muted);">Documents = hypertext = cross-references to other docs</p>
+  </div>
+  <div class="web-v v2" data-v="2.0">
+    <div class="web-v-title">Web 2.0</div>
+    <div class="web-v-sub">BUZZWORD FOR MODERN WEB</div>
+    <p>Wikis, weblogs, social communities</p>
+    <p><strong>Key additions:</strong></p>
+    <p><span class="tag tag-p">Ajax</span> <span class="tag tag-p">Comet</span> <span class="tag tag-p">WebSockets</span></p>
+    <p><span class="tag tag-p">RSS</span> <span class="tag tag-p">Atom</span> <span class="tag tag-p">RDF</span> <span class="tag tag-p">HTML5</span></p>
+    <p>⬆️ Client-side logic becomes important</p>
+    <p>⬆️ New business models emerge</p>
+    <p style="margin-top:0.8rem; font-size:0.8rem; color: var(--muted);">Technological evolution of Web 1.0</p>
+  </div>
+  <div class="web-v v3" data-v="3.0">
+    <div class="web-v-title">Web 3.0</div>
+    <div class="web-v-sub">= SEMANTIC WEB</div>
+    <p>Semantically interconnected DATA (not docs)</p>
+    <p>Known as <strong>Linked Data</strong></p>
+    <p><span class="tag tag-y">RDF</span> <span class="tag tag-y">RDFS</span> <span class="tag tag-y">OWL</span> <span class="tag tag-y">Microformats</span></p>
+    <p>Vision: Machines talking to machines</p>
+    <p style="margin-top:0.8rem; font-size:0.8rem; color: var(--muted);">Conceptual evolution — Tim Berners-Lee's dream</p>
+  </div>
+</div>
+
+<div class="highlight-box">
+  <div class="hb-label">⚡ CRITICAL DISTINCTION</div>
+  <p><strong>Web 2.0 = TECHNOLOGICAL evolution</strong> (new protocols, frameworks, interaction models)</p>
+  <p><strong>Web 3.0 = CONCEPTUAL evolution</strong> (new paradigm: data-centric, not document-centric)</p>
+  <p style="margin-top:0.8rem; font-size:0.88rem; color: var(--muted);">Tim Berners-Lee quote: "A Semantic Web which should make this possible has yet to emerge, but when it does, the day-to-day mechanisms of trade, bureaucracy and our daily lives will be handled by machines talking to machines."</p>
+</div>
+
+<div class="trick-box">
+  <span class="trick-icon">🧠</span>
+  <p class="trick-text"><strong>MEMORY TRICK:</strong> Web <strong>1</strong> = Documents + <strong>3</strong> foundations (HTTP, HTML, URI). Web <strong>2</strong> = Social + Ajax (more client logic). Web <strong>3</strong> = Semantic = RDF/OWL = Machines, not humans.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 3 — XML -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="xml">
+  <span class="section-num">03</span>
+  <h2 class="section-title">XML — THE FOUNDATION</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="card" style="margin-bottom: 1rem;">
+  <div class="card-label">DEFINITION</div>
+  <h3>What is XML?</h3>
+  <p>Extensible Markup Language — a general purpose <strong>meta-language</strong> for representation, exchange, and processing of data. It's the basis for many web formats.</p>
+</div>
+
+<div class="trick-box">
+  <span class="trick-icon">🔑</span>
+  <p class="trick-text"><strong>KEY WORD: META-LANGUAGE</strong> — XML is not a language with fixed tags, it's a language for DEFINING languages. You make your own tags.</p>
+</div>
+
+<p style="margin-bottom:1rem; color: var(--muted); font-size: 0.9rem;">XML is the foundation of:</p>
+<div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem;">
+  <span class="tag tag-g">XHTML</span>
+  <span class="tag tag-g">XSL / XSLT</span>
+  <span class="tag tag-g">XML Schema</span>
+  <span class="tag tag-g">RSS</span>
+  <span class="tag tag-g">Atom</span>
+  <span class="tag tag-g">RDF (serialization)</span>
+</div>
+
+<div class="grid-2">
+  <div class="full-card">
+    <h3 style="margin-bottom:1rem; font-size:1rem; color:var(--accent);">📦 Content Types of Elements</h3>
+    <table class="compare-table">
+      <tr><th>Type</th><th>What it means</th></tr>
+      <tr><td><span class="tag tag-g">Empty</span></td><td>No content at all — <code>&lt;br/&gt;</code></td></tr>
+      <tr><td><span class="tag tag-p">Simple</span></td><td>Text values only — <code>&lt;isbn&gt;123&lt;/isbn&gt;</code></td></tr>
+      <tr><td><span class="tag tag-y">Element</span></td><td>Contains child elements</td></tr>
+      <tr><td><span class="tag tag-r">Mixed</span></td><td>Simple + Element content both</td></tr>
+    </table>
+  </div>
+  <div class="full-card">
+    <h3 style="margin-bottom:1rem; font-size:1rem; color:var(--accent4);">🌳 Tree Terminology</h3>
+    <ul style="color:#b0b0c8; font-size:0.88rem;">
+      <li><strong>Root element</strong> — top-level, only ONE allowed</li>
+      <li><strong>Parent element</strong> — contains other elements</li>
+      <li><strong>Child element</strong> — inside a parent</li>
+      <li><strong>Siblings</strong> — elements at the same level (sister elements)</li>
+      <li><strong>Attribute</strong> — name-value pair on an element</li>
+    </ul>
+  </div>
+</div>
+
+<div class="code-block"><span class="code-comment">&lt;?xml version="1.0" encoding="UTF-8"?&gt;   &lt;!-- XML Declaration --&gt;</span>
+<span class="code-tag">&lt;bookstock&gt;</span>                              <span class="code-comment">&lt;!-- ROOT element --&gt;</span>
+  <span class="code-tag">&lt;book</span> <span class="code-attr">id</span>=<span class="code-val">"42"</span><span class="code-tag">&gt;</span>                         <span class="code-comment">&lt;!-- Attribute: id="42" --&gt;</span>
+    <span class="code-tag">&lt;title&gt;</span>TCP/IP Illustrated<span class="code-tag">&lt;/title&gt;</span>  <span class="code-comment">&lt;!-- Simple content --&gt;</span>
+    <span class="code-tag">&lt;author&gt;</span>W.R. Stevens<span class="code-tag">&lt;/author&gt;</span>      <span class="code-comment">&lt;!-- Siblings with title, isbn --&gt;</span>
+    <span class="code-tag">&lt;isbn&gt;</span>0201633469<span class="code-tag">&lt;/isbn&gt;</span>
+  <span class="code-tag">&lt;/book&gt;</span>
+<span class="code-tag">&lt;/bookstock&gt;</span>
+<span class="code-comment">&lt;!-- End of document --&gt;</span></div>
+
+<h3 style="margin: 1.5rem 0 1rem; font-size: 1.1rem;">⚖️ XML Syntax Rules (for Well-Formed documents)</h3>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-label">RULES — MUST FOLLOW</div>
+    <h3>✅ Well-Formed XML</h3>
+    <ul>
+      <li>Non-empty elements: start tag + end tag <code>&lt;X&gt;...&lt;/X&gt;</code></li>
+      <li>Empty elements: self-closing <code>&lt;X/&gt;</code></li>
+      <li>Exactly <strong>ONE root element</strong></li>
+      <li>All attribute values must be <strong>quoted</strong></li>
+      <li>Tags must NOT overlap: <code>&lt;X&gt;&lt;Y&gt;&lt;/X&gt;&lt;/Y&gt;</code> ❌</li>
+      <li>XML is <strong>case sensitive</strong>: <code>&lt;X&gt;&lt;/x&gt;</code> ❌</li>
+      <li>Content must comply with declared charset (default UTF-8)</li>
+    </ul>
+  </div>
+  <div class="card accent2">
+    <div class="card-label">COMMON TRAPS</div>
+    <h3>❌ Well-Formed Violations</h3>
+    <ul>
+      <li><code>&lt;book&gt;&lt;title&gt;&lt;/book&gt;&lt;/title&gt;</code> — overlapping!</li>
+      <li><code>&lt;Book&gt;...&lt;/book&gt;</code> — case mismatch!</li>
+      <li><code>&lt;isbn value=123&gt;</code> — unquoted attribute!</li>
+      <li>Two root elements in one document</li>
+      <li>Missing end tag on non-empty element</li>
+    </ul>
+  </div>
+</div>
+
+<div class="trick-box">
+  <span class="trick-icon">🎯</span>
+  <p class="trick-text"><strong>EXAM TRICK:</strong> "Well-formed" = follows XML syntax rules. "Valid" = additionally conforms to a DTD or Schema. A valid document is ALWAYS well-formed, but a well-formed document is NOT necessarily valid.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 4 — NAMESPACES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="namespace">
+  <span class="section-num">04</span>
+  <h2 class="section-title">XML NAMESPACES</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="card accent3" style="margin-bottom:1.5rem;">
+  <div class="card-label">THE PROBLEM</div>
+  <h3>🚨 Why Namespaces Exist</h3>
+  <p>Different contributors use the <strong>same element name</strong> to mean different things. Example: <code>&lt;title&gt;</code> could mean the document's title OR a book's title in the same file → NAME CONFLICTS.</p>
+</div>
+
+<div class="code-block"><span class="code-comment">/* PROBLEM: program scanning for book titles will also find document title */</span>
+<span class="code-tag">&lt;datafile&gt;</span>
+  <span class="code-tag">&lt;title&gt;</span>Book List<span class="code-tag">&lt;/title&gt;</span>   <span class="code-comment">&lt;!-- document title --&gt;</span>
+  <span class="code-tag">&lt;book&gt;</span>
+    <span class="code-tag">&lt;title&gt;</span>TCP/IP Illustrated<span class="code-tag">&lt;/title&gt;</span>  <span class="code-comment">&lt;!-- book title — CONFLICT! --&gt;</span>
+  <span class="code-tag">&lt;/book&gt;</span>
+<span class="code-tag">&lt;/datafile&gt;</span>
+
+<span class="code-comment">/* SOLUTION: Bind each group to a unique namespace using a URI prefix */</span>
+<span class="code-tag">&lt;datafile</span> <span class="code-attr">xmlns:a</span>=<span class="code-val">"http://example.com/doc/"</span>
+          <span class="code-attr">xmlns:b</span>=<span class="code-val">"http://example.com/myNs/"</span><span class="code-tag">&gt;</span>
+  <span class="code-key">a:</span><span class="code-tag">&lt;title&gt;</span>Book List<span class="code-tag">&lt;/</span><span class="code-key">a:</span><span class="code-tag">title&gt;</span>
+  <span class="code-tag">&lt;</span><span class="code-key">b:</span><span class="code-tag">book&gt;</span>
+    <span class="code-tag">&lt;</span><span class="code-key">b:</span><span class="code-tag">title&gt;</span>TCP/IP Illustrated<span class="code-tag">&lt;/</span><span class="code-key">b:</span><span class="code-tag">title&gt;</span>  <span class="code-comment">&lt;!-- No conflict! --&gt;</span>
+  <span class="code-tag">&lt;/</span><span class="code-key">b:</span><span class="code-tag">book&gt;</span>
+<span class="code-tag">&lt;/datafile&gt;</span></div>
+
+<div class="grid-3">
+  <div class="card">
+    <div class="card-label">HOW</div>
+    <h3>xmlns: prefix</h3>
+    <p><code>xmlns:prefix="URI"</code> imports the namespace and binds it to a prefix.</p>
+  </div>
+  <div class="card accent4">
+    <div class="card-label">IMPORTANT</div>
+    <h3>URIs ≠ real URLs</h3>
+    <p>The namespace URI is just a <strong>unique identifier</strong>. It might point to a non-existing resource — that's OK!</p>
+  </div>
+  <div class="card accent2">
+    <div class="card-label">USAGE</div>
+    <h3>Standardized dialects</h3>
+    <p>XHTML, XSD, etc. define their own namespace that you import into your documents.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 5 — VALIDATION -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="validation">
+  <span class="section-num">05</span>
+  <h2 class="section-title">XML VALIDATION</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="highlight-box">
+  <div class="hb-label">DEFINITION</div>
+  <p>A <strong>valid</strong> XML document is related to and conforms to further information describing its structure and data types. Two common validation languages: <strong>DTD</strong> and <strong>XML Schema</strong>.</p>
+</div>
+
+<table class="compare-table">
+  <tr>
+    <th>Feature</th>
+    <th>DTD (Document Type Definition)</th>
+    <th>XML Schema (XSD)</th>
+  </tr>
+  <tr>
+    <td><strong>Format</strong></td>
+    <td>Custom syntax (not XML)</td>
+    <td>Written in XML itself</td>
+  </tr>
+  <tr>
+    <td><strong>Data Types</strong></td>
+    <td>Very limited (mostly PCDATA)</td>
+    <td>Rich: string, integer, date, etc.</td>
+  </tr>
+  <tr>
+    <td><strong>Complex Types</strong></td>
+    <td>❌ No complex types</td>
+    <td>✅ Sequences, choices, groups</td>
+  </tr>
+  <tr>
+    <td><strong>Namespace support</strong></td>
+    <td>Limited</td>
+    <td>Full namespace support</td>
+  </tr>
+  <tr>
+    <td><strong>Shortcoming</strong></td>
+    <td>Limited type definition capabilities</td>
+    <td>More verbose but powerful</td>
+  </tr>
+</table>
+
+<div class="grid-2">
+  <div>
+    <h3 style="color:var(--accent); margin-bottom:0.8rem; font-size:1rem;">DTD Example</h3>
+    <div class="code-block"><span class="code-comment">&lt;!DOCTYPE note [</span>
+<span class="code-tag">&lt;!ELEMENT book (title,author,isbn)&gt;</span>
+<span class="code-comment">/* book has 3 children: title, author, isbn */</span>
+<span class="code-tag">&lt;!ELEMENT title (#PCDATA)&gt;</span>
+<span class="code-tag">&lt;!ELEMENT author (#PCDATA)&gt;</span>
+<span class="code-comment">/* PCDATA = Parsed Character Data = text */</span>
+<span class="code-tag">&lt;!ELEMENT isbn (#PCDATA)&gt;</span>
+<span class="code-comment">]&gt;</span></div>
+  </div>
+  <div>
+    <h3 style="color:var(--accent4); margin-bottom:0.8rem; font-size:1rem;">XML Schema (XSD) Example</h3>
+    <div class="code-block"><span class="code-tag">&lt;xs:element</span> <span class="code-attr">name</span>=<span class="code-val">"book"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;xs:complexType&gt;</span>
+    <span class="code-tag">&lt;xs:sequence&gt;</span>
+<span class="code-comment">  /* sequence = ordered children */</span>
+      <span class="code-tag">&lt;xs:element</span> <span class="code-attr">name</span>=<span class="code-val">"title"</span> <span class="code-attr">type</span>=<span class="code-val">"xs:string"</span><span class="code-tag">/&gt;</span>
+      <span class="code-tag">&lt;xs:element</span> <span class="code-attr">name</span>=<span class="code-val">"author"</span> <span class="code-attr">type</span>=<span class="code-val">"xs:string"</span><span class="code-tag">/&gt;</span>
+      <span class="code-tag">&lt;xs:element</span> <span class="code-attr">name</span>=<span class="code-val">"isbn"</span> <span class="code-attr">type</span>=<span class="code-val">"xs:string"</span><span class="code-tag">/&gt;</span>
+    <span class="code-tag">&lt;/xs:sequence&gt;</span>
+  <span class="code-tag">&lt;/xs:complexType&gt;</span>
+<span class="code-tag">&lt;/xs:element&gt;</span></div>
+  </div>
+</div>
+
+<div class="trick-box">
+  <span class="trick-icon">💡</span>
+  <p class="trick-text"><strong>MEMORY TRICK — DTD vs XSD:</strong> DTD = old, simple, <strong>D</strong>umb on types. XSD = XML Schema = written IN XML = modern, richer types. Remember: <strong>Schema ≥ DTD</strong> in every way. DTD's main shortcoming = limited type definitions.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 6 — XML PROCESSING (DOM vs SAX) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="processing">
+  <span class="section-num">06</span>
+  <h2 class="section-title">XML PROCESSING: DOM vs SAX</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-label">MODEL 1</div>
+    <h3>🌳 DOM — Document Object Model</h3>
+    <ul>
+      <li>Standardized by <strong>W3C</strong></li>
+      <li>Loads the <strong>entire document</strong> into memory as a tree</li>
+      <li>You can <strong>traverse</strong> the tree or access elements directly by id</li>
+      <li>Supports <strong>random access</strong> to any node</li>
+      <li>Can <strong>read AND modify</strong> the document</li>
+    </ul>
+    <div class="code-block" style="margin-top:1rem"><span class="code-key">var</span> elem = document.getElementById(<span class="code-val">"42"</span>)
+<span class="code-key">var</span> child = elem.getElementsByTagName(<span class="code-val">"author"</span>)[0]
+<span class="code-key">var</span> val = child.childNode.nodeValue</div>
+  </div>
+  <div class="card accent2">
+    <div class="card-label">MODEL 2</div>
+    <h3>⚡ SAX — Simple API for XML</h3>
+    <ul>
+      <li><strong>Event-based</strong> mechanism — not tree-based</li>
+      <li>Reads document <strong>sequentially</strong>, top to bottom</li>
+      <li>Generates <strong>events</strong> (startElement, endElement, characters…)</li>
+      <li>You register <strong>event handlers</strong> that get called</li>
+      <li>Does NOT load whole document — <strong>memory efficient</strong></li>
+      <li>Read-only — no modification possible</li>
+    </ul>
+  </div>
+</div>
+
+<table class="compare-table" style="margin-top:1.5rem;">
+  <tr>
+    <th>Aspect</th>
+    <th>DOM</th>
+    <th>SAX</th>
+  </tr>
+  <tr>
+    <td><strong>Memory</strong></td>
+    <td>⚠️ High — loads full tree</td>
+    <td>✅ Low — sequential read</td>
+  </tr>
+  <tr>
+    <td><strong>Access pattern</strong></td>
+    <td>Random access (by id, by tag)</td>
+    <td>Sequential only</td>
+  </tr>
+  <tr>
+    <td><strong>Modification</strong></td>
+    <td>✅ Can modify document</td>
+    <td>❌ Read-only</td>
+  </tr>
+  <tr>
+    <td><strong>API type</strong></td>
+    <td>Tree traversal API</td>
+    <td>Event / callback model</td>
+  </tr>
+  <tr>
+    <td><strong>Best for</strong></td>
+    <td>Complex manipulation, searching</td>
+    <td>Large files, simple extraction</td>
+  </tr>
+  <tr>
+    <td><strong>Standardized by</strong></td>
+    <td>W3C</td>
+    <td>Open community (saxproject.org)</td>
+  </tr>
+</table>
+
+<h3 style="margin: 1.5rem 0 0.8rem; color:var(--accent2); font-size:1rem;">SAX Event Sequence Example</h3>
+<div class="flow" style="flex-direction: column; align-items: flex-start; gap:0.3rem;">
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-step">Start Document</div></div>
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-arrow">↓</div><div class="flow-step">Start Element: bookstock</div></div>
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-arrow">↓</div><div class="flow-step">Start Element: book (Attributes: id=42)</div></div>
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-arrow">↓</div><div class="flow-step">Start Element: title</div></div>
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-arrow">↓</div><div class="flow-step">Characters: "TCP/IP Illustrated"</div></div>
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-arrow">↓</div><div class="flow-step">End Element: title</div></div>
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-arrow">↓</div><div class="flow-step">... (continues sequentially) ...</div></div>
+  <div style="display:flex; align-items:center; gap:0.5rem;"><div class="flow-arrow">↓</div><div class="flow-step">End Document</div></div>
+</div>
+
+<div class="trick-box">
+  <span class="trick-icon">🎯</span>
+  <p class="trick-text"><strong>EXAM TRICK:</strong> DOM = like a photo (everything in memory at once). SAX = like a movie (events stream one by one). If exam asks "which is better for large files?" → SAX (memory efficient). If "which allows modification?" → DOM only.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 7 — ALTERNATIVES TO XML -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header">
+  <span class="section-num">07</span>
+  <h2 class="section-title">XML ALTERNATIVES</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="grid-2">
+  <div class="card accent3">
+    <div class="card-label">ALTERNATIVE 1</div>
+    <h3>📋 JSON — JavaScript Object Notation</h3>
+    <p>Discussed in detail in Chapter 3. Lightweight, less verbose than XML, native to JavaScript.</p>
+  </div>
+  <div class="card accent4">
+    <div class="card-label">ALTERNATIVE 2</div>
+    <h3>📝 YAML — YAML Ain't Markup Language</h3>
+    <ul>
+      <li>Compact, text-based, human-readable</li>
+      <li><strong>Superset of JSON</strong> (all JSON is valid YAML)</li>
+      <li>Supports: lists, associative arrays, scalars</li>
+      <li>Enables <strong>cross-references</strong> between nodes</li>
+      <li>Hierarchies by <strong>indentation</strong> (no tags!)</li>
+    </ul>
+    <div class="code-block" style="margin-top:0.8rem">lectures:
+  - 'Internet and Web Applications'
+  - 'Distributed Systems'
+  - 'Mobile Communication'</div>
+  </div>
+</div>
+
+<div class="trick-box">
+  <span class="trick-icon">⚠️</span>
+  <p class="trick-text"><strong>WHY ALTERNATIVES?</strong> XML has overhead and redundant information (verbose opening + closing tags). JSON/YAML are lighter. YAML = superset of JSON — remember this for the exam!</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 8 — XHTML -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="xhtml">
+  <span class="section-num">08</span>
+  <h2 class="section-title">XHTML</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="card" style="margin-bottom:1rem;">
+  <div class="card-label">DEFINITION</div>
+  <h3>Extensible Hypertext Markup Language</h3>
+  <p>XHTML is an <strong>XML reformulation of HTML</strong> — it takes HTML's concepts but applies strict XML syntax rules.</p>
+</div>
+
+<div class="grid-2">
+  <div class="full-card">
+    <h3 style="color:var(--accent); margin-bottom:1rem; font-size:1rem;">✅ Advantages of XHTML</h3>
+    <ul style="color:#b0b0c8; font-size:0.88rem;">
+      <li>High standardization → better browser engine unification</li>
+      <li>Processable by regular <strong>XML tools</strong> (style, validation)</li>
+      <li>Extensible with other XML languages (e.g., <strong>MathML</strong> for math expressions)</li>
+      <li>Can be validated by DTD (e.g., XHTML 1.1 DTD from W3C)</li>
+    </ul>
+  </div>
+  <div class="full-card">
+    <h3 style="color:var(--accent4); margin-bottom:1rem; font-size:1rem;">🔑 XHTML vs HTML Key Difference</h3>
+    <ul style="color:#b0b0c8; font-size:0.88rem;">
+      <li>XHTML = stricter syntax (must be well-formed)</li>
+      <li>Empty elements MUST self-close: <code>&lt;br/&gt;</code> not <code>&lt;br&gt;</code></li>
+      <li>All tags lowercase, all attributes quoted</li>
+      <li>Expressive power derived from HTML</li>
+    </ul>
+  </div>
+</div>
+
+<div class="code-block"><span class="code-comment">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="code-comment">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"</span>
+<span class="code-comment">  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;</span>  <span class="code-comment">&lt;!-- Reference to DTD --&gt;</span>
+
+<span class="code-tag">&lt;html</span> <span class="code-attr">xmlns</span>=<span class="code-val">"http://www.w3.org/1999/xhtml"</span> <span class="code-attr">xml:lang</span>=<span class="code-val">"en"</span><span class="code-tag">&gt;</span>
+<span class="code-comment">       ↑ Default namespace defined here</span>
+  <span class="code-tag">&lt;body&gt;</span>
+    <span class="code-tag">&lt;br/&gt;</span>   <span class="code-comment">&lt;!-- Empty elements MUST be self-closed in XHTML --&gt;</span>
+    <span class="code-tag">&lt;table&gt;</span>
+      <span class="code-tag">&lt;tr&gt;&lt;td&gt;</span>TCP/IP Illustrated<span class="code-tag">&lt;/td&gt;&lt;td&gt;</span>W.R. Stevens<span class="code-tag">&lt;/td&gt;&lt;/tr&gt;</span>
+    <span class="code-tag">&lt;/table&gt;</span>
+  <span class="code-tag">&lt;/body&gt;</span>
+<span class="code-tag">&lt;/html&gt;</span></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 9 — CONTENT TYPE / MIME -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="content-type">
+  <span class="section-num">09</span>
+  <h2 class="section-title">CONTENT TYPES (MIME)</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="flow" style="flex-direction:column; align-items:flex-start;">
+  <div style="font-size:0.85rem; color:var(--muted); margin-bottom:0.5rem; font-family:'Space Mono',monospace;">HOW IT WORKS:</div>
+  <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+    <div class="flow-step">Server sends response</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Header includes Content-Type</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Client reads type</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Finds right app from DB</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Delegates to that app</div>
+  </div>
+</div>
+
+<div class="highlight-box" style="margin-top:1.5rem;">
+  <div class="hb-label">FORMAT</div>
+  <p style="font-family:'Space Mono',monospace; font-size:1rem; color:var(--accent);">Content-Type: <span style="color:var(--accent3)">type</span> / <span style="color:var(--accent2)">subtype</span></p>
+</div>
+
+<table class="compare-table">
+  <tr><th>Content-Type</th><th>Meaning</th></tr>
+  <tr><td><code>application/xml</code></td><td>General XML content</td></tr>
+  <tr><td><code>text/plain</code></td><td>Plain text</td></tr>
+  <tr><td><code>text/html</code></td><td>HTML document</td></tr>
+  <tr><td><code>image/jpeg</code></td><td>JPEG image</td></tr>
+  <tr><td><code>video/mpeg</code></td><td>MPEG video</td></tr>
+  <tr><td><code>application/json</code></td><td>JSON data</td></tr>
+</table>
+
+<div class="trick-box">
+  <span class="trick-icon">🧠</span>
+  <p class="trick-text"><strong>EXAM TRICK:</strong> Also called "media type" or "MIME type" — these are all the same thing! The client has a lookup table: Content-Type → which application to open. If it can't handle it itself, it finds an external program.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 10 — INTERACTION OVERVIEW -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header">
+  <span class="section-num">10</span>
+  <h2 class="section-title">WEB INTERACTION MODEL</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="full-card">
+  <h3 style="margin-bottom:1rem; font-size:1rem;">🔄 Classic Client-Server Architecture</h3>
+  <div class="flow">
+    <div class="flow-step">Client (Browser)</div>
+    <div class="flow-arrow">→ request URI via HTTP →</div>
+    <div class="flow-step">Web Server</div>
+    <div class="flow-arrow">→ returns document →</div>
+    <div class="flow-step">Client interprets</div>
+  </div>
+  <p style="margin-top:1rem; font-size:0.88rem; color:#b0b0c8;">A single document can contain multiple content types that the browser interprets separately:</p>
+  <div style="display:flex; gap:0.5rem; margin-top:0.8rem; flex-wrap:wrap;">
+    <span class="tag tag-g">XHTML → Text content</span>
+    <span class="tag tag-p">CSS → Layout and Style</span>
+    <span class="tag tag-y">JavaScript → Program Logic</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 11 — JAVASCRIPT -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="js">
+  <span class="section-num">11</span>
+  <h2 class="section-title">JAVASCRIPT</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-label">DEFINITION</div>
+    <h3>⚡ What is JavaScript?</h3>
+    <ul>
+      <li>Object-based, wide-spread <strong>script language</strong></li>
+      <li>Standardized as <strong>ECMAScript</strong></li>
+      <li>Used primarily for <strong>client-side execution</strong></li>
+      <li>Embedded in or linked from (X)HTML documents</li>
+      <li>Browser identifies code → forwards to <strong>JavaScript engine</strong></li>
+      <li>Result can change document content or trigger reactions (e.g. open new window)</li>
+    </ul>
+  </div>
+  <div class="card accent2">
+    <div class="card-label">SECURITY</div>
+    <h3>🔒 Sandbox Principle</h3>
+    <p>Script running in the JS engine can <strong>only access objects inside the browser</strong> by default.</p>
+    <p style="margin-top:0.8rem;"><strong>Cannot access:</strong></p>
+    <ul>
+      <li>❌ File system</li>
+      <li>❌ Network resources directly</li>
+      <li>❌ Operating system</li>
+    </ul>
+    <p style="margin-top:0.8rem;"><strong>Can access:</strong></p>
+    <ul>
+      <li>✅ DOM of the current page</li>
+      <li>✅ Browser APIs (window, document…)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="highlight-box">
+  <div class="hb-label">KEY COMBO</div>
+  <p><strong>JavaScript + DOM = Dynamic Web Pages</strong></p>
+  <p>JavaScript is often used with the DOM API to dynamically modify the structure and content of an XHTML document — this is the core of Web 2.0 interactivity (Ajax, etc.)</p>
+</div>
+
+<div class="code-block"><span class="code-tag">&lt;html&gt;</span>
+<span class="code-tag">&lt;head&gt;</span>
+  <span class="code-tag">&lt;script</span> <span class="code-attr">language</span>=<span class="code-val">"JavaScript"</span> <span class="code-attr">type</span>=<span class="code-val">"text/javascript"</span><span class="code-tag">&gt;</span>
+    <span class="code-key">function</span> hello() { alert(<span class="code-val">"Hello!"</span>); }
+  <span class="code-tag">&lt;/script&gt;</span>
+<span class="code-tag">&lt;/head&gt;</span>
+<span class="code-tag">&lt;body</span> <span class="code-attr">onLoad</span>=<span class="code-val">"hello()"</span><span class="code-tag">&gt;</span>   <span class="code-comment">&lt;!-- onLoad = called when page loads --&gt;</span>
+  This is a simple JavaScript example.
+<span class="code-tag">&lt;/body&gt;</span>
+<span class="code-tag">&lt;/html&gt;</span></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  SECTION 12 — CSS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="css">
+  <span class="section-num">12</span>
+  <h2 class="section-title">CSS — CASCADING STYLE SHEETS</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-label">DEFINITION</div>
+  <h3>🎨 What is CSS?</h3>
+  <p>Client-side language for defining the <strong>layout</strong> of markup language elements. Simplifies uniform design and its maintenance of web pages.</p>
+</div>
+
+<div class="grid-2">
+  <div class="full-card">
+    <h3 style="color:var(--accent); margin-bottom:1rem; font-size:1rem;">How to include CSS</h3>
+    <ul style="color:#b0b0c8; font-size:0.88rem;">
+      <li>Directly <strong>embedded</strong> in HTML file (<code>&lt;style&gt;</code> tag)</li>
+      <li><strong>Linked externally</strong>: <code>&lt;link rel="stylesheet" href="main.css"&gt;</code></li>
+    </ul>
+    <div class="trick-box" style="margin-top:1rem;">
+      <span class="trick-icon">💡</span>
+      <p class="trick-text"><strong>KEY BENEFIT:</strong> External CSS = change ONE file → update ALL linked pages simultaneously!</p>
+    </div>
+  </div>
+  <div class="full-card">
+    <h3 style="color:var(--accent4); margin-bottom:1rem; font-size:1rem;">CSS Selector Types</h3>
+    <table class="compare-table">
+      <tr><th>Selector</th><th>Targets</th><th>Syntax</th></tr>
+      <tr><td>Element</td><td>All &lt;p&gt; tags</td><td><code>p { }</code></td></tr>
+      <tr><td>Class</td><td>class="top"</td><td><code>.top { }</code></td></tr>
+      <tr><td>ID</td><td>id="fat"</td><td><code>#fat { }</code></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="code-block"><span class="code-comment">/* main.css — selectors and their properties */</span>
+
+<span class="code-key">input</span> {                     <span class="code-comment">/* Element selector — targets all &lt;input&gt; */</span>
+  font-size: 110%;
+  color: red;
+  background: #ffff00;
+}
+
+<span class="code-key">.top</span> {                     <span class="code-comment">/* Class selector — targets class="top" */</span>
+  padding-top: 20px;
+}
+
+<span class="code-key">p</span> {                        <span class="code-comment">/* Element selector */</span>
+  font-size: 16pt;
+  font-family: "Garamond", serif;
+  font-weight: bold;
+}
+
+<span class="code-key">#fat</span> {                     <span class="code-comment">/* ID selector — targets id="fat" */</span>
+  font-weight: bold;
+}</div>
+
+<div class="trick-box">
+  <span class="trick-icon">🧠</span>
+  <p class="trick-text"><strong>MEMORY TRICK for Selectors:</strong> <code>p</code> = plain element. <code>.class</code> = dot for class. <code>#id</code> = hash for ID. In order of specificity: ID (#) > Class (.) > Element. "ID wins everything!"</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  MEGA REVIEW TABLE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sep"></div>
+
+<div class="section-header">
+  <span class="section-num">📊</span>
+  <h2 class="section-title">MEGA SUMMARY TABLE</h2>
+  <div class="section-line"></div>
+</div>
+
+<table class="compare-table">
+  <tr>
+    <th>Concept</th>
+    <th>What it is</th>
+    <th>Key Point</th>
+    <th>Exam Trap</th>
+  </tr>
+  <tr>
+    <td><span class="tag tag-g">XML</span></td>
+    <td>Meta-language for data representation</td>
+    <td>Basis for XHTML, RSS, Atom, RDF…</td>
+    <td>XML defines languages, not a language itself</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-g">Well-formed</span></td>
+    <td>Follows XML syntax rules</td>
+    <td>One root, quoted attrs, no overlaps, case-sensitive</td>
+    <td>Well-formed ≠ Valid</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-p">Valid</span></td>
+    <td>Conforms to DTD or Schema</td>
+    <td>Always also well-formed</td>
+    <td>Valid requires well-formed first</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-y">DTD</span></td>
+    <td>Validation language for XML</td>
+    <td>Old, limited types (PCDATA)</td>
+    <td>DTD is NOT written in XML syntax</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-y">XSD</span></td>
+    <td>XML Schema — richer validation</td>
+    <td>Written in XML, rich types</td>
+    <td>xs:sequence = ordered children</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-g">DOM</span></td>
+    <td>Tree-based XML processing API</td>
+    <td>W3C standard, random access, full tree in memory</td>
+    <td>Requires full doc in memory</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-r">SAX</span></td>
+    <td>Event-based XML processing</td>
+    <td>Sequential, memory efficient, read-only</td>
+    <td>Cannot modify, no random access</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-p">XHTML</span></td>
+    <td>XML version of HTML</td>
+    <td>Strict syntax, XML toolable</td>
+    <td>Empty elements MUST self-close</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-g">Namespace</span></td>
+    <td>Unique identifier for element groups</td>
+    <td>Solves name conflicts, URI is just an ID</td>
+    <td>URI doesn't need to exist!</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-y">MIME type</span></td>
+    <td>Content-Type: type/subtype</td>
+    <td>Tells client what app to use</td>
+    <td>Also called media type / MIME type</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-r">JavaScript</span></td>
+    <td>Client-side scripting (ECMAScript)</td>
+    <td>Sandbox principle, JS + DOM = dynamic pages</td>
+    <td>Sandboxed = no file system access</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-p">CSS</span></td>
+    <td>Layout language for markup</td>
+    <td>External file = maintain all pages at once</td>
+    <td>Selector: element, .class, #id</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-g">Web 2.0</span></td>
+    <td>Buzzword for modern web apps</td>
+    <td>Ajax, social, more client-side logic</td>
+    <td>TECHNOLOGICAL evolution</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-y">Web 3.0</span></td>
+    <td>Semantic Web</td>
+    <td>Data-centric (Linked Data), RDF/OWL</td>
+    <td>CONCEPTUAL evolution</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-r">YAML</span></td>
+    <td>Data serialization format</td>
+    <td>Superset of JSON, hierarchies by indentation</td>
+    <td>YAML ⊃ JSON (YAML is the bigger set)</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  QUIZ SECTION -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sep"></div>
+
+<div class="section-header" id="quiz">
+  <span class="section-num">🧠</span>
+  <h2 class="section-title">EXAM QUIZ — TEST YOURSELF</h2>
+  <div class="section-line"></div>
+</div>
+
+<p style="color:var(--muted); margin-bottom:1.5rem; font-family:'Space Mono',monospace; font-size:0.8rem;">Click an answer to see if you're right. Track your score! 👇</p>
+
+<!-- Q1 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q01</span>
+    <span>What are the THREE fundamental mechanisms of the original World Wide Web (Web 1.0)?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) TCP, IP, DNS</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) HTTP, HTML, URI</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) XML, JSON, YAML</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) Ajax, WebSocket, Comet</div>
+  </div>
+  <div class="quiz-explanation">✅ HTTP = Application protocol. HTML = Document description format. URI = Document addressing mechanism. These three are the pillars of the original WWW.</div>
+</div>
+
+<!-- Q2 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q02</span>
+    <span>A document that follows XML syntax rules (one root, quoted attributes, no overlapping tags) is called…?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) Valid</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) Well-formed</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) Structured</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) Validated</div>
+  </div>
+  <div class="quiz-explanation">✅ Well-formed = correct syntax. Valid = well-formed PLUS conforms to DTD/Schema. Remember: valid ⊃ well-formed.</div>
+</div>
+
+<!-- Q3 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q03</span>
+    <span>Which XML processing model loads the ENTIRE document into memory as a tree structure?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) SAX</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) DOM</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) YAML</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) XSD</div>
+  </div>
+  <div class="quiz-explanation">✅ DOM (Document Object Model) interprets the document in its logical tree structure, requiring the entire tree to be loaded into memory. SAX reads sequentially and doesn't load everything.</div>
+</div>
+
+<!-- Q4 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q04</span>
+    <span>What is the main shortcoming of DTD compared to XML Schema?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) DTD cannot reference external files</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) DTD has limited type definition capabilities</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) DTD is written in XML making it verbose</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) DTD cannot validate element names</div>
+  </div>
+  <div class="quiz-explanation">✅ The main shortcoming of DTD is limited type definition capabilities — it mostly uses PCDATA (plain text). XSD supports rich types like string, integer, date, etc.</div>
+</div>
+
+<!-- Q5 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q05</span>
+    <span>XML namespaces solve name conflicts using URIs. What's important to know about these URIs?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) They must point to valid, existing web pages</div>
+    <div class="quiz-opt" onclick="answer(this, false)">B) They must use HTTPS protocol</div>
+    <div class="quiz-opt" onclick="answer(this, true)">C) They are unique identifiers and may point to non-existing resources</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) They must be registered with W3C</div>
+  </div>
+  <div class="quiz-explanation">✅ Namespace URIs are just unique identifiers — they DON'T need to point to real resources. They just need to be unique strings that avoid naming conflicts.</div>
+</div>
+
+<!-- Q6 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q06</span>
+    <span>JavaScript's sandbox principle means that scripts running in the browser can access…?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) The file system and network resources freely</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) Only objects inside the browser, by default</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) Any OS-level resource</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) The user's cookies and passwords directly</div>
+  </div>
+  <div class="quiz-explanation">✅ Sandbox principle = JS can only access objects inside the browser by default. No direct file system or arbitrary network access. This is a core security concept.</div>
+</div>
+
+<!-- Q7 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q07</span>
+    <span>What is the correct CSS selector for targeting an element with id="header"?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) .header { }</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) #header { }</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) header { }</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) @header { }</div>
+  </div>
+  <div class="quiz-explanation">✅ #id selector uses the hash (#) symbol. .class uses dot (.). element selector has no prefix. Specificity: #id > .class > element.</div>
+</div>
+
+<!-- Q8 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q08</span>
+    <span>Web 3.0 / Semantic Web focuses on…?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) Better social networking features</div>
+    <div class="quiz-opt" onclick="answer(this, false)">B) Faster HTTP protocols</div>
+    <div class="quiz-opt" onclick="answer(this, true)">C) Semantically interconnected DATA (Linked Data), not documents</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) Improved client-side JavaScript engines</div>
+  </div>
+  <div class="quiz-explanation">✅ Web 3.0 = Semantic Web = focus on DATA not documents = Linked Data. Uses RDF, RDFS, OWL. It's a CONCEPTUAL evolution (not just technological like Web 2.0).</div>
+</div>
+
+<!-- Q9 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q09</span>
+    <span>YAML is described as a "superset of JSON." What does this mean?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) JSON can parse YAML directly</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) All valid JSON is also valid YAML</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) YAML is faster than JSON</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) YAML requires JSON to work</div>
+  </div>
+  <div class="quiz-explanation">✅ Superset means YAML includes everything JSON can do, plus more. So every JSON document is a valid YAML document, but not vice versa.</div>
+</div>
+
+<!-- Q10 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q10</span>
+    <span>SAX (Simple API for XML) is best described as what type of processing model?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) Tree-based with random access</div>
+    <div class="quiz-opt" onclick="answer(this, false)">B) Schema validation model</div>
+    <div class="quiz-opt" onclick="answer(this, true)">C) Event-based, sequential processing</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) In-memory DOM modification model</div>
+  </div>
+  <div class="quiz-explanation">✅ SAX = event-based. The parser reads sequentially, firing events (startElement, characters, endElement, etc.) that your handlers catch. Memory efficient, no random access, read-only.</div>
+</div>
+
+<!-- Q11 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q11</span>
+    <span>What does the Content-Type header do in an HTTP response?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) Encrypts the content</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) Tells the client which application to use to interpret the content</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) Compresses the response body</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) Sets the document language</div>
+  </div>
+  <div class="quiz-explanation">✅ Content-Type is meta-information that tells the client the type of content. The client then looks up its "type → application" database and delegates content to the right handler.</div>
+</div>
+
+<!-- Q12 -->
+<div class="quiz-card">
+  <div class="quiz-q">
+    <span class="quiz-num">Q12</span>
+    <span>In XHTML, how must empty elements (like line break) be written?</span>
+  </div>
+  <div class="quiz-options">
+    <div class="quiz-opt" onclick="answer(this, false)">A) &lt;br&gt;</div>
+    <div class="quiz-opt" onclick="answer(this, true)">B) &lt;br/&gt;</div>
+    <div class="quiz-opt" onclick="answer(this, false)">C) &lt;BR&gt;</div>
+    <div class="quiz-opt" onclick="answer(this, false)">D) &lt;break&gt;&lt;/break&gt;</div>
+  </div>
+  <div class="quiz-explanation">✅ XHTML follows strict XML rules: empty elements MUST be self-closing with /&gt;. In regular HTML you can write &lt;br&gt;, but XHTML requires &lt;br/&gt;.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sep"></div>
+
+<div class="footer">
+  <span class="big">GO ACE IT</span>
+  <p>Internet & Web Applications · Lecture 1 · Full Summary</p>
+  <p style="margin-top:0.5rem; color: var(--accent);">Every slide. Every word. Every concept. You've got this. 🔥</p>
+</div>
+
+</div><!-- end container -->
+
+<script>
+  // Sticky nav
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('stickyNav');
+    nav.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // Scroll helper
+  function scrollTo(id) {
+    const el = document.querySelector(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Quiz
+  let score = 0, total = 0;
+
+  function answer(el, correct) {
+    const card = el.closest('.quiz-card');
+    if (card.dataset.answered) return;
+    card.dataset.answered = 'true';
+    total++;
+
+    const opts = card.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.style.pointerEvents = 'none');
+
+    if (correct) {
+      el.classList.add('correct');
+      score++;
+    } else {
+      el.classList.add('wrong');
+      // Find the correct one
+      opts.forEach(o => {
+        if (o.getAttribute('onclick').includes('true')) {
+          o.classList.add('correct');
+        }
+      });
+    }
+
+    card.querySelector('.quiz-explanation').classList.add('show');
+
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('totalNum').textContent = total;
+
+    // Animate score bar
+    const bar = document.getElementById('scoreBar');
+    bar.style.transform = 'scale(1.1)';
+    setTimeout(() => bar.style.transform = 'scale(1)', 200);
+  }
+</script>
+</body>
+</html>
