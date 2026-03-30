@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet & Web Applications – Lecture 1 | شرح بالمصري</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a40;
+    --accent: #00ff88;
+    --accent2: #ff6b35;
+    --accent3: #7c5cfc;
+    --accent4: #00c9ff;
+    --text: #e8e8f0;
+    --text-dim: #888899;
+    --danger: #ff4757;
+    --warn: #ffa502;
+    --mono: 'JetBrains Mono', monospace;
+    --arabic: 'Cairo', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--arabic);
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,255,136,0.08) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-size: 13px;
+    color: var(--accent);
+    font-family: var(--mono);
+    margin-bottom: 30px;
+    animation: fadeDown 0.8s ease forwards;
+    position: relative;
+    z-index: 2;
+  }
+
+  .badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    position: relative;
+    z-index: 2;
+    animation: fadeDown 0.8s 0.2s ease both;
+  }
+
+  .hero h1 .en { color: var(--accent); font-family: var(--mono); display: block; }
+  .hero h1 .ar { color: var(--text); font-family: var(--arabic); display: block; font-size: 0.6em; margin-top: 10px; }
+
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    position: relative;
+    z-index: 2;
+    animation: fadeDown 0.8s 0.4s ease both;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    animation: fadeDown 0.8s 0.6s ease both;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 24px;
+    text-align: center;
+  }
+
+  .stat-num { font-size: 2rem; font-weight: 900; color: var(--accent); font-family: var(--mono); }
+  .stat-label { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    animation: bounce 2s infinite;
+    z-index: 2;
+  }
+
+  .scroll-hint span { font-size: 1.5rem; }
+
+  @keyframes bounce {
+    0%,100%{transform:translateX(-50%) translateY(0)}
+    50%{transform:translateX(-50%) translateY(-10px)}
+  }
+
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+  }
+
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    overflow-x: auto;
+    gap: 10px;
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.78rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: var(--arabic);
+  }
+
+  .nav-links a:hover { color: var(--accent); background: rgba(0,255,136,0.08); }
+
+  /* MAIN LAYOUT */
+  .main { max-width: 1100px; margin: 0 auto; padding: 60px 20px; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 80px;
+    animation: fadeIn 0.6s ease both;
+  }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .section-title-en {
+    font-family: var(--mono);
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .section-title-ar {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+    font-family: var(--arabic);
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover { border-color: rgba(0,255,136,0.3); transform: translateY(-2px); }
+  .card:hover::before { opacity: 1; }
+
+  .card.danger { border-color: rgba(255,71,87,0.3); }
+  .card.danger::before { background: linear-gradient(90deg, var(--danger), var(--accent2)); opacity: 1; }
+
+  .card.warn { border-color: rgba(255,165,2,0.3); }
+  .card.warn::before { background: linear-gradient(90deg, var(--warn), var(--accent2)); opacity: 1; }
+
+  .card.purple { border-color: rgba(124,92,252,0.3); }
+  .card.purple::before { background: linear-gradient(90deg, var(--accent3), var(--accent4)); opacity: 1; }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .card-title .en { font-family: var(--mono); color: var(--accent); }
+  .card-title .ar { font-family: var(--arabic); color: var(--text-dim); font-size: 0.85rem; font-weight: 600; }
+
+  .explain {
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.15);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--text);
+    direction: rtl;
+    text-align: right;
+    font-family: var(--arabic);
+  }
+
+  .explain strong { color: var(--accent); }
+  .explain .term { 
+    font-family: var(--mono); 
+    background: rgba(0,255,136,0.15); 
+    padding: 2px 8px; 
+    border-radius: 4px; 
+    font-size: 0.85em;
+    color: var(--accent4);
+  }
+
+  /* CODE */
+  .code-block {
+    background: #080810;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .code-block pre {
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #a8b5d0;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .kw { color: #ff79c6; }
+  .tag { color: #ff6b6b; }
+  .attr { color: #ffd93d; }
+  .val { color: #6bcb77; }
+  .cm { color: #6272a4; font-style: italic; }
+  .str { color: #f1fa8c; }
+  .num { color: #bd93f9; }
+
+  /* GRID 2 COL */
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+  /* DIAGRAM */
+  .diagram {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+
+  .diagram svg text { font-family: var(--arabic), var(--mono); }
+
+  /* TAG */
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-family: var(--mono);
+    font-weight: 700;
+    margin: 3px;
+  }
+
+  .chip-green { background: rgba(0,255,136,0.12); color: var(--accent); border: 1px solid rgba(0,255,136,0.3); }
+  .chip-red { background: rgba(255,71,87,0.12); color: var(--danger); border: 1px solid rgba(255,71,87,0.3); }
+  .chip-purple { background: rgba(124,92,252,0.12); color: var(--accent3); border: 1px solid rgba(124,92,252,0.3); }
+  .chip-blue { background: rgba(0,201,255,0.12); color: var(--accent4); border: 1px solid rgba(0,201,255,0.3); }
+  .chip-orange { background: rgba(255,107,53,0.12); color: var(--accent2); border: 1px solid rgba(255,107,53,0.3); }
+
+  /* TRICKY SECTION */
+  .tricky-box {
+    background: linear-gradient(135deg, rgba(255,71,87,0.08), rgba(255,107,53,0.05));
+    border: 2px solid rgba(255,71,87,0.4);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 24px 0;
+    position: relative;
+  }
+
+  .tricky-box::before {
+    content: '⚠️ TRICKY';
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: var(--danger);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+
+  .tricky-title { color: var(--danger); font-family: var(--mono); font-weight: 700; margin-bottom: 12px; font-size: 0.95rem; }
+
+  /* SUMMARY */
+  .summary-card {
+    background: linear-gradient(135deg, var(--surface) 0%, #1a1a2e 100%);
+    border: 2px solid var(--accent3);
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(124,92,252,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .summary-card h2 {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .summary-item {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+    font-size: 0.88rem;
+  }
+
+  .summary-item:last-child { border-bottom: none; }
+
+  .summary-key {
+    font-family: var(--mono);
+    color: var(--accent4);
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+
+  .summary-val { color: var(--text); line-height: 1.7; direction: ltr; text-align: left; }
+
+  /* QUIZ */
+  .quiz-box {
+    background: var(--surface2);
+    border: 1px solid var(--accent3);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 30px 0;
+  }
+
+  .quiz-q {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--accent4);
+    direction: rtl;
+    text-align: right;
+    font-family: var(--arabic);
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+
+  .quiz-opt {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    cursor: pointer;
+    text-align: right;
+    direction: rtl;
+    font-family: var(--arabic);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+
+  .quiz-opt:hover { border-color: var(--accent3); background: rgba(124,92,252,0.08); }
+  .quiz-opt.correct { border-color: var(--accent); background: rgba(0,255,136,0.12); color: var(--accent); }
+  .quiz-opt.wrong { border-color: var(--danger); background: rgba(255,71,87,0.1); color: var(--danger); }
+
+  .quiz-feedback {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    display: none;
+    direction: rtl;
+    text-align: right;
+    font-family: var(--arabic);
+    line-height: 1.7;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); color: var(--accent); }
+  .quiz-feedback.nope { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); color: var(--danger); }
+
+  /* TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .comp-table th { background: var(--surface2); padding: 12px 16px; text-align: right; color: var(--accent); font-family: var(--mono); border: 1px solid var(--border); }
+  .comp-table td { padding: 12px 16px; border: 1px solid var(--border); color: var(--text); direction: rtl; text-align: right; font-family: var(--arabic); line-height: 1.6; }
+  .comp-table tr:hover td { background: rgba(0,255,136,0.03); }
+
+  /* PROGRESS */
+  .progress-bar { background: var(--surface2); border-radius: 50px; height: 6px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; border-radius: 50px; animation: fillBar 1.5s ease forwards; }
+  @keyframes fillBar { from{width:0} }
+
+  /* LIST */
+  .styled-list { list-style: none; }
+  .styled-list li {
+    padding: 8px 0 8px 0;
+    padding-right: 24px;
+    position: relative;
+    color: var(--text);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    direction: rtl;
+    text-align: right;
+    font-family: var(--arabic);
+  }
+
+  .styled-list li::before {
+    content: '▸';
+    position: absolute;
+    right: 0;
+    color: var(--accent);
+  }
+
+  .styled-list li strong { color: var(--accent4); }
+
+  /* TOP BANNER */
+  .exam-banner {
+    background: linear-gradient(135deg, rgba(255,71,87,0.15), rgba(255,107,53,0.1));
+    border: 2px solid var(--danger);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .exam-banner .icon { font-size: 2.5rem; }
+  .exam-banner h3 { color: var(--danger); font-size: 1.1rem; font-family: var(--arabic); }
+  .exam-banner p { color: var(--text-dim); font-size: 0.88rem; margin-top: 4px; font-family: var(--arabic); }
+
+  /* DIFF LABEL */
+  .diff {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: var(--mono);
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  .diff-easy { background: rgba(0,255,136,0.15); color: var(--accent); }
+  .diff-med { background: rgba(255,165,2,0.15); color: var(--warn); }
+  .diff-hard { background: rgba(255,71,87,0.15); color: var(--danger); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+  }
+
+  footer span { color: var(--accent); }
+
+  /* SCROLL TO TOP */
+  #topBtn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: none;
+    z-index: 999;
+    font-weight: 900;
+    transition: transform 0.2s;
+  }
+
+  #topBtn:hover { transform: scale(1.1); }
+
+  @media(max-width:768px) {
+    .summary-item { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="badge">LECTURE 01 – Internet & Web Applications</div>
+  <h1>
+    <span class="en">Internet & Web Applications</span>
+   
+  </h1>
+  <div class="scroll-hint"><span>↓</span>ابدأ الشرح</div>
+</section>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">IWA › L01</div>
+    <ul class="nav-links">
+      <li><a href="#intro">المقدمة</a></li>
+      <li><a href="#web">الويب</a></li>
+      <li><a href="#xml">XML</a></li>
+      <li><a href="#xhtml">XHTML</a></li>
+      <li><a href="#dom-sax">DOM & SAX</a></li>
+      <li><a href="#content-type">Content Type</a></li>
+      <li><a href="#js">JavaScript</a></li>
+      <li><a href="#css">CSS</a></li>
+      <li><a href="#tricky">نقاط صعبة</a></li>
+      <li><a href="#summary">ملخص امتحان</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- EXAM BANNER -->
+  <div class="exam-banner">
+    <div class="icon">🔥</div>
+    <div>
+      <h3>امتحان قريب؟ احنا معاك!</h3>
+      <p>كل حاجة هنا من المحاضرة الأصلية + شرح عميق + نقاط الفخاخ اللي بيجيبها الدكتور. خليك مركّز.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 1: INTRO ==================== -->
+  <section class="section" id="intro">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <div>
+        <div class="section-title-en">Course Content Overview</div>
+        <div class="section-title-ar">إيه اللي هنتعلمه في المادة دي؟</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">Network-enabled Applications</span>
+        <span class="ar">تطبيقات الشبكة</span>
+      </div>
+      <div class="explain">
+        المادة دي بتتكلم عن <strong>تطبيقات الإنترنت</strong> والويب. يعني مش بس إنك تفتح موقع، لا، دي تغطي:
+        <ul class="styled-list" style="margin-top:12px">
+          <li><strong>BitTorrent:</strong> نظام توزيع الملفات – بيخليك تنزّل ملف من آلاف الناس في نفس الوقت بدل سيرفر واحد</li>
+          <li><strong>Git:</strong> نظام إدارة الكود – اللي بيخلي المبرمجين يشتغلوا على نفس المشروع معاً</li>
+          <li><strong>Web Search Engines:</strong> محركات البحث زي Google – هنشوف هي بتشتغل ازاي من الداخل</li>
+          <li><strong>Web Applications:</strong> التطبيقات اللي على الويب – زي Facebook, Gmail</li>
+          <li><strong>Weblogs:</strong> المدونات</li>
+          <li><strong>Web Feeds:</strong> RSS و Atom – اللي بيخليك تتابع مواقع من غير ما تدخل عليها</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">12 Main Topics in the Course</span>
+        <span class="ar">المحاور الـ12 في الكورس</span>
+      </div>
+      <div class="explain">
+        المحاضرة قالت إن الكورس هيغطي <strong>12 موضوع أساسي</strong>:
+      </div>
+      <div class="grid2" style="margin-top:16px">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="color:var(--accent);font-family:var(--mono);font-size:0.75rem;margin-bottom:12px">PART 1 – الأساسيات</div>
+          <ul class="styled-list">
+            <li>Introduction (الشرح ده)</li>
+            <li>Basic aspects of Web applications</li>
+            <li>Interaction models in WWW</li>
+            <li>XSL / CSS</li>
+            <li>Semantic Web (Web 3.0)</li>
+            <li>Web Application Frameworks</li>
+          </ul>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="color:var(--accent2);font-family:var(--mono);font-size:0.75rem;margin-bottom:12px">PART 2 – التطبيقات</div>
+          <ul class="styled-list">
+            <li>Subscription Services</li>
+            <li>Web Crawling & Search</li>
+            <li>Content & File Management, Wikis</li>
+            <li>File Sharing</li>
+            <li>Load Balancing & CDN</li>
+            <li>Business Models</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 2: WEB ==================== -->
+  <section class="section" id="web">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <div>
+        <div class="section-title-en">The Web: 1.0 → 2.0 → 3.0</div>
+        <div class="section-title-ar">تطور الويب من البداية للسيمانتيك ويب</div>
+      </div>
+    </div>
+
+    <!-- WEB 1.0 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="en">World Wide Web (Web 1.0)</span>
+        <span class="ar">الويب الأساسي</span>
+      </div>
+      <div class="explain">
+        <strong>The World Wide Web</strong> هو نظام من <span class="term">Hypertext Documents</span> (مستندات فيها روابط لمستندات تانية) بيشوفها المتصفح.<br><br>
+        
+        <strong>Hypertext = نص تشعبي</strong> – يعني مش نص عادي، لكن فيه <strong>روابط داخلية لمستندات تانية</strong>. زي إنك بتقرأ مقال على ويكيبيديا وفيه لينكات تودي لمقالات تانية – ده Hypertext.<br><br>
+        
+        الويب بيشتغل <strong>فوق بروتوكولات الإنترنت</strong> – يعني الإنترنت هو الأساس (زي الطريق)، والويب هو تطبيق يشتغل عليه (زي العربية على الطريق).
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 700 200" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Three pillars -->
+          <rect x="50" y="40" width="180" height="120" rx="12" fill="#1a1a26" stroke="#00ff88" stroke-width="1.5"/>
+          <text x="140" y="75" text-anchor="middle" fill="#00ff88" font-size="11" font-family="JetBrains Mono">Application Protocol</text>
+          <text x="140" y="95" text-anchor="middle" fill="#888899" font-size="10" font-family="JetBrains Mono">HTTP</text>
+          <text x="140" y="115" text-anchor="middle" fill="#a8b5d0" font-size="9" font-family="Cairo">بروتوكول الاتصال</text>
+          <text x="140" y="140" text-anchor="middle" fill="#6272a4" font-size="8.5" font-family="Cairo">بين الكلاينت والسيرفر</text>
+
+          <rect x="260" y="40" width="180" height="120" rx="12" fill="#1a1a26" stroke="#7c5cfc" stroke-width="1.5"/>
+          <text x="350" y="75" text-anchor="middle" fill="#7c5cfc" font-size="11" font-family="JetBrains Mono">Document Format</text>
+          <text x="350" y="95" text-anchor="middle" fill="#888899" font-size="10" font-family="JetBrains Mono">HTML</text>
+          <text x="350" y="115" text-anchor="middle" fill="#a8b5d0" font-size="9" font-family="Cairo">لغة وصف المستندات</text>
+          <text x="350" y="140" text-anchor="middle" fill="#6272a4" font-size="8.5" font-family="Cairo">اللي بيرسم الصفحة</text>
+
+          <rect x="470" y="40" width="180" height="120" rx="12" fill="#1a1a26" stroke="#00c9ff" stroke-width="1.5"/>
+          <text x="560" y="75" text-anchor="middle" fill="#00c9ff" font-size="11" font-family="JetBrains Mono">Addressing</text>
+          <text x="560" y="95" text-anchor="middle" fill="#888899" font-size="10" font-family="JetBrains Mono">URI</text>
+          <text x="560" y="115" text-anchor="middle" fill="#a8b5d0" font-size="9" font-family="Cairo">نظام عنونة المستندات</text>
+          <text x="560" y="140" text-anchor="middle" fill="#6272a4" font-size="8.5" font-family="Cairo">العنوان على الإنترنت</text>
+        </svg>
+      </div>
+
+      <div class="explain">
+        <strong>3 ركائز أساسية للويب:</strong><br><br>
+        1️⃣ <strong>HTTP (Hypertext Transfer Protocol):</strong> البروتوكول اللي المتصفح بيتكلم بيه مع السيرفر. زي اللغة المشتركة بينهم.<br><br>
+        2️⃣ <strong>HTML (Hypertext Markup Language):</strong> اللغة اللي بيتكتب بيها محتوى الصفحة. السيرفر بيبعت HTML، والمتصفح بيرسمها على الشاشة.<br><br>
+        3️⃣ <strong>URI (Uniform Resource Identifiers):</strong> "عنوان" كل مورد على الإنترنت. زي <span class="term">https://example.com/page</span> – ده URI بيحدد مكان الصفحة.
+      </div>
+    </div>
+
+    <!-- WEB 2.0 -->
+    <div class="card purple">
+      <div class="card-title">
+        <span class="en">Web 2.0</span>
+        <span class="ar">الويب التفاعلي</span>
+      </div>
+      <div class="explain">
+        <strong>Web 2.0</strong> مش بروتوكول جديد أو تكنولوجيا منفصلة – هو <strong>buzzword</strong> (مصطلح تسويقي) بيوصف الأشكال الحديثة للتطبيقات والخدمات اللي بتعمل في المتصفح.<br><br>
+        
+        <strong>مثال:</strong> الفرق بين موقع أخبار قديم (بتقرأ بس) وبين Facebook (بتقرأ، تكتب، تتفاعل، تشير) – ده الفرق بين Web 1.0 و Web 2.0.<br><br>
+        
+        <strong>خصائص Web 2.0:</strong><br>
+        ✅ <strong>Social component عالي</strong> – ناس بتتكلم مع ناس<br>
+        ✅ <strong>User interfaces جميلة</strong> – مش بس HTML عادي<br>
+        ✅ <strong>Client-side logic بتزيد</strong> – كتير من الكود بيشتغل في المتصفح مش السيرفر
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 700 280" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Center -->
+          <ellipse cx="350" cy="140" rx="80" ry="50" fill="#1a1a26" stroke="#7c5cfc" stroke-width="2"/>
+          <text x="350" y="135" text-anchor="middle" fill="#7c5cfc" font-size="13" font-weight="bold" font-family="JetBrains Mono">Web 2.0</text>
+          <text x="350" y="155" text-anchor="middle" fill="#6272a4" font-size="9" font-family="Cairo">المنظومة كلها</text>
+
+          <!-- Branches -->
+          <line x1="270" y1="140" x2="140" y2="80" stroke="#00ff88" stroke-width="1.5" stroke-dasharray="4"/>
+          <rect x="20" y="50" width="120" height="60" rx="8" fill="#12121a" stroke="#00ff88" stroke-width="1"/>
+          <text x="80" y="72" text-anchor="middle" fill="#00ff88" font-size="9" font-family="JetBrains Mono">Ajax / Comet</text>
+          <text x="80" y="88" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">تحديث جزء من</text>
+          <text x="80" y="100" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">الصفحة بدون reload</text>
+
+          <line x1="270" y1="140" x2="140" y2="200" stroke="#ff6b35" stroke-width="1.5" stroke-dasharray="4"/>
+          <rect x="20" y="170" width="120" height="60" rx="8" fill="#12121a" stroke="#ff6b35" stroke-width="1"/>
+          <text x="80" y="192" text-anchor="middle" fill="#ff6b35" font-size="9" font-family="JetBrains Mono">Social Software</text>
+          <text x="80" y="208" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">تفاعل اجتماعي</text>
+          <text x="80" y="220" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">بين المستخدمين</text>
+
+          <line x1="430" y1="140" x2="560" y2="80" stroke="#00c9ff" stroke-width="1.5" stroke-dasharray="4"/>
+          <rect x="560" y="50" width="120" height="60" rx="8" fill="#12121a" stroke="#00c9ff" stroke-width="1"/>
+          <text x="620" y="72" text-anchor="middle" fill="#00c9ff" font-size="9" font-family="JetBrains Mono">Web Sockets</text>
+          <text x="620" y="88" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">اتصال مستمر</text>
+          <text x="620" y="100" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">ثنائي الاتجاه</text>
+
+          <line x1="430" y1="140" x2="560" y2="200" stroke="#ffd93d" stroke-width="1.5" stroke-dasharray="4"/>
+          <rect x="560" y="170" width="120" height="60" rx="8" fill="#12121a" stroke="#ffd93d" stroke-width="1"/>
+          <text x="620" y="192" text-anchor="middle" fill="#ffd93d" font-size="9" font-family="JetBrains Mono">New Formats</text>
+          <text x="620" y="208" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">HTML5, RSS</text>
+          <text x="620" y="220" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">Atom, RDF</text>
+
+          <line x1="350" y1="90" x2="350" y2="30" stroke="#bd93f9" stroke-width="1.5" stroke-dasharray="4"/>
+          <rect x="280" y="5" width="140" height="25" rx="6" fill="#12121a" stroke="#bd93f9" stroke-width="1"/>
+          <text x="350" y="20" text-anchor="middle" fill="#bd93f9" font-size="9" font-family="JetBrains Mono">New Business Models</text>
+        </svg>
+      </div>
+
+      <div class="tricky-box">
+        <div class="tricky-title">⚠️ نقطة امتحان مهمة</div>
+        <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+          المحاضرة بتقول صراحة إن Web 2.0 هو <strong>technological evolution</strong> (تطور تكنولوجي) بينما Web 3.0 هو <strong>conceptual evolution</strong> (تطور مفاهيمي). الفرق ده بيجي في الامتحان!
+        </div>
+      </div>
+    </div>
+
+    <!-- WEB 3.0 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="en">Web 3.0 – The Semantic Web</span>
+        <span class="ar">ويب الفهم والمعنى</span>
+      </div>
+      <div class="explain">
+        <strong>Web 3.0</strong> أو <strong>Semantic Web</strong> هي رؤية (vision) لمستقبل الويب حيث البيانات على الإنترنت بتكون <strong>مترابطة ومفهومة للآلات</strong>، مش بس للبشر.<br><br>
+        
+        <strong>الفرق التاريخي:</strong><br>
+        📄 <strong>Web 1.0:</strong> بنشتغل مع <em>مستندات (Documents)</em> – صفحة HTML بتقرأها<br>
+        👥 <strong>Web 2.0:</strong> برضو مستندات بس مع تفاعل اجتماعي<br>
+        🔗 <strong>Web 3.0:</strong> بنشتغل مع <em>بيانات (Data)</em> – <strong>Linked Data</strong> – البيانات نفسها ليها معنى ومرتبطة ببعض<br><br>
+        
+        <strong>مثال عملي:</strong> لو دكتور كتب إنه من "القاهرة"، Web 3.0 يفهم إن "القاهرة" دي عاصمة مصر وموقعها الجغرافي 30°N، بدل ما يبقى مجرد نص "القاهرة" مش بيفهمه أوتوماتيكي.<br><br>
+        
+        <strong>Formats مهمة:</strong> <span class="term">RDF</span>, <span class="term">RDFS</span>, <span class="term">OWL</span>, <span class="term">Microformats</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>Tim Berners-Lee Quote – مؤسس الويب</span>
+        </div>
+        <pre><span class="cm">// Tim Berners-Lee – مخترع الويب الأصلي – قال:</span>
+<span class="str">"I have a dream for the Web in which computers become 
+capable of analyzing ALL the data on the Web — 
+the content, links, and transactions between people 
+and computers. A 'Semantic Web' should make this 
+possible... the day-to-day mechanisms of trade, 
+bureaucracy and our daily lives will be handled 
+by machines talking to machines."</span>
+
+<span class="cm">// الفكرة: الكمبيوتر مش بس يعرض البيانات،</span>
+<span class="cm">// لكن يفهمها ويحلل العلاقات بينها تلقائياً</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 3: XML ==================== -->
+  <section class="section" id="xml">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <div>
+        <div class="section-title-en">XML – Extensible Markup Language</div>
+        <div class="section-title-ar">لغة وصف البيانات القابلة للتوسع</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">What is XML?</span>
+        <span class="ar">إيه هو XML؟</span>
+      </div>
+      <div class="explain">
+        <strong>XML (Extensible Markup Language)</strong> هي <strong>meta-language</strong> – يعني "لغة عن اللغات" – بتستخدمها عشان توصف بياناتك وتبادلها ومعالجتها بشكل منظم.<br><br>
+        
+        <strong>ليه بنقول "Extensible"؟</strong> لأنك <strong>بتعرّف tags (وسوم) بنفسك</strong> بحسب احتياجاتك. مش زي HTML اللي فيها tags محددة (<span class="term">&lt;h1&gt;</span>، <span class="term">&lt;p&gt;</span>)، في XML تقدر تعمل <span class="term">&lt;book&gt;</span>، <span class="term">&lt;student&gt;</span>، أي حاجة.<br><br>
+        
+        XML هي <strong>أساس كتير من formats</strong> على الويب:
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 700 260" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Center XML -->
+          <ellipse cx="350" cy="130" rx="70" ry="45" fill="#1a1a26" stroke="#ffd93d" stroke-width="2.5"/>
+          <text x="350" y="125" text-anchor="middle" fill="#ffd93d" font-size="16" font-weight="bold" font-family="JetBrains Mono">XML</text>
+          <text x="350" y="145" text-anchor="middle" fill="#6272a4" font-size="9" font-family="Cairo">اللغة الأم</text>
+
+          <!-- Children -->
+          <line x1="280" y1="130" x2="170" y2="70" stroke="#00ff88" stroke-width="1.5"/>
+          <rect x="80" y="45" width="90" height="50" rx="8" fill="#12121a" stroke="#00ff88" stroke-width="1"/>
+          <text x="125" y="65" text-anchor="middle" fill="#00ff88" font-size="10" font-family="JetBrains Mono">XHTML</text>
+          <text x="125" y="80" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">صفحات الويب</text>
+
+          <line x1="280" y1="130" x2="170" y2="190" stroke="#ff6b35" stroke-width="1.5"/>
+          <rect x="80" y="165" width="90" height="50" rx="8" fill="#12121a" stroke="#ff6b35" stroke-width="1"/>
+          <text x="125" y="185" text-anchor="middle" fill="#ff6b35" font-size="10" font-family="JetBrains Mono">RSS/Atom</text>
+          <text x="125" y="200" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">Web Feeds</text>
+
+          <line x1="350" y1="85" x2="350" y2="25" stroke="#00c9ff" stroke-width="1.5"/>
+          <rect x="285" y="5" width="130" height="20" rx="6" fill="#12121a" stroke="#00c9ff" stroke-width="1"/>
+          <text x="350" y="19" text-anchor="middle" fill="#00c9ff" font-size="9" font-family="JetBrains Mono">XML Schema</text>
+
+          <line x1="420" y1="130" x2="530" y2="70" stroke="#7c5cfc" stroke-width="1.5"/>
+          <rect x="530" y="45" width="90" height="50" rx="8" fill="#12121a" stroke="#7c5cfc" stroke-width="1"/>
+          <text x="575" y="65" text-anchor="middle" fill="#7c5cfc" font-size="10" font-family="JetBrains Mono">RDF</text>
+          <text x="575" y="80" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">Semantic Web</text>
+
+          <line x1="420" y1="130" x2="530" y2="190" stroke="#bd93f9" stroke-width="1.5"/>
+          <rect x="530" y="165" width="90" height="50" rx="8" fill="#12121a" stroke="#bd93f9" stroke-width="1"/>
+          <text x="575" y="185" text-anchor="middle" fill="#bd93f9" font-size="10" font-family="JetBrains Mono">XSL</text>
+          <text x="575" y="200" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">Stylesheets</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- XML Terminology -->
+    <div class="card">
+      <div class="card-title">
+        <span class="en">XML Terminology & Structure</span>
+        <span class="ar">مصطلحات XML والهيكل الشجري</span>
+      </div>
+      <div class="explain">
+        مستندات XML بتتنظم في <strong>هيكل شجري (tree structure)</strong> – تخيل شجرة عائلة، كل عنصر (Element) ممكن يكون فيه عناصر جوه جوه.<br><br>
+        
+        <strong>أنواع محتوى العنصر:</strong><br>
+        🔸 <strong>Empty content:</strong> العنصر فاضي خالص، زي <span class="term">&lt;br/&gt;</span><br>
+        🔸 <strong>Simple content:</strong> نص عادي جوه العنصر، زي <span class="term">&lt;title&gt;TCP/IP&lt;/title&gt;</span><br>
+        🔸 <strong>Element content:</strong> عناصر جوه عناصر، زي <span class="term">&lt;book&gt;&lt;title&gt;...&lt;/title&gt;&lt;/book&gt;</span><br>
+        🔸 <strong>Mixed content:</strong> نص وعناصر مع بعض
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>XML Example – من المحاضرة بالضبط</span>
+        </div>
+        <pre><span class="cm">&lt;!-- XML Declaration - بتحدد الإصدار والـ encoding --&gt;</span>
+<span class="kw">&lt;?xml</span> <span class="attr">version</span>=<span class="str">"1.0"</span> <span class="attr">encoding</span>=<span class="str">"UTF-8"</span><span class="kw">?&gt;</span>
+
+<span class="cm">&lt;!-- Root Element - عنصر جذر واحد بس --&gt;</span>
+<span class="tag">&lt;bookstock&gt;</span>
+
+  <span class="cm">&lt;!-- Child Element مع Attribute --&gt;</span>
+  <span class="tag">&lt;book</span> <span class="attr">id</span>=<span class="str">"42"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span>TCP/IP Illustrated<span class="tag">&lt;/title&gt;</span>   <span class="cm">&lt;!-- Simple Content --&gt;</span>
+    <span class="tag">&lt;author&gt;</span>W.R. Stevens<span class="tag">&lt;/author&gt;</span>
+    <span class="tag">&lt;isbn&gt;</span>0201633469<span class="tag">&lt;/isbn&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+
+  <span class="tag">&lt;book</span> <span class="attr">id</span>=<span class="str">"43"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span>Mobile Web Services<span class="tag">&lt;/title&gt;</span>
+    <span class="tag">&lt;author&gt;</span>F. Hirsch<span class="tag">&lt;/author&gt;</span>
+    <span class="tag">&lt;author&gt;</span>J. Kemp<span class="tag">&lt;/author&gt;</span>   <span class="cm">&lt;!-- عنصرين بنفس الاسم = OK --&gt;</span>
+    <span class="tag">&lt;isbn&gt;</span>0470015969<span class="tag">&lt;/isbn&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+
+<span class="tag">&lt;/bookstock&gt;</span>
+
+<span class="cm">&lt;!-- End of document --&gt;</span></pre>
+      </div>
+
+      <div class="explain" style="margin-top:16px">
+        <strong>مصطلحات لازم تحفظها:</strong><br><br>
+        🌳 <strong>Root Element:</strong> عنصر الجذر – <span class="term">&lt;bookstock&gt;</span> – واحد بس في الملف<br>
+        👨‍👧 <strong>Parent/Child:</strong> <span class="term">&lt;bookstock&gt;</span> هو Parent لـ <span class="term">&lt;book&gt;</span><br>
+        👫 <strong>Siblings:</strong> عناصر على نفس المستوى – <span class="term">&lt;title&gt;</span>، <span class="term">&lt;author&gt;</span>، <span class="term">&lt;isbn&gt;</span> هم siblings<br>
+        🏷️ <strong>Attribute:</strong> خاصية جوه start tag – <span class="term">id="42"</span><br>
+        📝 <strong>Simple Content:</strong> النص الجوه العنصر – "TCP/IP Illustrated"
+      </div>
+    </div>
+
+    <!-- XML Syntax Rules -->
+    <div class="card warn">
+      <div class="card-title">
+        <span class="en">XML Syntax Rules – Well-Formed</span>
+        <span class="ar">قواعد بناء XML الصحيح</span>
+      </div>
+      <div class="explain">
+        لو مستند XML متبع القواعد دي يتسمى <strong>"Well-formed"</strong> (مبني صح). القواعد دي لازم تعرفها عشان الامتحان بيجيب أسئلة "إيه المشكلة في الكود ده؟":
+      </div>
+
+      <div class="grid2">
+        <div class="card" style="border-color:rgba(0,255,136,0.3);margin-bottom:0">
+          <div style="color:var(--accent);font-family:var(--mono);font-size:0.8rem;margin-bottom:12px">✅ CORRECT</div>
+          <div class="code-block">
+            <pre style="font-size:0.75rem"><span class="tag">&lt;book&gt;</span>content<span class="tag">&lt;/book&gt;</span>
+<span class="tag">&lt;br/&gt;</span>  <span class="cm">← empty element</span>
+<span class="tag">&lt;X&gt;&lt;Y&gt;&lt;/Y&gt;&lt;/X&gt;</span>  <span class="cm">← nested OK</span>
+<span class="attr">id</span>=<span class="str">"42"</span>  <span class="cm">← quoted attribute</span>
+<span class="tag">&lt;Book&gt;</span>=<span class="tag">&lt;Book&gt;</span>  <span class="cm">← same case</span></pre>
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(255,71,87,0.3);margin-bottom:0">
+          <div style="color:var(--danger);font-family:var(--mono);font-size:0.8rem;margin-bottom:12px">❌ WRONG</div>
+          <div class="code-block">
+            <pre style="font-size:0.75rem"><span class="cm">← No end tag:</span>
+<span class="tag">&lt;book&gt;</span>content
+<span class="cm">← Two root elements:</span>
+<span class="tag">&lt;a&gt;&lt;/a&gt;&lt;b&gt;&lt;/b&gt;</span>
+<span class="cm">← Overlapping:</span>
+<span class="tag">&lt;X&gt;&lt;Y&gt;&lt;/X&gt;&lt;/Y&gt;</span>  ❌
+<span class="cm">← Unquoted:</span>
+<span class="attr">id</span>=<span class="num">42</span>  ❌
+<span class="cm">← Case mismatch:</span>
+<span class="tag">&lt;X&gt;&lt;/x&gt;</span>  ❌</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="tricky-box" style="margin-top:20px">
+        <div class="tricky-title">الفرق بين Well-Formed و Valid</div>
+        <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+          <strong style="color:var(--accent)">Well-Formed:</strong> بيلتزم بقواعد XML الأساسية (كل tag مفتوح يتقفل، root واحد، attributes بين quotes)<br>
+          <strong style="color:var(--accent4)">Valid:</strong> Well-Formed + بيتماشى مع DTD أو XML Schema اللي بيحدد هيكل معين<br><br>
+          ⚠️ <strong>Well-Formed أولاً، Valid تانياً.</strong> مستند ممكن يكون well-formed بس مش valid.
+        </div>
+      </div>
+    </div>
+
+    <!-- XML Namespaces -->
+    <div class="card">
+      <div class="card-title">
+        <span class="en">XML Namespaces</span>
+        <span class="ar">فضاءات الأسماء – حل مشكلة التعارض</span>
+      </div>
+      <div class="explain">
+        <strong>المشكلة:</strong> تخيل إنك عندك ملف XML فيه بيانات من مصدرين مختلفين. الاتنين عندهم عنصر اسمه <span class="term">&lt;title&gt;</span>، بس الأول يقصد بيه عنوان الكتاب والتاني يقصد اسم الملف. لو اتحطوا في نفس الملف، الكمبيوتر هيتلخبط.<br><br>
+        
+        <strong>الحل: Namespaces</strong> – بنضيف "لاحقة" (prefix) لكل عنصر بتوضح مصدره وتمنع التعارض.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>XML Namespaces – قبل وبعد</span>
+        </div>
+        <pre><span class="cm">=== قبل: تعارض في الأسماء ===</span>
+<span class="tag">&lt;datafile&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Book list<span class="tag">&lt;/title&gt;</span>         <span class="cm">← عنوان الملف؟</span>
+  <span class="tag">&lt;book&gt;</span>
+    <span class="tag">&lt;title&gt;</span>TCP/IP Illustrated<span class="tag">&lt;/title&gt;</span> <span class="cm">← عنوان الكتاب؟</span>
+  <span class="tag">&lt;/book&gt;</span>
+<span class="tag">&lt;/datafile&gt;</span>
+
+<span class="cm">=== بعد: namespace يحل المشكلة ===</span>
+<span class="tag">&lt;datafile</span> 
+  <span class="attr">xmlns:a</span>=<span class="str">"http://www.example.com/doc/"</span>
+  <span class="attr">xmlns:b</span>=<span class="str">"http://www.example.com/myNs/"</span><span class="tag">&gt;</span>
+  
+  <span class="tag">&lt;a:title&gt;</span>Book list<span class="tag">&lt;/a:title&gt;</span>         <span class="cm">← ينتمي للـ namespace (a)</span>
+  <span class="tag">&lt;b:book&gt;</span>
+    <span class="tag">&lt;b:title&gt;</span>TCP/IP Illustrated<span class="tag">&lt;/b:title&gt;</span> <span class="cm">← ينتمي للـ namespace (b)</span>
+  <span class="tag">&lt;/b:book&gt;</span>
+<span class="tag">&lt;/datafile&gt;</span></pre>
+      </div>
+
+      <div class="explain">
+        <strong>ملاحظات مهمة:</strong><br>
+        🔑 الـ namespace identifier هو URL زي <span class="term">http://www.example.com/doc/</span> – بس مش لازم يكون موقع حقيقي! مجرد <strong>unique identifier</strong> (معرّف فريد)<br>
+        🔑 بنربط الـ namespace بـ prefix قصير (a, b) لتسهيل الكتابة<br>
+        🔑 كل frameworks مشهورة زي XHTML بتعرّف namespace خاص بيها يتضاف في كل مستند
+      </div>
+    </div>
+
+    <!-- DTD & XML Schema -->
+    <div class="card">
+      <div class="card-title">
+        <span class="en">XML Validity: DTD vs XML Schema</span>
+        <span class="ar">التحقق من صحة XML</span>
+      </div>
+      <div class="explain">
+        <strong>Valid XML</strong> = ملف بيتبع قواعد هيكل معين محدد مسبقاً. في طريقتين لتعريف الهيكل ده:
+      </div>
+
+      <div class="grid2">
+        <div class="card" style="margin-bottom:0;border-color:rgba(255,165,2,0.3)">
+          <div class="card-title"><span class="en" style="color:var(--warn)">1. DTD</span></div>
+          <div class="explain" style="font-size:0.85rem">
+            <strong>Document Type Definition</strong> – قديمة وبسيطة. بتعرّف <strong>قائمة بالعناصر المسموحة</strong> وعلاقاتها.<br><br>
+            ❌ <strong>Main shortcoming:</strong> قدرات محدودة جداً في تعريف أنواع البيانات
+          </div>
+          <div class="code-block">
+            <pre style="font-size:0.75rem"><span class="cm">&lt;!DOCTYPE note [</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="attr">book</span> <span class="str">(title,author,isbn)</span><span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="attr">title</span> <span class="str">(#PCDATA)</span><span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="attr">author</span> <span class="str">(#PCDATA)</span><span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="attr">isbn</span> <span class="str">(#PCDATA)</span><span class="kw">&gt;</span>
+<span class="cm">]&gt;</span>
+<span class="cm">// PCDATA = character data (نص)</span></pre>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:0;border-color:rgba(0,201,255,0.3)">
+          <div class="card-title"><span class="en" style="color:var(--accent4)">2. XML Schema</span></div>
+          <div class="explain" style="font-size:0.85rem">
+            <strong>XML Schema</strong> – حديثة وأقوى. هي نفسها XML وبتعرّف أنواع بيانات معقدة.<br><br>
+            ✅ Simple types (string, integer...)<br>
+            ✅ Complex types (sequences of elements)
+          </div>
+          <div class="code-block">
+            <pre style="font-size:0.75rem"><span class="tag">&lt;xs:element</span> <span class="attr">name</span>=<span class="str">"book"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;xs:complexType&gt;</span>
+    <span class="tag">&lt;xs:sequence&gt;</span>
+      <span class="tag">&lt;xs:element</span> 
+        <span class="attr">name</span>=<span class="str">"title"</span> 
+        <span class="attr">type</span>=<span class="str">"xs:string"</span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;xs:element</span> 
+        <span class="attr">name</span>=<span class="str">"author"</span> 
+        <span class="attr">type</span>=<span class="str">"xs:string"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/xs:sequence&gt;</span>
+  <span class="tag">&lt;/xs:complexType&gt;</span>
+<span class="tag">&lt;/xs:element&gt;</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="tricky-box" style="margin-top:20px">
+        <div class="tricky-title">نقطة فارقة في الامتحان</div>
+        <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+          DTD بتتكتب بصيغة مختلفة عن XML (مش XML). أما XML Schema فهي <strong>نفسها XML dialect</strong> – ملف XML بيصف ملف XML تاني! ده بيخليها <strong>أقوى وأكثر مرونة</strong>. لو الدكتور سألك ليه XML Schema أحسن من DTD، الإجابة: أنواع بيانات أكثر + هي نفسها XML.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 4: XHTML ==================== -->
+  <section class="section" id="xhtml">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <div>
+        <div class="section-title-en">XHTML – Extensible HyperText Markup Language</div>
+        <div class="section-title-ar">HTML بتاعت XML</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">XHTML – HTML meets XML</span>
+        <span class="ar">الجمع بين HTML وXML</span>
+      </div>
+      <div class="explain">
+        <strong>XHTML</strong> هي إعادة صياغة HTML كـ XML. يعني نفس قدرات HTML (عناوين، روابط، صور، جداول) بس بقواعد XML الصارمة.<br><br>
+        
+        <strong>فوايد XHTML:</strong><br>
+        ✅ <strong>قواعد أكثر صرامة</strong> = المتصفحات بتتعامل معاها بشكل أكثر اتساق (stricter syntax → further unification of browser engines)<br>
+        ✅ <strong>تقدر تعالجها بأدوات XML العادية</strong> (زي validators، XSLT للـ styling)<br>
+        ✅ <strong>قابلة للتوسع</strong> – تقدر تضيف لغات XML تانية زي MathML لو حبيت تكتب معادلات رياضية<br>
+        ✅ <strong>يمكن التحقق منها بـ DTD</strong>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>XHTML Example – من المحاضرة</span>
+        </div>
+        <pre><span class="cm">&lt;!-- XML Declaration --&gt;</span>
+<span class="kw">&lt;?xml</span> <span class="attr">version</span>=<span class="str">"1.0"</span> <span class="attr">encoding</span>=<span class="str">"UTF-8"</span><span class="kw">?&gt;</span>
+
+<span class="cm">&lt;!-- Reference to DTD - بيقول مين بيحكم هيكل الملف ده --&gt;</span>
+<span class="kw">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;</span>
+
+<span class="cm">&lt;!-- Default namespace - إجباري في XHTML --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">xmlns</span>=<span class="str">"http://www.w3.org/1999/xhtml"</span> <span class="attr">xml:lang</span>=<span class="str">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>XHTML Example<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h3&gt;</span>Available books<span class="tag">&lt;/h3&gt;</span>
+  <span class="tag">&lt;br/&gt;</span>   <span class="cm">&lt;!-- Empty element → directly closed! --&gt;</span>
+  <span class="tag">&lt;table&gt;</span>
+    <span class="tag">&lt;tr&gt;&lt;td&gt;</span>Title<span class="tag">&lt;/td&gt;&lt;td&gt;</span>Author<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;&lt;td&gt;</span>TCP/IP Illustrated<span class="tag">&lt;/td&gt;&lt;td&gt;</span>W.R. Stevens<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="tag">&lt;/table&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+      </div>
+
+      <div class="tricky-box">
+        <div class="tricky-title">XHTML vs HTML – فروق دقيقة بتجي في الامتحان</div>
+        <table class="comp-table" style="margin-top:10px">
+          <tr>
+            <th>الموضوع</th>
+            <th>HTML عادي</th>
+            <th>XHTML</th>
+          </tr>
+          <tr><td>Empty elements</td><td>&lt;br&gt;</td><td>&lt;br/&gt; ← لازم تقفلها!</td></tr>
+          <tr><td>Attributes</td><td>تقدر تكتب بدون quotes</td><td>لازم بين quotes دايماً</td></tr>
+          <tr><td>Case</td><td>غير حساس</td><td>حساس – كله lowercase</td></tr>
+          <tr><td>XML declaration</td><td>مش مطلوبة</td><td>مطلوبة &lt;?xml ...?&gt;</td></tr>
+          <tr><td>Namespace</td><td>مش مطلوبة</td><td>لازم xmlns تحدده</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 5: DOM & SAX ==================== -->
+  <section class="section" id="dom-sax">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <div>
+        <div class="section-title-en">DOM & SAX – XML Processing Models</div>
+        <div class="section-title-ar">طريقتان لمعالجة XML</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">DOM – Document Object Model</span>
+        <span class="ar">معالجة XML كشجرة في الذاكرة</span>
+      </div>
+      <div class="explain">
+        <strong>DOM (Document Object Model)</strong> هو API (واجهة برمجية) معياري من W3C بيخليك <strong>تدخل على أي جزء من الـ XML وتعدل فيه</strong>.<br><br>
+        
+        <strong>الفكرة:</strong> DOM بيحمل <strong>الملف كله في الذاكرة (RAM)</strong> كشجرة من الأوبجكتات. بعدين تقدر تتنقل في الشجرة دي أو توصل لأي عنصر مباشرة بالـ id.<br><br>
+        
+        <strong>مثال:</strong> لو عندك XML فيه 1000 كتاب وعايز تعدل الكتاب رقم 42 – مع DOM تروح له مباشرة وتغير بياناته.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>DOM API – JavaScript Example</span>
+        </div>
+        <pre><span class="cm">// الخطوة 1: روح للعنصر بالـ id مباشرة</span>
+<span class="kw">var</span> elem = document.<span class="attr">getElementById</span>(<span class="str">"42"</span>)
+<span class="cm">// → عدد رحلة لـ bookstock → book id=42</span>
+
+<span class="cm">// الخطوة 2: جوه book، جيب أول عنصر "author"</span>
+<span class="kw">var</span> child = elem.<span class="attr">getElementsByTagName</span>(<span class="str">"author"</span>)[<span class="num">0</span>]
+<span class="cm">// → getElementsByTagName returns a LIST of elements</span>
+<span class="cm">// → [0] يجيب الأول في القائمة</span>
+
+<span class="cm">// الخطوة 3: الـ text node جوه author</span>
+<span class="kw">var</span> secondChild = child.<span class="attr">childNode</span>
+
+<span class="cm">// الخطوة 4: الـ value (النص فعلاً)</span>
+<span class="kw">var</span> value = secondChild.<span class="attr">nodeValue</span>
+<span class="cm">// → "W.R. Stevens"</span></pre>
+      </div>
+
+      <div class="explain">
+        ⚠️ <strong>عيب DOM:</strong> لازم يحمل <strong>الملف كله في RAM</strong>. لو الملف كبير جداً (مئات الميجا) = مشكلة!
+      </div>
+    </div>
+
+    <!-- SAX -->
+    <div class="card">
+      <div class="card-title">
+        <span class="en">SAX – Simple API for XML</span>
+        <span class="ar">معالجة XML بالأحداث – بدون تحميل الملف كله</span>
+      </div>
+      <div class="explain">
+        <strong>SAX (Simple API for XML)</strong> هو نظام معالجة مختلف تماماً – <strong>Event-based</strong> (مبني على الأحداث).<br><br>
+        
+        <strong>الفكرة:</strong> بدل ما تحمل الملف كله في الذاكرة، الـ SAX parser بيقرأ الملف <strong>سطراً سطراً من الأول للآخر</strong>. كل ما يلاقي عنصر أو نص أو غيره، بيولّد "event" (حدث) وبيبعته لـ "handler" (مُعالج) بتكتبه إنت.
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 700 200" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- XML file -->
+          <rect x="20" y="40" width="140" height="120" rx="10" fill="#12121a" stroke="#00c9ff" stroke-width="1.5"/>
+          <text x="90" y="65" text-anchor="middle" fill="#00c9ff" font-size="10" font-family="JetBrains Mono">XML File</text>
+          <text x="90" y="85" text-anchor="middle" fill="#888899" font-size="8.5" font-family="JetBrains Mono">&lt;bookstock&gt;</text>
+          <text x="90" y="100" text-anchor="middle" fill="#888899" font-size="8.5" font-family="JetBrains Mono">  &lt;book id="42"&gt;</text>
+          <text x="90" y="115" text-anchor="middle" fill="#888899" font-size="8.5" font-family="JetBrains Mono">  &lt;title&gt;...&lt;/title&gt;</text>
+          <text x="90" y="130" text-anchor="middle" fill="#888899" font-size="8.5" font-family="JetBrains Mono">  &lt;/book&gt;</text>
+          <text x="90" y="145" text-anchor="middle" fill="#888899" font-size="8.5" font-family="JetBrains Mono">&lt;/bookstock&gt;</text>
+
+          <!-- Arrow READ -->
+          <line x1="160" y1="100" x2="240" y2="100" stroke="#ffd93d" stroke-width="2"/>
+          <polygon points="240,95 255,100 240,105" fill="#ffd93d"/>
+          <text x="200" y="90" text-anchor="middle" fill="#ffd93d" font-size="9" font-family="JetBrains Mono">READ</text>
+          <text x="200" y="115" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">تتابعي من الأول</text>
+
+          <!-- SAX Parser -->
+          <rect x="255" y="60" width="130" height="80" rx="10" fill="#1a1a26" stroke="#7c5cfc" stroke-width="1.5"/>
+          <text x="320" y="90" text-anchor="middle" fill="#7c5cfc" font-size="11" font-family="JetBrains Mono">SAX Parser</text>
+          <text x="320" y="110" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">يقرأ ويولّد أحداث</text>
+          <text x="320" y="127" text-anchor="middle" fill="#6272a4" font-size="8" font-family="Cairo">بدون تحميل كامل</text>
+
+          <!-- Arrow Events -->
+          <line x1="385" y1="100" x2="460" y2="100" stroke="#ff6b35" stroke-width="2"/>
+          <polygon points="460,95 475,100 460,105" fill="#ff6b35"/>
+          <text x="420" y="90" text-anchor="middle" fill="#ff6b35" font-size="9" font-family="JetBrains Mono">Events</text>
+
+          <!-- Handler -->
+          <rect x="475" y="40" width="150" height="120" rx="10" fill="#12121a" stroke="#00ff88" stroke-width="1.5"/>
+          <text x="550" y="65" text-anchor="middle" fill="#00ff88" font-size="10" font-family="JetBrains Mono">Event Handler</text>
+          <text x="550" y="82" text-anchor="middle" fill="#888899" font-size="8" font-family="JetBrains Mono">startDocument()</text>
+          <text x="550" y="96" text-anchor="middle" fill="#888899" font-size="8" font-family="JetBrains Mono">startElement()</text>
+          <text x="550" y="110" text-anchor="middle" fill="#888899" font-size="8" font-family="JetBrains Mono">characters()</text>
+          <text x="550" y="124" text-anchor="middle" fill="#888899" font-size="8" font-family="JetBrains Mono">endElement()</text>
+          <text x="550" y="138" text-anchor="middle" fill="#888899" font-size="8" font-family="JetBrains Mono">endDocument()</text>
+        </svg>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>SAX Event Output – ترتيب الأحداث</span>
+        </div>
+        <pre><span class="cm">// للملف:  &lt;bookstock&gt;&lt;book id="42"&gt;&lt;title&gt;TCP/IP Illustrated&lt;/title&gt;...</span>
+Start document
+Start element: bookstock
+Characters:    <span class="str">"\n"</span>
+Start element: book (Attributes: id=42;)
+Characters:    <span class="str">"\n"</span>
+Start element: title
+Characters:    <span class="str">"TCP/IP Illustrated"</span>
+End element:   title
+Characters:    <span class="str">"\n"</span>
+Start element: author
+Characters:    <span class="str">"W.R. Stevens"</span>
+End element:   author
+...
+End element:   bookstock
+End document</pre>
+      </div>
+
+      <div class="tricky-box">
+        <div class="tricky-title">DOM vs SAX – متى تستخدم إيه؟</div>
+        <table class="comp-table" style="margin-top:10px">
+          <tr><th>المعيار</th><th>DOM</th><th>SAX</th></tr>
+          <tr><td>طريقة العمل</td><td>يحمل الشجرة كلها في RAM</td><td>يقرأ تتابعياً، event-based</td></tr>
+          <tr><td>الوصول للبيانات</td><td>Random access – أي عنصر مباشرة</td><td>Sequential – من الأول للآخر بس</td></tr>
+          <tr><td>استهلاك الذاكرة</td><td>عالي (كل الملف في RAM)</td><td>منخفض (عنصر بعنصر)</td></tr>
+          <tr><td>التعديل</td><td>ممكن تعدل وتحذف وتضيف</td><td>قراءة فقط</td></tr>
+          <tr><td>مناسب لـ</td><td>ملفات صغيرة، تحتاج تعديل</td><td>ملفات كبيرة جداً، قراءة فقط</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Alternatives to XML -->
+    <div class="card">
+      <div class="card-title">
+        <span class="en">Alternatives to XML – JSON & YAML</span>
+        <span class="ar">بدائل XML</span>
+      </div>
+      <div class="explain">
+        المحاضرة بتقول إن XML رغم انتشارها الواسع، فيها <strong>overhead (زيادة غير ضرورية)</strong> ومعلومات مكررة. بالتالي في بدائل أخف:
+      </div>
+      <div class="grid2">
+        <div class="card" style="margin-bottom:0;border-color:rgba(255,211,61,0.3)">
+          <div style="color:#ffd93d;font-family:var(--mono);font-size:0.9rem;margin-bottom:10px">JSON</div>
+          <div class="explain" style="font-size:0.85rem">
+            <strong>JavaScript Object Notation</strong> – هنتكلم عنه تفصيل في الشابتر 3. أخف وأسرع من XML، بيستخدم في APIs كتير.
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0;border-color:rgba(0,201,255,0.3)">
+          <div style="color:var(--accent4);font-family:var(--mono);font-size:0.9rem;margin-bottom:10px">YAML</div>
+          <div class="explain" style="font-size:0.85rem">
+            <strong>YAML Ain't Markup Language</strong> – compact، human-readable، superset من JSON. بيدعم: lists، associative arrays، scalars. الهيكل بالـ <strong>indentation</strong> (مسافات البداية مش tags).
+          </div>
+          <div class="code-block">
+            <pre style="font-size:0.75rem"><span class="cm"># YAML list – block format</span>
+<span class="attr">lectures</span>:
+  <span class="str">- 'Internet and Web Applications'</span>
+  <span class="str">- 'Distributed Systems'</span>
+  <span class="str">- 'Mobile Communication'</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 6: CONTENT TYPE ==================== -->
+  <section class="section" id="content-type">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <div>
+        <div class="section-title-en">Web Interaction & Content Type (MIME)</div>
+        <div class="section-title-ar">كيف الكلاينت والسيرفر بيتكلموا</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">Client-Server Interaction Model</span>
+        <span class="ar">نموذج التفاعل على الويب</span>
+      </div>
+      <div class="explain">
+        الويب مبني على <strong>Client-Server Architecture</strong>. الكلاينت (المتصفح) بيطلب مستندات من السيرفر بـ URI عن طريق HTTP. المستند الواحد ممكن يكون محتوياته من أنواع مختلفة:
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 700 220" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Client -->
+          <rect x="20" y="60" width="180" height="100" rx="12" fill="#1a1a26" stroke="#00ff88" stroke-width="1.5"/>
+          <text x="110" y="90" text-anchor="middle" fill="#00ff88" font-size="11" font-family="JetBrains Mono">Client</text>
+          <text x="110" y="107" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">(Web Browser)</text>
+          <text x="110" y="125" text-anchor="middle" fill="#6272a4" font-size="8" font-family="Cairo">يفسر المستند</text>
+
+          <!-- Request Arrow -->
+          <line x1="200" y1="90" x2="480" y2="90" stroke="#00c9ff" stroke-width="2"/>
+          <polygon points="480,85 500,90 480,95" fill="#00c9ff"/>
+          <text x="350" y="78" text-anchor="middle" fill="#00c9ff" font-size="9" font-family="JetBrains Mono">1. Request document (URI)</text>
+
+          <!-- Response Arrow -->
+          <line x1="480" y1="130" x2="200" y2="130" stroke="#ff6b35" stroke-width="2"/>
+          <polygon points="200,125 180,130 200,135" fill="#ff6b35"/>
+          <text x="350" y="148" text-anchor="middle" fill="#ff6b35" font-size="9" font-family="JetBrains Mono">2. XHTML + CSS + JS</text>
+
+          <!-- Server -->
+          <rect x="500" y="60" width="180" height="100" rx="12" fill="#1a1a26" stroke="#7c5cfc" stroke-width="1.5"/>
+          <text x="590" y="90" text-anchor="middle" fill="#7c5cfc" font-size="11" font-family="JetBrains Mono">Web Server</text>
+          <text x="590" y="110" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">XHTML | CSS | JS</text>
+          <text x="590" y="127" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">Images | Videos</text>
+
+          <!-- Labels -->
+          <text x="110" y="185" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">← يفسر ويعرض</text>
+          <text x="590" y="185" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">يبعت المحتوى →</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">Content Type / MIME Type</span>
+        <span class="ar">نوع المحتوى – بيقول للمتصفح "إيه ده؟"</span>
+      </div>
+      <div class="explain">
+        <strong>Content Type</strong> (أو Media Type أو MIME Type) هو metadata (معلومة تانوية) بتيجي مع كل ملف بيبعته السيرفر وبتقول للكلاينت <strong>نوع المحتوى ده إيه</strong> عشان يعرف يفسره صح.<br><br>
+        
+        <strong>Format: <span class="term">Content-Type: type/subtype</span></strong>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>HTTP Response Header – بيحتوي على Content-Type</span>
+        </div>
+        <pre><span class="cm">HTTP/1.1 200 OK</span>
+<span class="attr">Content-Type</span>: <span class="str">application/xml</span>    <span class="cm">← XML عام</span>
+<span class="attr">Content-Length</span>: <span class="num">136713</span>
+...
+
+<span class="cm">== أمثلة أنواع محتوى ==</span>
+<span class="attr">Content-Type</span>: <span class="str">application/xml</span>    <span class="cm">← XML</span>
+<span class="attr">Content-Type</span>: <span class="str">text/html</span>           <span class="cm">← HTML عادي</span>
+<span class="attr">Content-Type</span>: <span class="str">text/plain</span>          <span class="cm">← نص عادي</span>
+<span class="attr">Content-Type</span>: <span class="str">image/jpeg</span>          <span class="cm">← صورة JPEG</span>
+<span class="attr">Content-Type</span>: <span class="str">video/mpeg</span>          <span class="cm">← فيديو MPEG</span>
+<span class="attr">Content-Type</span>: <span class="str">application/json</span>    <span class="cm">← JSON data</span></pre>
+      </div>
+
+      <div class="explain">
+        <strong>إزاي بيشتغل الموضوع؟</strong><br>
+        1️⃣ الكلاينت يستقبل الرد من السيرفر مع الـ Content-Type في الـ header<br>
+        2️⃣ المتصفح يبص على النوع – لو هو مسؤول عنه يعرضه مباشرة<br>
+        3️⃣ لو مش مسؤول، يدور في <strong>جدول (database)</strong> عنده على تطبيق مناسب يفتح الملف ده<br>
+        4️⃣ يشغّل التطبيق ده ويعطيه المستند
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>Client Logic – Pseudo Code من المحاضرة</span>
+        </div>
+        <pre><span class="kw">if</span>(notResponsible) {
+  document = response;
+  format   = response.<span class="attr">getType</span>();           <span class="cm">// جيب نوع المحتوى</span>
+  program  = database.<span class="attr">lookup</span>(format);     <span class="cm">// دور على برنامج مناسب</span>
+  application = <span class="attr">start</span>(program);           <span class="cm">// ابدأ البرنامج</span>
+  application.<span class="attr">delegateTo</span>(document);      <span class="cm">// ادي البرنامج الملف</span>
+}
+<span class="cm">// مثال: لو Content-Type: application/pdf</span>
+<span class="cm">// المتصفح هيشغل Adobe Acrobat أو PDF viewer</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 7: JAVASCRIPT ==================== -->
+  <section class="section" id="js">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <div>
+        <div class="section-title-en">JavaScript</div>
+        <div class="section-title-ar">لغة التفاعلية على الجانب العميل</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">What is JavaScript?</span>
+        <span class="ar">إيه هو JavaScript وليه بنستخدمه؟</span>
+      </div>
+      <div class="explain">
+        <strong>JavaScript</strong> هي لغة سكريبت (script language) قائمة على الأوبجكتات (object-based) ومتشهرة جداً. اسمها القياسي الرسمي هو <strong>ECMAScript</strong>.<br><br>
+        
+        بتتنفذ على <strong>جانب الكلاينت (Client-side)</strong> – يعني في المتصفح بتاع المستخدم، مش على السيرفر.<br><br>
+        
+        بيتضاف للـ HTML بطريقتين:<br>
+        ✅ <strong>Embedded:</strong> مكتوب مباشرة جوه الـ HTML داخل <span class="term">&lt;script&gt;</span> tag<br>
+        ✅ <strong>Linked:</strong> ملف .js منفصل بتستدعيه
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span>JavaScript in HTML – المثال من المحاضرة</span>
+        </div>
+        <pre><span class="tag">&lt;html&gt;</span>
+  <span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;script</span> <span class="attr">language</span>=<span class="str">"JavaScript"</span> <span class="attr">type</span>=<span class="str">"text/javascript"</span><span class="tag">&gt;</span>
+      <span class="kw">function</span> <span class="attr">hello</span>() { 
+        alert(<span class="str">"Hello!"</span>);    <span class="cm">// بيعمل popup box</span>
+      }
+    <span class="tag">&lt;/script&gt;</span>
+  <span class="tag">&lt;/head&gt;</span>
+  <span class="tag">&lt;body</span> <span class="attr">onLoad</span>=<span class="str">"hello()"</span><span class="tag">&gt;</span>   <span class="cm">&lt;!-- لما الصفحة تحمل، نادي على hello() --&gt;</span>
+    This is a simple JavaScript example.
+  <span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span>
+<span class="cm">// المتصفح بيلاقي script tag → يبعت للـ JavaScript Engine → ينفذ الكود</span></pre>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <div class="card-title">
+        <span class="en">Sandbox Principle – Security!</span>
+        <span class="ar">مبدأ الصندوق الرملي – الأمان</span>
+      </div>
+      <div class="explain">
+        ده مفهوم أمان <strong>مهم جداً</strong>! المحاضرة بتقول: JavaScript engine بيسمح للكود بس يوصل للـ <strong>objects جوه المتصفح</strong> – مش أكثر.<br><br>
+        
+        <strong>الـ JavaScript مش تقدر:</strong><br>
+        ❌ توصل لـ File System (ملفات الكمبيوتر) مباشرة<br>
+        ❌ تتصل بأي Network resource (بروتوكول أمان: Same-Origin Policy)<br><br>
+        
+        <strong>ليه ده مهم؟</strong> لأنك لو بتفتح موقع مجهول وفيه JavaScript، الكود ده مش يقدر يقرأ ملفاتك أو يتصل بسيرفرات تانية ويسرق بياناتك – الـ sandbox بيحميك.
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 700 200" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Browser border -->
+          <rect x="30" y="20" width="640" height="160" rx="14" fill="#12121a" stroke="#ffa502" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="350" y="40" text-anchor="middle" fill="#ffa502" font-size="10" font-family="JetBrains Mono">Web Browser (Sandbox)</text>
+
+          <!-- JS Engine -->
+          <rect x="60" y="55" width="160" height="100" rx="10" fill="#1a1a26" stroke="#7c5cfc" stroke-width="1.5"/>
+          <text x="140" y="80" text-anchor="middle" fill="#7c5cfc" font-size="10" font-family="JetBrains Mono">JavaScript Engine</text>
+          <text x="140" y="100" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">ينفذ الكود</text>
+
+          <!-- DOM -->
+          <rect x="270" y="55" width="130" height="100" rx="10" fill="#1a1a26" stroke="#00ff88" stroke-width="1.5"/>
+          <text x="335" y="80" text-anchor="middle" fill="#00ff88" font-size="10" font-family="JetBrains Mono">DOM</text>
+          <text x="335" y="98" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">يقدر يعدل</text>
+          <text x="335" y="113" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">الـ HTML</text>
+
+          <!-- Arrow JS to DOM - ALLOWED -->
+          <line x1="220" y1="105" x2="270" y2="105" stroke="#00ff88" stroke-width="2"/>
+          <polygon points="270,100 285,105 270,110" fill="#00ff88"/>
+          <text x="247" y="93" text-anchor="middle" fill="#00ff88" font-size="8" font-family="JetBrains Mono">✓ OK</text>
+
+          <!-- File System - BLOCKED -->
+          <rect x="460" y="30" width="130" height="50" rx="8" fill="#1a0000" stroke="#ff4757" stroke-width="1.5"/>
+          <text x="525" y="52" text-anchor="middle" fill="#ff4757" font-size="10" font-family="JetBrains Mono">File System</text>
+          <text x="525" y="68" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">ملفات الكمبيوتر</text>
+
+          <!-- Network - BLOCKED -->
+          <rect x="460" y="120" width="130" height="50" rx="8" fill="#1a0000" stroke="#ff4757" stroke-width="1.5"/>
+          <text x="525" y="142" text-anchor="middle" fill="#ff4757" font-size="10" font-family="JetBrains Mono">Network</text>
+          <text x="525" y="158" text-anchor="middle" fill="#888899" font-size="8.5" font-family="Cairo">موارد الشبكة</text>
+
+          <!-- BLOCKED arrows -->
+          <line x1="400" y1="80" x2="460" y2="55" stroke="#ff4757" stroke-width="2" stroke-dasharray="5"/>
+          <text x="425" y="62" text-anchor="middle" fill="#ff4757" font-size="11" font-weight="bold">✗</text>
+
+          <line x1="400" y1="130" x2="460" y2="145" stroke="#ff4757" stroke-width="2" stroke-dasharray="5"/>
+          <text x="425" y="148" text-anchor="middle" fill="#ff4757" font-size="11" font-weight="bold">✗</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">JavaScript + DOM = Dynamic Pages</span>
+        <span class="ar">الجمع بين JS وDOM = صفحات ديناميكية</span>
+      </div>
+      <div class="explain">
+        <strong>JavaScript بتستخدم كتير مع DOM</strong> – ده بيخلي هيكل مستند XHTML يتغير بشكل ديناميكي (من غير ما الصفحة تعمل reload).<br><br>
+        
+        <strong>مثال:</strong> لما بتضغط على زرار في Gmail وترسالة تتحرك للـ trash من غير ما الصفحة تعمل refresh – ده JS بتعدل في الـ DOM مباشرة.
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 8: CSS ==================== -->
+  <section class="section" id="css">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <div>
+        <div class="section-title-en">CSS – Cascading Style Sheets</div>
+        <div class="section-title-ar">لغة تصميم صفحات الويب</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">What is CSS?</span>
+        <span class="ar">إيه هو CSS وليه بنستخدمه؟</span>
+      </div>
+      <div class="explain">
+        <strong>CSS (Cascading Style Sheets)</strong> هي لغة client-side لتعريف <strong>تصميم وشكل عناصر HTML</strong>.<br><br>
+        
+        <strong>أهم فايدة:</strong> <strong>Separation of Concerns</strong> – فصل المحتوى (HTML) عن التصميم (CSS). بدل ما تكتب اللون والخط في كل element على حدة، بتعرف كل ده في ملف CSS منفصل.<br><br>
+        
+        <strong>الفايدة العملية:</strong> لو بدلت شيء في ملف CSS واحد → كل صفحات الموقع المرتبطة بيه بتتغير تلقائياً!
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 700 180" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- CSS File -->
+          <rect x="280" y="20" width="140" height="60" rx="10" fill="#1a1a26" stroke="#ffd93d" stroke-width="2"/>
+          <text x="350" y="45" text-anchor="middle" fill="#ffd93d" font-size="11" font-family="JetBrains Mono">main.css</text>
+          <text x="350" y="65" text-anchor="middle" fill="#888899" font-size="9" font-family="Cairo">ملف التصميم الواحد</text>
+
+          <!-- Three HTML pages -->
+          <rect x="40" y="120" width="120" height="50" rx="8" fill="#12121a" stroke="#00ff88" stroke-width="1"/>
+          <text x="100" y="142" text-anchor="middle" fill="#00ff88" font-size="9" font-family="JetBrains Mono">index.html</text>
+          <text x="100" y="158" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">الصفحة الرئيسية</text>
+
+          <rect x="290" y="120" width="120" height="50" rx="8" fill="#12121a" stroke="#7c5cfc" stroke-width="1"/>
+          <text x="350" y="142" text-anchor="middle" fill="#7c5cfc" font-size="9" font-family="JetBrains Mono">about.html</text>
+          <text x="350" y="158" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">عننا</text>
+
+          <rect x="540" y="120" width="120" height="50" rx="8" fill="#12121a" stroke="#ff6b35" stroke-width="1"/>
+          <text x="600" y="142" text-anchor="middle" fill="#ff6b35" font-size="9" font-family="JetBrains Mono">contact.html</text>
+          <text x="600" y="158" text-anchor="middle" fill="#888899" font-size="8" font-family="Cairo">تواصل معنا</text>
+
+          <!-- Arrows from CSS to pages -->
+          <line x1="310" y1="80" x2="140" y2="120" stroke="#ffd93d" stroke-width="1.5" stroke-dasharray="4"/>
+          <line x1="350" y1="80" x2="350" y2="120" stroke="#ffd93d" stroke-width="1.5" stroke-dasharray="4"/>
+          <line x1="390" y1="80" x2="570" y2="120" stroke="#ffd93d" stroke-width="1.5" stroke-dasharray="4"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="en">CSS Selectors & Properties</span>
+        <span class="ar">المحددات والخصائص</span>
+      </div>
+      <div class="explain">
+        CSS بيشتغل بنظام <strong>Selectors</strong>: بتختار عناصر HTML وبتحدد ليها خصائص تصميمية.<br><br>
+        <strong>أنواع Selectors:</strong><br>
+        🔵 <strong>Element Selector:</strong> <span class="term">p { color: red; }</span> ← كل عناصر &lt;p&gt;<br>
+        🟡 <strong>Class Selector:</strong> <span class="term">.top { padding: 20px; }</span> ← كل elements بـ class="top"<br>
+        🟢 <strong>ID Selector:</strong> <span class="term">#fat { font-weight: bold; }</span> ← عنصر واحد بـ id="fat"
+      </div>
+
+      <div class="grid2">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span>main.css – من المحاضرة</span>
+          </div>
+          <pre style="font-size:0.78rem"><span class="cm">/* Element selector - كل input */</span>
+<span class="attr">input</span> {
+  <span class="kw">font-size</span>: <span class="num">110%</span>;
+  <span class="kw">color</span>: <span class="str">red</span>;
+  <span class="kw">background</span>: <span class="str">#ffff00</span>;  <span class="cm">← أصفر</span>
+}
+
+<span class="cm">/* Class selector - class="top" */</span>
+.<span class="attr">top</span> { 
+  <span class="kw">padding-top</span>: <span class="num">20px</span>; 
+}
+
+<span class="cm">/* Element selector - كل p */</span>
+<span class="attr">p</span> {
+  <span class="kw">font-size</span>: <span class="num">16pt</span>;
+  <span class="kw">font-family</span>: <span class="str">"Garamond"</span>, serif;
+  <span class="kw">font-weight</span>: bold;
+}
+
+<span class="cm">/* ID selector - id="fat" */</span>
+<span class="num">#fat</span> { 
+  <span class="kw">font-weight</span>: bold; 
+}</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span>index.html – استخدام CSS</span>
+          </div>
+          <pre style="font-size:0.78rem"><span class="tag">&lt;head&gt;</span>
+  <span class="cm">&lt;!-- ربط ملف CSS --&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="str">"stylesheet"</span> 
+        <span class="attr">href</span>=<span class="str">"main.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"top"</span><span class="tag">&gt;</span>
+    <span class="cm">&lt;!-- 20px padding من فوق --&gt;</span>
+    <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"/banner.jpg"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"top"</span><span class="tag">&gt;</span>
+    Welcome...  <span class="cm">&lt;!-- Garamond, bold --&gt;</span>
+  <span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="str">"fat"</span><span class="tag">&gt;</span>
+    Please enter... <span class="cm">&lt;!-- bold --&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/body&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="tricky-box">
+        <div class="tricky-title">لماذا "Cascading"؟</div>
+        <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+          <strong>"Cascading"</strong> (متتالي/متراكب) لأن لو عندك أكتر من مصدر CSS (ملف خارجي + style داخل HTML + inline style)، فيه <strong>ترتيب أولوية</strong> بينهم يحدد مين بياخد الأسبقية. الـ inline style دايماً بياخد أعلى أولوية.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TRICKY SECTION ==================== -->
+  <section class="section" id="tricky">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <div>
+        <div class="section-title-en">Tricky Parts & Common Exam Traps</div>
+        <div class="section-title-ar">النقاط الصعبة والفخاخ اللي تتجنبها</div>
+      </div>
+    </div>
+
+    <div class="tricky-box">
+      <div class="tricky-title">⚠️ TRAP 1 – Well-Formed vs Valid</div>
+      <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+        <strong>Well-formed</strong> = بيتبع قواعد XML الأساسية (tags متقفلة، root واحد...) – <strong>مش بتحتاج DTD أو Schema</strong><br>
+        <strong>Valid</strong> = well-formed + <strong>بيتبع كمان schema أو DTD محدد</strong><br>
+        → لو الدكتور قالك ملف "well-formed" مش يعني إنه "valid" بالضرورة!
+      </div>
+    </div>
+
+    <div class="tricky-box">
+      <div class="tricky-title">⚠️ TRAP 2 – Namespace URIs مش لازم تكون موقع حقيقي</div>
+      <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+        المحاضرة قالت صراحة: "These identifiers are web addresses that might point to <strong>non existing resources</strong>" – يعني الـ namespace URI زي <span class="term">http://www.example.com/doc/</span> مش لازم يكون موقع شغال، هو بس <strong>unique identifier</strong> (معرّف فريد).
+      </div>
+    </div>
+
+    <div class="tricky-box">
+      <div class="tricky-title">⚠️ TRAP 3 – Web 2.0 هو buzzword مش تكنولوجيا</div>
+      <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+        المحاضرة قالت صراحة: "Web 2.0 is a <strong>buzzword</strong> for describing modern forms of applications" – مش بروتوكول جديد أو version منفصلة!<br>
+        Web 2.0 = <strong>technological evolution</strong> (تطور تكنولوجي)<br>
+        Web 3.0 = <strong>conceptual evolution</strong> (تطور مفاهيمي) – الفرق ده بيجي في الامتحان.
+      </div>
+    </div>
+
+    <div class="tricky-box">
+      <div class="tricky-title">⚠️ TRAP 4 – DOM loads ALL document in memory</div>
+      <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+        DOM بيحمل <strong>الشجرة كلها في RAM</strong> = مشكلة مع الملفات الكبيرة<br>
+        SAX بيقرأ تتابعياً بدون تحميل الكل = أحسن للملفات الكبيرة بس <strong>يقدر يقرأ بس مش يعدل</strong><br>
+        → الاختيار بين DOM وSAX بيعتمد على حجم الملف واحتياجك للتعديل
+      </div>
+    </div>
+
+    <div class="tricky-box">
+      <div class="tricky-title">⚠️ TRAP 5 – JavaScript Engine Sandbox</div>
+      <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+        الـ JavaScript بتاعت الويب <strong>مش تقدر توصل للـ File System أو Network resources</strong> مباشرة بـ default – الـ sandbox بيحميك من الكود الضار.<br>
+        لو سألك الدكتور "ليه JavaScript آمن؟" = <strong>Sandbox Principle</strong>
+      </div>
+    </div>
+
+    <div class="tricky-box">
+      <div class="tricky-title">⚠️ TRAP 6 – XML DTD بصيغة مختلفة عن XML</div>
+      <div style="color:var(--text);font-size:0.9rem;direction:rtl;text-align:right;font-family:var(--arabic);line-height:1.8">
+        DTD بتتكتب بصيغة خاصة مختلفة عن XML (<span class="term">&lt;!ELEMENT...&gt;</span>)<br>
+        بس XML Schema هي نفسها XML! ملف XSD هو ملف XML عادي.<br>
+        ده من أسباب تفوق XML Schema على DTD.
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="quiz-box">
+      <div class="quiz-q">🧠 سؤال: إيه الفرق بين URI و URL؟ (سؤال بيجي في الامتحانات)</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="answer(this, false, 'لا! URL هو نوع من أنواع URI – URI أعم وأشمل من URL. URL بيحدد المكان والطريقة، أما URI فقد يكون اسم فقط.')">هما نفس الشيء</div>
+        <div class="quiz-opt" onclick="answer(this, true, '✅ صح! URI (Uniform Resource Identifier) هو المصطلح العام الأشمل. URL (Uniform Resource Locator) هو نوع من URI بيحدد المكان والطريقة (http://...). كل URL هو URI بس مش كل URI هو URL.')">URI أعم – URL هو نوع من URI</div>
+        <div class="quiz-opt" onclick="answer(this, false, 'لا! العكس هو الصح. URI هو الأعم وURL هو النوع الأخص.')">URL أعم من URI</div>
+      </div>
+      <div class="quiz-feedback" id="qf1"></div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-q">🧠 سؤال: لو عندك XML ملف كبير جداً (جيجابايت) وعايز تستخرج منه بيانات معينة – إيه الأنسب؟</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="answer(this, false, 'لا! DOM بيحمل الملف كله في RAM – لو الملف جيجابايت هيكسر الذاكرة.', 2)">DOM</div>
+        <div class="quiz-opt" onclick="answer(this, true, '✅ صح! SAX بيقرأ الملف تتابعياً ومش محتاج يحمل كل حاجة في الذاكرة – مثالي للملفات الكبيرة.', 2)">SAX</div>
+        <div class="quiz-opt" onclick="answer(this, false, 'YAML أداة تنسيق بيانات مش processing model لـ XML.', 2)">YAML</div>
+      </div>
+      <div class="quiz-feedback" id="qf2"></div>
+    </div>
+  </section>
+
+  <!-- ==================== SUMMARY ==================== -->
+  <section class="section" id="summary">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <div>
+        <div class="section-title-en">Exam Cheat Sheet – Summary</div>
+        <div class="section-title-ar">ملخص الامتحان – أقوى حاجة فيها</div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <h2>📋 COMPLETE EXAM SUMMARY – Lecture 1</h2>
+
+      <div class="summary-item">
+        <div class="summary-key">World Wide Web</div>
+        <div class="summary-val">System of hypertext documents viewable by a browser. Built on 3 pillars: <strong>HTTP</strong> (application protocol), <strong>HTML</strong> (document format), <strong>URI</strong> (addressing). Runs on top of Internet protocols.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">Hypertext</div>
+        <div class="summary-val">Documents with internal cross-references (links) to other documents. Not just static text.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">Web 2.0</div>
+        <div class="summary-val"><strong>Buzzword</strong> describing modern web apps (wikis, blogs). High social component, appealing UIs. Includes Ajax, Comet, WebSockets, HTML5, RSS, Atom, RDF. Is a <strong>technological evolution</strong>.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">Web 3.0 / Semantic</div>
+        <div class="summary-val">Vision of semantically interconnected data. <strong>Conceptual evolution</strong>. Focus on data not documents → <strong>Linked Data</strong>. Key formats: RDF, RDFS, OWL, Microformats.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">XML</div>
+        <div class="summary-val"><strong>General-purpose meta-language</strong> for representation, exchange, processing of data. Extensible (you define your own tags). Tree structure. Basis for XHTML, RSS, Atom, RDF, XSL, XML Schema.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">Well-Formed XML</div>
+        <div class="summary-val">Follows basic XML syntax: start+end tags, exactly one root, quoted attributes, no overlapping tags, case-sensitive. Well-formed ≠ Valid!</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">Valid XML</div>
+        <div class="summary-val">Well-formed + conforms to a DTD or XML Schema defining allowed structure/types.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">DTD vs XML Schema</div>
+        <div class="summary-val">DTD: simple, limited type definitions, non-XML syntax. XML Schema: powerful, many data types, IS itself XML. XML Schema preferred for complex type definitions.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">XML Namespaces</div>
+        <div class="summary-val">Solve name conflicts by qualifying elements with unique identifiers (URIs). URI doesn't need to point to existing resource — just a unique ID. Prefix (a:, b:) is bound to namespace.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">XHTML</div>
+        <div class="summary-val">XML reformulation of HTML. Stricter syntax (empty elements must close: &lt;br/&gt;, all lowercase, quoted attributes, XML declaration required, namespace required). Validated by DTD. Extensible (add MathML, etc).</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">DOM</div>
+        <div class="summary-val">W3C API for XML/HTML. Loads ENTIRE document into memory as a tree. Allows random access, traversal, modification. Bad for very large files (memory intensive).</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">SAX</div>
+        <div class="summary-val">Event-based XML processing. Reads sequentially, generates events (startElement, characters, endElement...) — no full tree in memory. Good for large files. Read-only (cannot easily modify).</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">Content Type (MIME)</div>
+        <div class="summary-val">Format: <code>type/subtype</code> (e.g., application/xml, image/jpeg, text/html). Sent in HTTP response header. Client uses it to find appropriate app to handle the content.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">JavaScript</div>
+        <div class="summary-val">Object-based scripting language, standardized as <strong>ECMAScript</strong>. Client-side execution in browser's JS engine. Sandbox principle: can only access objects inside browser (not file system, not external network by default). Often used with DOM for dynamic pages.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">CSS</div>
+        <div class="summary-val">Cascading Style Sheets. Client-side language for layout/styling of markup. External CSS file → change one file affects all linked pages. Uses selectors: element (p{}), class (.top{}), ID (#fat{}). "Cascading" = priority ordering of multiple sources.</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-key">YAML</div>
+        <div class="summary-val">YAML Ain't Markup Language. Compact, human-readable data serialization. Superset of JSON. Uses indentation for hierarchy. Supports: lists, associative arrays, scalars, cross-references.</div>
+      </div>
+
+      <div style="margin-top:30px;padding:20px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);border-radius:12px;direction:rtl;text-align:right;font-family:var(--arabic)">
+        <div style="color:var(--accent);font-weight:700;margin-bottom:12px;font-size:1rem">🏆 أهم 5 نقاط للامتحان</div>
+        <ol style="padding-right:20px;line-height:2.2;color:var(--text);font-size:0.9rem">
+          <li>الفرق بين <strong>Web 1.0 / 2.0 / 3.0</strong> ومميزات كل واحد</li>
+          <li>الفرق بين <strong>Well-Formed</strong> و <strong>Valid</strong> XML</li>
+          <li>الفرق بين <strong>DOM</strong> (شجرة في RAM) و <strong>SAX</strong> (event-based)</li>
+          <li><strong>Sandbox Principle</strong> في JavaScript – ليه بيحمي المستخدم</li>
+          <li>الفرق بين <strong>DTD</strong> و <strong>XML Schema</strong> ومتى تستخدم إيه</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Made with 💚 for the exam | Internet & Web Applications – Lecture 01 | <span>كل التوفيق!</span>
+</footer>
+
+<button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Scroll to top button
+window.addEventListener('scroll', () => {
+  document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'block' : 'none';
+});
+
+// Quiz function
+function answer(el, correct, msg, qNum = 1) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  el.classList.add(correct ? 'correct' : 'wrong');
+  const fb = document.getElementById(`qf${qNum}`);
+  fb.textContent = msg;
+  fb.className = `quiz-feedback show ${correct ? 'ok' : 'nope'}`;
+}
+
+// Animate sections on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animationDelay = '0s';
+      entry.target.style.opacity = '1';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+// Highlight active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    if (window.scrollY >= section.offsetTop - 100) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.style.color = link.getAttribute('href') === `#${current}` ? 'var(--accent)' : '';
+  });
+});
+</script>
+</body>
+</html>
