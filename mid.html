@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IS 345 — Internet Applications Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #252535;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --correct: #43e97b;
+    --wrong: #ff4f6d;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --radius: 14px;
+    --transition: all 0.25s cubic-bezier(.4,0,.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(108,99,255,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 80%, rgba(255,101,132,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 2.5rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .logo-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .logo-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .score-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .score-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 8px var(--accent3);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* ── EXAM SELECTOR ── */
+  .exam-selector {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .exam-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1.2rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .exam-btn span.elabel { font-weight: 700; color: var(--text); font-size: 0.8rem; }
+  .exam-btn span.emeta  { font-size: 0.65rem; color: var(--muted); }
+
+  .exam-btn:hover { border-color: var(--accent); color: var(--text); transform: translateY(-2px); }
+  .exam-btn.active {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(108,99,255,0.05));
+    color: var(--text);
+    box-shadow: 0 0 20px rgba(108,99,255,0.15);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    position: relative;
+    z-index: 10;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    animation: slideIn 0.35s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+    border-radius: 2px 2px 0 0;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .q-number {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(108,99,255,0.12);
+    border: 1px solid rgba(108,99,255,0.3);
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .q-status {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .q-text {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  .q-text code {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    display: block;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    margin: 0.75rem 0;
+    overflow-x: auto;
+    color: #a8d8a8;
+    white-space: pre;
+  }
+
+  /* ── OPTIONS ── */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .option-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1.1rem;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .option-key {
+    min-width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: var(--transition);
+  }
+
+  .option-btn:not(.answered):hover {
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.07);
+    transform: translateX(4px);
+  }
+
+  .option-btn:not(.answered):hover .option-key {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .option-btn.selected-correct {
+    border-color: var(--correct);
+    background: rgba(67,233,123,0.08);
+    animation: correctBounce 0.4s ease;
+  }
+
+  .option-btn.selected-correct .option-key {
+    background: var(--correct);
+    color: #000;
+  }
+
+  .option-btn.selected-wrong {
+    border-color: var(--wrong);
+    background: rgba(255,79,109,0.08);
+    animation: shake 0.35s ease;
+  }
+
+  .option-btn.selected-wrong .option-key {
+    background: var(--wrong);
+    color: #fff;
+  }
+
+  .option-btn.reveal-correct {
+    border-color: var(--correct);
+    opacity: 0.55;
+  }
+
+  .option-btn.reveal-correct .option-key {
+    background: var(--correct);
+    color: #000;
+  }
+
+  .option-btn.answered { cursor: not-allowed; }
+
+  @keyframes correctBounce {
+    0%  { transform: scale(1); }
+    40% { transform: scale(1.025) translateX(4px); }
+    100%{ transform: scale(1) translateX(0); }
+  }
+
+  @keyframes shake {
+    0%,100%{ transform: translateX(0); }
+    25%    { transform: translateX(-6px); }
+    75%    { transform: translateX(6px); }
+  }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .feedback.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback.correct { background: rgba(67,233,123,0.1); border: 1px solid rgba(67,233,123,0.3); color: var(--correct); }
+  .feedback.wrong   { background: rgba(255,79,109,0.1);  border: 1px solid rgba(255,79,109,0.3);  color: var(--wrong); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── RESULTS BANNER ── */
+  .results-banner {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    text-align: center;
+    animation: slideIn 0.4s ease;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .results-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(108,99,255,0.1), transparent 70%);
+  }
+
+  .results-banner.show { display: block; }
+
+  .result-score {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .result-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; letter-spacing: 0.1em; }
+  .result-grade { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; margin-top: 1rem; color: var(--text); }
+  .result-msg   { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+
+  .result-bars {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .result-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .result-bar-fill {
+    width: 36px;
+    border-radius: 6px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+    height: 60px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .result-bar-inner {
+    width: 100%;
+    border-radius: 6px;
+    transition: height 1s ease 0.3s;
+  }
+
+  .result-bar-inner.c { background: var(--correct); }
+  .result-bar-inner.w { background: var(--wrong); }
+
+  .result-bar-label { font-size: 0.6rem; color: var(--muted); }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .nav-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.6rem 1.4rem;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    letter-spacing: 0.05em;
+  }
+
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent), #8b83ff);
+    border-color: transparent;
+    color: #fff;
+  }
+  .nav-btn.primary:hover { box-shadow: 0 0 20px rgba(108,99,255,0.5); transform: translateY(-1px); }
+
+  .nav-center {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: var(--transition);
+    cursor: pointer;
+  }
+
+  .nav-dot.answered-c { background: var(--correct); }
+  .nav-dot.answered-w { background: var(--wrong); }
+  .nav-dot.current    { background: var(--accent); box-shadow: 0 0 8px var(--accent); transform: scale(1.4); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.t-correct { border-color: var(--correct); color: var(--correct); }
+  .toast.t-wrong   { border-color: var(--wrong);   color: var(--wrong); }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px){
+    header { padding: 1.5rem 1rem; }
+    .exam-selector { padding: 1rem; }
+    .main { padding: 1rem 1rem 6rem; }
+    .question-card { padding: 1.25rem; }
+    .bottom-nav { padding: 0.75rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-tag">Helwan University · FCI</span>
+    <span class="logo-title">IS 345 — Quiz</span>
+    <span class="logo-sub">Internet Applications · Dr. Hanan Fahmy</span>
+  </div>
+  <div class="header-meta">
+    <div class="score-chip">
+      <span class="score-dot"></span>
+      <span id="liveScore">Score: 0 / 0</span>
+    </div>
+  </div>
+</header>
+
+<div class="exam-selector" id="examSelector">
+  <button class="exam-btn active" onclick="loadExam(0)">
+    <span class="elabel">Exam A</span>
+    <span class="emeta">Mar 2025 · 20 Qs</span>
+  </button>
+  <button class="exam-btn" onclick="loadExam(1)">
+    <span class="elabel">Exam B</span>
+    <span class="emeta">Spring 2021 · 20 Qs</span>
+  </button>
+  <button class="exam-btn" onclick="loadExam(2)">
+    <span class="elabel">Exam C</span>
+    <span class="emeta">Mar 2016 · 16 Qs</span>
+  </button>
+</div>
+
+<div class="main" id="mainContent"></div>
+
+<div class="bottom-nav">
+  <button class="nav-btn" id="btnPrev" onclick="navigate(-1)">← Prev</button>
+  <div class="nav-center" id="navDots"></div>
+  <button class="nav-btn primary" id="btnNext" onclick="navigate(1)">Next →</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  EXAM DATA
+// ═══════════════════════════════════════════════
+const EXAMS = [
+// ──── EXAM A: March 2025 ────
+{
+  title: "Midterm — March 2025",
+  duration: 30,
+  questions: [
+    {
+      q: "What is the primary limitation of DOM parsing?",
+      opts: ["It requires loading entire document into memory","It can't handle large files","It doesn't support namespaces","It's slower than manual parsing"],
+      a: 0,
+      exp: "DOM loads the entire document tree into memory, which is its primary drawback for large files."
+    },
+    {
+      q: "What is the main characteristic of Web 2.0 applications?",
+      opts: ["They require special browsers","They have social components and interaction","They only work with XML","They must use XHTML"],
+      a: 1,
+      exp: "Web 2.0 is a buzzword describing modern web apps focused on social interaction, user-generated content, and dynamic experiences."
+    },
+    {
+      q: "What happens when a web browser receives content with an unknown content type?",
+      opts: ["It automatically discards the content","It displays an error message","It looks up an appropriate application to handle it","It converts it to plain text"],
+      a: 2,
+      exp: "When encountering an unknown MIME type, the browser tries to find or prompt for an appropriate handler application."
+    },
+    {
+      q: "________ has poor performance while parsing small and medium-sized XML files with good enough heap space in Java.",
+      opts: ["DOM","DTD","SAX","XML Schema"],
+      a: 0,
+      exp: "DOM parsing is memory-heavy and slower for small/medium XML files because it builds a full in-memory tree."
+    },
+    {
+      q: "What is a key feature of HTTP/2 compared to HTTP/1.1?",
+      opts: ["New HTTP methods","Different status codes","Multiplexing support","Simplified header structure"],
+      a: 2,
+      exp: "HTTP/2 introduces multiplexing, allowing multiple requests/responses over a single TCP connection simultaneously."
+    },
+    {
+      q: "What is the main purpose of cookies in web applications?",
+      opts: ["To compress data transmission","To encrypt sensitive information","To manage session identification","To store large files locally"],
+      a: 2,
+      exp: "Cookies are primarily used for session management — identifying and tracking user sessions across HTTP requests."
+    },
+    {
+      q: "What is a major advantage of WebSockets over HTTP-based streaming?",
+      opts: ["Higher security","Bi-directional communication channel","Slower data transfer","Larger header size"],
+      a: 1,
+      exp: "WebSockets provide full-duplex, bi-directional communication channels over a single TCP connection."
+    },
+    {
+      q: "What is the primary purpose of HTTP pipelining?",
+      opts: ["To encrypt data transmission","To send multiple requests without waiting for previous responses","To compress HTTP headers","To establish multiple TCP connections"],
+      a: 1,
+      exp: "HTTP pipelining allows a client to send multiple requests before receiving any response, improving latency."
+    },
+    {
+      q: "According to the content, what is Web 2.0?",
+      opts: ["A programming language","A type of web server","A buzzword for modern web applications with social components","A document format"],
+      a: 2,
+      exp: "Web 2.0 is a buzzword for modern forms of applications and services accessible by web browsers, emphasizing social components."
+    },
+    {
+      q: "What is the primary characteristic of Comet communication?",
+      opts: ["Requires constant client requests","Only works with XML data","Enables server-initiated data push","Limited to text-based communication"],
+      a: 2,
+      exp: "Comet is a technique that enables servers to push data to clients without explicit client requests."
+    },
+    {
+      q: "________ is a technique that makes it possible to send further requests without waiting for previous responses and there is no requirement of respecting the requests' order.",
+      opts: ["Asynchronous","Pipelining","Multiplexing","Limited to text-based communication"],
+      a: 2,
+      exp: "HTTP/2 Multiplexing allows concurrent, out-of-order request/response pairs over a single connection."
+    },
+    {
+      q: "In synchronous model, there is a ________ dependency between request and response.",
+      opts: ["High","Minimum","Moderate","Limited to text-based communication"],
+      a: 0,
+      exp: "In the synchronous model, the client must wait for the server response before proceeding — high dependency."
+    },
+    {
+      q: "In HTTP 1.1, what does the status code category 4xx indicate?",
+      opts: ["Server errors","Successful operations","Client errors","Redirection required"],
+      a: 2,
+      exp: "4xx codes indicate client-side errors (e.g. 404 Not Found, 400 Bad Request)."
+    },
+    {
+      q: "How are hierarchies realized in YAML?",
+      opts: ["Through tags","Through indentation","Through brackets","Through namespaces"],
+      a: 1,
+      exp: "YAML uses indentation (whitespace) to represent data hierarchy, unlike XML tags or JSON brackets."
+    },
+    {
+      q: "What is the primary advantage of HTTP/1.1 persistent connections?",
+      opts: ["Enhanced security","Improved efficiency","Better error handling","Increased bandwidth"],
+      a: 1,
+      exp: "Persistent connections (keep-alive) reuse TCP connections for multiple requests, improving efficiency."
+    },
+    {
+      q: "What is the client-server relationship described in the Web architecture?",
+      opts: ["Multiple servers communicate with each other","Client fetches documents from server using HTTP","Server pushes content to client automatically","Clients communicate directly with each other"],
+      a: 1,
+      exp: "The basic web model: clients (browsers) fetch documents from servers using HTTP protocol."
+    },
+    {
+      q: "In the non-blocking communication model, what happens to user activities during server processing?",
+      opts: ["They are temporarily disabled","They are queued for later processing","They are not blocked","They are redirected to another server"],
+      a: 2,
+      exp: "In the non-blocking model, user activities continue uninterrupted while the server processes requests asynchronously."
+    },
+    {
+      q: "What is a key advantage of JSON over XML in AJAX applications?",
+      opts: ["Better security features","More complex structure","Lighter weight and less overhead","Broader browser support"],
+      a: 2,
+      exp: "JSON is lighter, faster to parse, and has less overhead than XML — making it preferred for AJAX."
+    },
+    {
+      q: "What is the purpose of the AJAX engine?",
+      opts: ["To block user interactions","To serve as an intermediary between user interface and server","To replace the web server","To store user data locally"],
+      a: 1,
+      exp: "The AJAX engine acts as an intermediary layer, enabling asynchronous communication between the UI and server."
+    },
+    {
+      q: "What is the primary shortcoming of the classic web application model?",
+      opts: ["Excessive server security","Complex client-side processing","Too many user interactions","Slow performance due to complete page refreshes"],
+      a: 3,
+      exp: "The classic model requires full page reloads for every update, causing slow performance and high bandwidth consumption."
+    },
+  ]
+},
+
+// ──── EXAM B: Spring 2021 ────
+{
+  title: "Midterm — Spring 2021",
+  duration: 30,
+  questions: [
+    {
+      q: "Web applications can be described as Internet applications and vice versa.",
+      opts: ["Yes","No"],
+      a: 1,
+      exp: "Not all Internet applications are web applications. Internet apps is a broader category (e.g. email clients, FTP tools)."
+    },
+    {
+      q: "________ means that in order to update the displayed data an HTTP Request is sent and the user actions are blocked until an HTTP Response from the server was sent.",
+      opts: ["Asynchronous model","Non-blocking model","Synchronous model"],
+      a: 2,
+      exp: "In the synchronous model, the UI blocks — the user cannot interact until the server responds."
+    },
+    {
+      q: "________ allows users to access updates to online content in a standardized, computer-readable format.",
+      opts: ["RSS","DTD","XML"],
+      a: 0,
+      exp: "RSS (Really Simple Syndication) is designed for distributing frequently updated content in a machine-readable format."
+    },
+    {
+      q: "________ chooses an available regenerated processing entity and forwards the client descriptor to it.",
+      opts: ["The connector entity","Web server","The delegation process"],
+      a: 2,
+      exp: "The delegation process selects an available processing entity and routes the client descriptor to it."
+    },
+    {
+      q: "________ used to talk about a resource without implying its location or how to access it.",
+      opts: ["URN","URI","URL"],
+      a: 0,
+      exp: "A URN (Uniform Resource Name) names a resource without specifying its location or access method."
+    },
+    {
+      q: "________ may use an (X)HTML engine to combine dynamic content with (X)HTML template to generate resulting documents that finally is delivered to the web browser.",
+      opts: ["Web server","AJAX engine","Application engine"],
+      a: 2,
+      exp: "The application engine combines dynamic data with HTML templates to produce final documents sent to the browser."
+    },
+    {
+      q: "Which of the following tags are NOT used in HTML5?",
+      opts: ["Font Tag","Table Tag","The two other answers"],
+      a: 0,
+      exp: "The <font> tag is deprecated in HTML5. The <table> tag is still valid in HTML5."
+    },
+    {
+      q: "The following XML code — does it have errors?<code>&lt;planet name=\"earth\" type=\"small\"&gt;\n  &lt;star type=\"G2\"&gt;sun&lt;/star&gt;\n  &lt;moon&gt;moon&lt;/moon&gt;\n  &lt;continent habitant=33 000 000&gt;australia&lt;/continent&gt;\n&lt;/planet&gt;</code>",
+      opts: ["It is not XML code","No, it hasn't","Yes, it has"],
+      a: 2,
+      exp: "Error: the habitant attribute value '33 000 000' is not quoted. XML requires all attribute values to be in quotes."
+    },
+    {
+      q: "Non-textual information such as digitized photos or graphic images is not a physical part of ________.",
+      opts: ["Web Host","Web Page","HTML"],
+      a: 2,
+      exp: "Images are referenced by HTML, but are not physically embedded inside the HTML document itself."
+    },
+    {
+      q: "________ is a buzzword for describing modern forms of applications and services that are accessible by the web browser.",
+      opts: ["Web 1.1","Web 0.2","Web 2.0"],
+      a: 2,
+      exp: "Web 2.0 is the buzzword for the era of dynamic, social, interactive web applications."
+    },
+    {
+      q: "________ is a high degree of standardization and stricter syntax leads to further unification of browser engine.",
+      opts: ["XHTML","Script engine","AJAX"],
+      a: 0,
+      exp: "XHTML enforces stricter XML-based syntax, enabling greater standardization across browser rendering engines."
+    },
+    {
+      q: "________ is software that makes resources available through an interface that is accessible by HTTP.",
+      opts: ["Web Server","Interaction Model","Web Browser"],
+      a: 0,
+      exp: "A Web Server is the software that serves resources over HTTP to clients."
+    },
+    {
+      q: "________ creates a client descriptor which is the endpoint of a communication path to the client and passes it to the delegation process.",
+      opts: ["Delegation Process","Web Server","Connector Entity"],
+      a: 2,
+      exp: "The Connector Entity creates the client descriptor and passes it to the delegation process."
+    },
+    {
+      q: "For AJAX technology, JSON is faster and easier than XML. This statement is:",
+      opts: ["Right","Wrong"],
+      a: 0,
+      exp: "JSON is indeed faster and easier to parse in JavaScript environments than XML, making it preferred for AJAX."
+    },
+    {
+      q: "HTML like XML is a self-describing language. This statement is:",
+      opts: ["Right","Wrong"],
+      a: 1,
+      exp: "HTML is NOT self-describing — it uses predefined tags. XML is self-describing because you define your own tags."
+    },
+    {
+      q: "Web admin need to change ________ to launch the hosted web application.",
+      opts: ["Domain alias","IP","DNS"],
+      a: 2,
+      exp: "DNS records are updated to point a domain to the new server/IP when launching a hosted web application."
+    },
+    {
+      q: "________ defines the structure and the legal elements and attributes of an XML document.",
+      opts: ["DTD","SAX","DOM"],
+      a: 0,
+      exp: "DTD (Document Type Definition) defines the valid structure, elements, and attributes of an XML document."
+    },
+    {
+      q: "________ interprets the document in its logical tree structure thus making it necessary to load a tree representation of the document into memory.",
+      opts: ["DOM","YAML","SAX"],
+      a: 0,
+      exp: "DOM (Document Object Model) builds a full in-memory tree representation of the document."
+    },
+    {
+      q: "________ can reuse a connection multiple times to download images, scripts, stylesheets, etc after the page has been delivered.",
+      opts: ["HTTP 1.0","HTTP 1.1 pipelining","HTTP 1.1"],
+      a: 2,
+      exp: "HTTP 1.1 introduced persistent connections (keep-alive), allowing connection reuse for multiple resources."
+    },
+    {
+      q: "Web host can be divided to have more than one web application.",
+      opts: ["True","False"],
+      a: 0,
+      exp: "A single web host can serve multiple web applications through virtual hosting configurations."
+    },
+  ]
+},
+
+// ──── EXAM C: March 2016 ────
+{
+  title: "Midterm — March 2016",
+  duration: 45,
+  questions: [
+    {
+      q: "Performs parsing and layout for (X)HTML documents enriched with other languages.",
+      opts: ["XML Parser","Rendering Engine","Easily modifiable"],
+      a: 1,
+      exp: "The Rendering Engine parses and lays out (X)HTML documents, handling mixed language content."
+    },
+    {
+      q: "________ is designed to permit intermediate network elements to improve or enable communications between clients and servers.",
+      opts: ["Web Server","HTTP","Block communication model"],
+      a: 1,
+      exp: "HTTP is designed to allow intermediate proxies and gateways to improve client-server communications."
+    },
+    {
+      q: "________ may use an (X)HTML engine to combine dynamic content with (X)HTML template to generate resulting documents that finally are delivered to the web browser.",
+      opts: ["Application engine","AJAX engine","Web server"],
+      a: 0,
+      exp: "The application engine merges dynamic content with HTML templates to produce the final web page."
+    },
+    {
+      q: "________ chooses an available pregenerated processing entity and forwards the client descriptor to it.",
+      opts: ["Web server","The connector entity","The delegation process"],
+      a: 2,
+      exp: "The delegation process selects and routes to an available processing entity."
+    },
+    {
+      q: "________ defines the structure and the legal elements and attributes of an XML document.",
+      opts: ["SAX","DTD","XML Schema"],
+      a: 1,
+      exp: "DTD defines valid structure, elements, and attributes for XML documents."
+    },
+    {
+      q: "________ interprets the document in its logical tree structure thus making it necessary to load a tree representation of the document into memory.",
+      opts: ["SAX","DOM","YAML"],
+      a: 1,
+      exp: "DOM loads the entire document as a tree in memory for interpretation and manipulation."
+    },
+    {
+      q: "________ can reuse a connection multiple times to download images, scripts, stylesheets, etc after the page has been delivered.",
+      opts: ["HTTP 1.0","HTTP 1.1 pipelining","HTTP 1.1"],
+      a: 2,
+      exp: "HTTP 1.1 supports persistent keep-alive connections for downloading multiple resources."
+    },
+    {
+      q: "The code that started with ________ means that the requested resource has been moved permanently to new URL.",
+      opts: ["3XX","4XX","5XX"],
+      a: 0,
+      exp: "3XX status codes indicate redirects. 301 Moved Permanently means the resource has a new permanent URL."
+    },
+    {
+      q: "________ provide an optimized transport for HTTP semantics using multiplexing and header compression.",
+      opts: ["HTTP 2","HTTP 1.2","Comet"],
+      a: 0,
+      exp: "HTTP/2 introduces multiplexing and HPACK header compression for optimized transport."
+    },
+    {
+      q: "Web server is responsible for rendering the user interface and communicating with the server on the user's behalf.",
+      opts: ["True","False"],
+      a: 1,
+      exp: "False — the Web BROWSER (not server) is responsible for rendering the UI and communicating on the user's behalf."
+    },
+    {
+      q: "The header specifies the operation that should be performed on the addressed resource and includes parameters (passed as key-value pairs).",
+      opts: ["True","False"],
+      a: 1,
+      exp: "False — it is the HTTP METHOD (e.g. GET, POST) that specifies the operation. The URL contains key-value query parameters."
+    },
+    {
+      q: "________ enables web servers to send data to the client with only an initial HTTP Request and after this without having any need for the client to request the data.",
+      opts: ["Asynchronous model","Synchronous model","Non-blocking model"],
+      a: 0,
+      exp: "The Comet/server-push (asynchronous) model allows the server to push data after the initial connection."
+    },
+    {
+      q: "The above XML code has errors?<code>&lt;planet name=\"earth\" type=\"small\"&gt;\n  &lt;star type=\"G2\"&gt;sun&lt;/star&gt;\n  &lt;moon&gt;moon&lt;/moon&gt;\n  &lt;continent habitant=33 000 000&gt;australia&lt;/continent&gt;\n&lt;/planet&gt;</code>",
+      opts: ["True","False"],
+      a: 0,
+      exp: "True — the habitant attribute value 33 000 000 is not enclosed in quotes, violating XML syntax rules."
+    },
+    {
+      q: "Which of the following represents the correct JSON encoding of a structure with multiple continent entries as an array?",
+      opts:[
+        'Option A — continents as separate objects without array brackets {}{}{}',
+        'Option B — continents wrapped in a JSON array [ {}, {}, {} ]',
+        'Option C — continents nested directly without array or proper closure'
+      ],
+      a: 1,
+      exp: "Option B is correct. Multiple sibling elements of the same type map to a JSON array [ ... ] in proper JSON representation."
+    },
+    {
+      q: "________ is a high degree of standardization and stricter syntax leads to further unification of browser engine.",
+      opts: ["XHTML","Script engine","None of the previous"],
+      a: 0,
+      exp: "XHTML's strict XML-based syntax promotes browser engine standardization."
+    },
+    {
+      q: "________ enables web servers to send data to the client with only an initial HTTP Request — this is known as:",
+      opts: ["Comet / Server Push","Synchronous pull model","Standard HTTP request-response"],
+      a: 0,
+      exp: "Comet is implemented via long-polling or streaming over HTTP, enabling server-initiated data delivery after initial connection."
+    },
+  ]
+}
+];
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let currentExam = 0;
+let currentQ    = 0;
+let answers     = [];   // null | {chosen, correct}
+let timer       = null;
+let timeLeft    = 0;
+
+function loadExam(idx) {
+  currentExam = idx;
+  currentQ    = 0;
+  answers     = new Array(EXAMS[idx].questions.length).fill(null);
+
+  // update selector buttons
+  document.querySelectorAll('.exam-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  
+  
+
+  renderQ();
+  renderDots();
+  updateScore();
+}
+
+
+
+// ═══════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════
+function renderQ() {
+  const exam = EXAMS[currentExam];
+  const qData = exam.questions[currentQ];
+  const ans   = answers[currentQ];
+  const total = exam.questions.length;
+
+  // check if all done
+  const allDone = answers.every(a => a !== null);
+
+  const container = document.getElementById('mainContent');
+
+  let html = '';
+
+  // Results banner (shown when all answered)
+  if (allDone) {
+    const correct = answers.filter(a => a && a.correct).length;
+    const wrong   = answers.filter(a => a && !a.correct).length;
+    const pct     = Math.round(correct/total*100);
+    const grade   = pct>=90?'A+':pct>=80?'A':pct>=70?'B':pct>=60?'C':pct>=50?'D':'F';
+    const msg     = pct>=80?'Excellent work! 🎉':pct>=60?'Good job, keep it up! 💪':'Review the material and try again 📚';
+    const cH      = Math.round(correct/total*60);
+    const wH      = Math.round(wrong/total*60);
+    html += `
+    <div class="results-banner show">
+      <div class="result-score">${pct}%</div>
+      <div class="result-label">OVERALL SCORE</div>
+      <div class="result-grade">${correct} / ${total} correct — Grade ${grade}</div>
+      <div class="result-msg">${msg}</div>
+      <div class="result-bars">
+        <div class="result-bar-item">
+          <div class="result-bar-fill">
+            <div class="result-bar-inner c" style="height:${cH}px"></div>
+          </div>
+          <div class="result-bar-label">✓ ${correct}</div>
+        </div>
+        <div class="result-bar-item">
+          <div class="result-bar-fill">
+            <div class="result-bar-inner w" style="height:${wH}px"></div>
+          </div>
+          <div class="result-bar-label">✗ ${wrong}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Progress
+  const answered = answers.filter(a=>a!==null).length;
+  html += `
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" style="width:${answered/total*100}%"></div></div>
+    <span class="progress-label">${answered}/${total} answered</span>
+  </div>`;
+
+  // Question card
+  const isAnswered = ans !== null;
+  const optKeys = ['A','B','C','D','E'];
+
+  html += `<div class="question-card">
+    <div class="q-header">
+      <span class="q-number">Q ${currentQ+1}</span>
+      <span class="q-status">${isAnswered ? (ans.correct ? '✓ Correct' : '✗ Wrong') : 'Unanswered'}</span>
+    </div>
+    <div class="q-text">${qData.q}</div>
+    <div class="options">`;
+
+  qData.opts.forEach((opt,i) => {
+    let cls = 'option-btn';
+    if(isAnswered) {
+      cls += ' answered';
+      if(i === ans.chosen && ans.correct)  cls += ' selected-correct';
+      if(i === ans.chosen && !ans.correct) cls += ' selected-wrong';
+      if(i === qData.a && !ans.correct)    cls += ' reveal-correct';
+    }
+    html += `<button class="${cls}" onclick="answer(${i})">
+      <span class="option-key">${optKeys[i]}</span>
+      <span>${opt}</span>
+    </button>`;
+  });
+
+  html += `</div>`;
+
+  // Feedback
+  if(isAnswered) {
+    const cls2 = ans.correct ? 'correct' : 'wrong';
+    const icon = ans.correct ? '✓' : '✗';
+    html += `<div class="feedback ${cls2} show">${icon} ${qData.exp}</div>`;
+  }
+
+  html += `</div>`;
+
+  container.innerHTML = html;
+  renderDots();
+  updateScore();
+}
+
+function answer(chosen) {
+  if(answers[currentQ] !== null) return;
+  const correct = chosen === EXAMS[currentExam].questions[currentQ].a;
+  answers[currentQ] = { chosen, correct };
+  showToast(correct ? '✓ Correct!' : '✗ Wrong!', correct ? 'correct' : 'wrong');
+  renderQ();
+}
+
+function navigate(dir) {
+  const total = EXAMS[currentExam].questions.length;
+  currentQ = Math.max(0, Math.min(total-1, currentQ+dir));
+  renderQ();
+}
+
+function goToQ(idx) {
+  currentQ = idx;
+  renderQ();
+}
+
+function renderDots() {
+  const total = EXAMS[currentExam].questions.length;
+  let html = '';
+  for(let i=0;i<total;i++){
+    let cls = 'nav-dot';
+    if(i === currentQ) cls += ' current';
+    else if(answers[i]) cls += answers[i].correct ? ' answered-c' : ' answered-w';
+    html += `<div class="${cls}" onclick="goToQ(${i})" title="Q${i+1}"></div>`;
+  }
+  document.getElementById('navDots').innerHTML = html;
+
+  document.getElementById('btnPrev').disabled = currentQ === 0;
+  document.getElementById('btnNext').disabled = currentQ === total-1;
+}
+
+function updateScore() {
+  const correct = answers.filter(a=>a&&a.correct).length;
+  const answered = answers.filter(a=>a!==null).length;
+  document.getElementById('liveScore').textContent = `Score: ${correct} / ${answered}`;
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast t-${type} show`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.classList.remove('show'); }, 2200);
+}
+
+// ── Init ──
+loadExam(0);
+</script>
+</body>
+</html>
