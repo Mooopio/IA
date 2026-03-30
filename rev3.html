@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet Apps – Lecture 3 | Web Interaction Models</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent1: #00f5a0;
+    --accent2: #00c9ff;
+    --accent3: #ff6b6b;
+    --accent4: #ffd93d;
+    --accent5: #c77dff;
+    --text: #e8e8f0;
+    --muted: #7070a0;
+    --card-glow1: rgba(0,245,160,0.08);
+    --card-glow2: rgba(0,201,255,0.08);
+    --card-glow3: rgba(255,107,107,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent1); border-radius: 3px; }
+
+  /* HEADER */
+  header {
+    position: relative;
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -100px; left: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,245,160,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -50px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,201,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent1);
+    text-transform: uppercase;
+    border: 1px solid var(--accent1);
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    position: relative; z-index:1;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    position: relative; z-index:1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'Space Mono', monospace;
+    position: relative; z-index:1;
+  }
+
+  /* NAV */
+  .toc {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .toc a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .toc a:hover { color: var(--accent1); border-color: var(--accent1); }
+
+  /* MAIN LAYOUT */
+  main { max-width: 1200px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  /* SECTIONS */
+  section { margin-bottom: 60px; scroll-margin-top: 80px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface2);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+  }
+  .accent-green { color: var(--accent1); }
+  .accent-blue { color: var(--accent2); }
+  .accent-red { color: var(--accent3); }
+  .accent-yellow { color: var(--accent4); }
+  .accent-purple { color: var(--accent5); }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .card.green { border-left: 3px solid var(--accent1); background: linear-gradient(135deg, var(--card-glow1), var(--surface)); }
+  .card.blue { border-left: 3px solid var(--accent2); background: linear-gradient(135deg, var(--card-glow2), var(--surface)); }
+  .card.red { border-left: 3px solid var(--accent3); background: linear-gradient(135deg, var(--card-glow3), var(--surface)); }
+  .card.yellow { border-left: 3px solid var(--accent4); background: linear-gradient(135deg, rgba(255,217,61,0.08), var(--surface)); }
+  .card.purple { border-left: 3px solid var(--accent5); background: linear-gradient(135deg, rgba(199,125,255,0.08), var(--surface)); }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  p { font-size: 14px; color: #c0c0d8; margin-bottom: 8px; }
+  ul { list-style: none; }
+  ul li {
+    font-size: 14px;
+    color: #c0c0d8;
+    padding: 5px 0;
+    padding-left: 18px;
+    position: relative;
+  }
+  ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent1); font-size: 12px; top: 6px; }
+
+  /* COMPARISON TABLE */
+  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    font-size: 13px;
+  }
+  thead tr { background: var(--surface2); }
+  th {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+  td { padding: 12px 18px; border-bottom: 1px solid var(--border); color: #c0c0d8; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* CODE BLOCKS */
+  pre {
+    background: #0d0d14;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 12px 0;
+  }
+  .kw { color: var(--accent5); }
+  .fn { color: var(--accent2); }
+  .str { color: var(--accent1); }
+  .num { color: var(--accent4); }
+  .cm { color: var(--muted); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .flow-step {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .flow-arrow {
+    color: var(--accent1);
+    font-size: 20px;
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge-green { background: rgba(0,245,160,0.15); color: var(--accent1); border: 1px solid rgba(0,245,160,0.3); }
+  .badge-red { background: rgba(255,107,107,0.15); color: var(--accent3); border: 1px solid rgba(255,107,107,0.3); }
+  .badge-blue { background: rgba(0,201,255,0.15); color: var(--accent2); border: 1px solid rgba(0,201,255,0.3); }
+  .badge-yellow { background: rgba(255,217,61,0.15); color: var(--accent4); border: 1px solid rgba(255,217,61,0.3); }
+  .badge-purple { background: rgba(199,125,255,0.15); color: var(--accent5); border: 1px solid rgba(199,125,255,0.3); }
+
+  /* STATES TABLE */
+  .states { display: flex; flex-direction: column; gap: 8px; }
+  .state-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 16px;
+  }
+  .state-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent2);
+    min-width: 24px;
+  }
+  .state-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    min-width: 110px;
+  }
+  .state-desc { font-size: 13px; color: #c0c0d8; }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: linear-gradient(135deg, rgba(0,245,160,0.1), rgba(0,201,255,0.08));
+    border: 1px solid rgba(0,245,160,0.3);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .highlight strong { color: var(--accent1); }
+
+  /* MEMORY TRICK */
+  .trick {
+    background: linear-gradient(135deg, rgba(255,217,61,0.1), rgba(199,125,255,0.08));
+    border: 1px solid rgba(255,217,61,0.3);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .trick-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--accent4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 40px 0;
+  }
+
+  /* QUIZ */
+  .quiz-section {
+    background: var(--surface);
+    border: 1px solid var(--accent5);
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 60px;
+  }
+  .quiz-section h2 { color: var(--accent5); margin-bottom: 8px; }
+  .quiz-item {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 18px;
+    margin: 12px 0;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .quiz-item:hover { border-color: var(--accent5); }
+  .quiz-q { font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+  .quiz-a {
+    display: none;
+    background: rgba(199,125,255,0.1);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--accent5);
+    border-left: 2px solid var(--accent5);
+    margin-top: 8px;
+  }
+  .quiz-item.open .quiz-a { display: block; }
+  .quiz-hint { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+  /* WEBSOCKET HANDSHAKE */
+  .handshake {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 8px;
+    align-items: start;
+    margin: 12px 0;
+    font-size: 12px;
+  }
+  .hs-client, .hs-server {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    line-height: 1.8;
+    border: 1px solid var(--border);
+  }
+  .hs-client { border-color: rgba(0,201,255,0.4); }
+  .hs-server { border-color: rgba(0,245,160,0.4); }
+  .hs-arrows { display: flex; flex-direction: column; gap: 6px; justify-content: center; align-items: center; padding-top: 50px; }
+  .hs-label { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 4px; font-family: 'Space Mono', monospace; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header { padding: 40px 20px 30px; }
+    .toc { padding: 14px 20px; }
+    main { padding: 30px 20px 60px; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  section { animation: fadeUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Internet Applications · Lecture 3</div>
+  <h1>Interaction Models<br>in the World Wide Web</h1>
+  <p class="subtitle">// Complete study guide — every word, every concept, exam-ready</p>
+</header>
+
+<nav class="toc">
+  <a href="#interaction">What is Interaction?</a>
+  <a href="#models-overview">3 Models Overview</a>
+  <a href="#sync">1. Synchronous</a>
+  <a href="#ajax">2. AJAX (Non-Blocking)</a>
+  <a href="#xmlhttprequest">XMLHttpRequest</a>
+  <a href="#json">JSON</a>
+  <a href="#comet">3. Comet</a>
+  <a href="#websockets">WebSockets</a>
+  <a href="#comparison">Full Comparison</a>
+  <a href="#quiz">Quick Quiz</a>
+</nav>
+
+<main>
+
+  <!-- ======= WHAT IS INTERACTION ======= -->
+  <section id="interaction">
+    <div class="section-header">
+      <span class="section-num">00</span>
+      <h2 class="accent-green">What is Interaction?</h2>
+    </div>
+
+    <div class="grid-2">
+      <div class="card green">
+        <h3>Communication = 2 Layers</h3>
+        <ul>
+          <li><strong>Layer 1:</strong> Between <span class="accent-green">User ↔ Application</span> (what the user sees/does)</li>
+          <li><strong>Layer 2:</strong> Between <span class="accent-blue">Client ↔ Server</span> (HTTP under the hood)</li>
+        </ul>
+        <div class="trick">
+          <div class="trick-label">🧠 Memory</div>
+          Think: <strong>U→A→C→S</strong> (User talks to App, App talks to Server)
+        </div>
+      </div>
+      <div class="card blue">
+        <h3>The 3 Models</h3>
+        <ul>
+          <li><span class="accent-red">Synchronous</span> → Classic Web (click, wait, refresh)</li>
+          <li><span class="accent-green">Non-Blocking</span> → AJAX</li>
+          <li><span class="accent-purple">Asynchronous</span> → Comet + WebSockets (HTML5)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= MODELS OVERVIEW TABLE ======= -->
+  <section id="models-overview">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="accent-blue">The 3 Models — Side by Side</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Technology</th>
+            <th>User Actions</th>
+            <th>HTTP Req/Res Coupling</th>
+            <th>Data Sending</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-red">Synchronous</span></td>
+            <td>Classic Web</td>
+            <td>🔴 BLOCKED (wait for response)</td>
+            <td>HIGH — 1 request = 1 response always</td>
+            <td>Synchronous with user actions</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">Non-Blocking</span></td>
+            <td>AJAX</td>
+            <td>🟢 NOT blocked</td>
+            <td>HIGH — still 1 request = 1 response</td>
+            <td>Asynchronous (user not blocked)</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">Asynchronous</span></td>
+            <td>Comet / WebSockets</td>
+            <td>🟢 NOT blocked</td>
+            <td>MINIMUM (server pushes freely)</td>
+            <td>Asynchronous — minimum dependency</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="trick" style="margin-top:16px;">
+      <div class="trick-label">🎯 Key Exam Trick</div>
+      <strong>AJAX is NOT truly asynchronous</strong> — it still needs a request before every server response (high coupling). Only Comet/WebSockets achieve <em>true</em> async (server can push anytime).
+    </div>
+  </section>
+
+  <!-- ======= SYNCHRONOUS ======= -->
+  <section id="sync">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="accent-red">Model 1: Synchronous (Classic Web)</h2>
+    </div>
+
+    <div class="card red">
+      <h3>"Click → Wait → Refresh" Paradigm</h3>
+      <div class="flow">
+        <div class="flow-step" style="border-color:var(--accent3); color:var(--accent3)">User Clicks</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">HTTP Request</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Server processes</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Full HTML response</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-color:var(--accent3); color:var(--accent3)">Browser refreshes</div>
+      </div>
+      <p style="margin-top:12px;">Browser sends HTTP Request → Server processes → Server sends back <strong>complete (X)HTML page</strong> → Browser refreshes entire screen.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🔴 Shortcomings</h3>
+        <ul>
+          <li>Slow performance (click, wait, refresh every time)</li>
+          <li>Loss of operation context on page refresh</li>
+          <li>Excessive server load</li>
+          <li>High bandwidth consumption (full page every time)</li>
+          <li>Redundant page refreshes</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Criteria (Definition)</h3>
+        <ul>
+          <li><strong>Synchronous</strong> = user actions are BLOCKED until HTTP Response arrives</li>
+          <li><strong>High dependence</strong> = for every data transfer from server→client, a request MUST be sent first</li>
+          <li>User activity and server-side processing are <strong>coupled</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight">
+      Result: <strong>slow, unreliable, low productivity, low interactivity, inefficient</strong> web applications
+    </div>
+  </section>
+
+  <!-- ======= AJAX ======= -->
+  <section id="ajax">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="accent-green">Model 2: Non-Blocking (AJAX)</h2>
+    </div>
+
+    <div class="card green">
+      <h3>AJAX = Asynchronous JavaScript + XML</h3>
+      <p>Named by <strong>Jesse James Garrett</strong> in <strong>2005</strong>. Introduced the "AJAX engine" as intermediary between user and server.</p>
+    </div>
+
+    <div class="card yellow">
+      <h3>📅 History Timeline</h3>
+      <ul>
+        <li><strong>1999:</strong> Microsoft → "Outlook Web Access" — first AJAX-like app using XMLHttpRequest</li>
+        <li><strong>1999:</strong> Only IE supported XMLHttpRequest (via ActiveX: <code>XMLHTTP</code>)</li>
+        <li><strong>~2002:</strong> Mozilla 1.0 and Netscape 7 implemented native XMLHttpRequest</li>
+        <li><strong>2005:</strong> Jesse James Garrett coined "AJAX" in article → Google Suggest + Google Maps → AJAX became popular</li>
+      </ul>
+    </div>
+
+    <h3 style="margin: 20px 0 12px; font-family:'Syne',sans-serif; font-size:16px;">AJAX Components (J.J. Garrett's Definition)</h3>
+    <div class="grid-2">
+      <div class="card blue">
+        <h3>🧩 AJAX is NOT one technology — it's several:</h3>
+        <ul>
+          <li>Standard-based presentation → <span class="accent-blue">XHTML + CSS</span></li>
+          <li>Dynamic display/interaction → <span class="accent-green">DOM (Document Object Model)</span></li>
+          <li>Data interchange → <span class="accent-yellow">XML + XSLT</span></li>
+          <li>Async data retrieval → <span class="accent-purple">XMLHttpRequest object</span></li>
+          <li>JavaScript → <span class="accent-red">binds everything together</span></li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>🎯 Intentions of AJAX</h3>
+        <ul>
+          <li>Create apps that look/feel like <strong>desktop apps</strong> (e.g. AJAXWrite)</li>
+          <li>Extend classic web with <strong>additional features</strong> (e.g. auto-completion in Google Suggest)</li>
+          <li>Eliminate "click, wait, refresh" → update <strong>only part</strong> of the page</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3>The AJAX Engine — How it Works</h3>
+      <div class="flow" style="flex-wrap:wrap; gap:6px; margin:12px 0;">
+        <div class="flow-step" style="border-color:var(--accent1); color:var(--accent1)">User Action</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-color:var(--accent5); color:var(--accent5)">JavaScript call to AJAX Engine</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Engine decides: need server?</div>
+      </div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div style="background:var(--surface2); border-radius:8px; padding:14px; border:1px solid var(--border);">
+          <p style="color:var(--accent1); font-weight:600; margin-bottom:6px;">If NO server needed:</p>
+          <ul>
+            <li>Simple data validation</li>
+            <li>Editing data in memory</li>
+            <li>Some navigation</li>
+          </ul>
+        </div>
+        <div style="background:var(--surface2); border-radius:8px; padding:14px; border:1px solid var(--border);">
+          <p style="color:var(--accent2); font-weight:600; margin-bottom:6px;">If server IS needed:</p>
+          <ul>
+            <li>Engine sends HTTP Request <strong>asynchronously</strong></li>
+            <li>User is NOT blocked</li>
+            <li>Gets data → updates page partially</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Real-World Examples</h3>
+      <ul>
+        <li><strong>Google Suggest:</strong> As you type, requests sent to server → drop-down list of terms + number of results</li>
+        <li><strong>Google Docs:</strong> Free browser-based Word alternative; saves in MS Word, OpenOffice, RTF, Text, PDF</li>
+      </ul>
+    </div>
+
+    <div class="trick">
+      <div class="trick-label">⚠️ Critical Point</div>
+      AJAX Criteria: <strong>Asynchronous</strong> = user not blocked. BUT still <strong>HIGH coupling</strong> = for each server-side update, a full request/response round trip is needed. → Not truly async!
+    </div>
+  </section>
+
+  <!-- ======= XMLHTTPREQUEST ======= -->
+  <section id="xmlhttprequest">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="accent-blue">XMLHttpRequest — Heart of AJAX</h2>
+    </div>
+
+    <div class="card blue">
+      <h3>What is XMLHttpRequest?</h3>
+      <p>Client-side programming API that transfers data via HTTP <strong>behind the scenes</strong> — without causing a complete page refresh. Request is initialized and response is handled through this object.</p>
+    </div>
+
+    <div class="card">
+      <h3>Creating the Object</h3>
+      <pre><span class="cm">// Modern browsers (IE7+, Firefox, Chrome, etc.)</span>
+<span class="kw">var</span> xmlHttpRequest = <span class="kw">new</span> <span class="fn">XMLHttpRequest</span>();
+
+<span class="cm">// IE5 & IE6 (ActiveX)</span>
+<span class="kw">var</span> xmlHttpRequest = <span class="kw">new</span> <span class="fn">ActiveXObject</span>(<span class="str">"Msxml2.XMLHTTP"</span>);
+
+<span class="cm">// Older IE versions</span>
+<span class="kw">var</span> xmlHttpRequest = <span class="kw">new</span> <span class="fn">ActiveXObject</span>(<span class="str">"Microsoft.XMLHTTP"</span>);</pre>
+    </div>
+
+    <div class="grid-2">
+      <div class="card green">
+        <h3>📌 Methods</h3>
+        <ul>
+          <li><code class="accent-green">open("method", "URL", [async, user, pass])</code> — pre-sets up connection; method = GET or POST; async default = <strong>false</strong></li>
+          <li><code class="accent-green">send("data")</code> — activates the open() settings; GET → data is <strong>null</strong>; POST → data is key=value pairs (e.g. <code>page=1&section=4</code>)</li>
+          <li><code class="accent-green">abort()</code> — cancels current request</li>
+        </ul>
+      </div>
+      <div class="card blue">
+        <h3>📌 Properties</h3>
+        <ul>
+          <li><code class="accent-blue">onreadystatechange</code> — event handler → points to callback function; fires when readyState changes</li>
+          <li><code class="accent-blue">readyState</code> — current status (0–4)</li>
+          <li><code class="accent-blue">responseText</code> — response as string</li>
+          <li><code class="accent-blue">responseXML</code> — response as XML</li>
+          <li><code class="accent-blue">status</code> — numeric HTTP status code</li>
+          <li><code class="accent-blue">statusText</code> — text of HTTP status</li>
+        </ul>
+        <div class="trick" style="margin-top:8px; font-size:12px;">
+          <div class="trick-label">Note</div>
+          responseText, responseXML, status, statusText are all extracted from the HTTP Response
+        </div>
+      </div>
+    </div>
+
+    <div class="card yellow">
+      <h3>readyState — 5 Values (0 to 4)</h3>
+      <div class="states">
+        <div class="state-row">
+          <div class="state-num" style="color:var(--accent3)">0</div>
+          <div class="state-name">Uninitialized</div>
+          <div class="state-desc">Object created, but <code>open()</code> NOT called yet</div>
+        </div>
+        <div class="state-row">
+          <div class="state-num" style="color:var(--accent4)">1</div>
+          <div class="state-name">Loading</div>
+          <div class="state-desc"><code>open()</code> called but request NOT sent yet</div>
+        </div>
+        <div class="state-row">
+          <div class="state-num" style="color:var(--accent4)">2</div>
+          <div class="state-name">Loaded</div>
+          <div class="state-desc">Request has been sent</div>
+        </div>
+        <div class="state-row">
+          <div class="state-num" style="color:var(--accent2)">3</div>
+          <div class="state-name">Interactive</div>
+          <div class="state-desc">Partial HTTP Response received</div>
+        </div>
+        <div class="state-row">
+          <div class="state-num" style="color:var(--accent1)">4</div>
+          <div class="state-name">Complete</div>
+          <div class="state-desc">All data received, connection closed ✓</div>
+        </div>
+      </div>
+      <div class="trick" style="margin-top:12px;">
+        <div class="trick-label">🧠 Exam Must Know</div>
+        Check for: <strong>readyState == 4 && status == 200</strong> → means fully done & successful
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Complete Working Example — Full Source</h3>
+      <pre><span class="cm">// helloworld.js</span>
+<span class="kw">function</span> <span class="fn">loadData</span>() {
+  <span class="kw">var</span> req = <span class="fn">getXMLHttpRequest</span>();
+  req.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"helloworld.xml"</span>, <span class="kw">true</span>);  <span class="cm">// async=true</span>
+  
+  req.onreadystatechange = <span class="kw">function</span>() {
+    <span class="kw">if</span>(req.readyState == <span class="num">4</span> && req.status == <span class="num">200</span>) {
+      <span class="cm">// Create table in &lt;div id="present"&gt;</span>
+      <span class="kw">var</span> tab_content = <span class="str">"&lt;table&gt;&lt;tr&gt;&lt;td id=\"content\"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</span>;
+      document.<span class="fn">getElementById</span>(<span class="str">"present"</span>).innerHTML = tab_content;
+      <span class="kw">var</span> output = document.<span class="fn">getElementById</span>(<span class="str">"content"</span>);
+      <span class="kw">var</span> xml = req.responseXML;
+      
+      <span class="kw">for</span>(i=<span class="num">0</span>; i &lt; xml.documentElement.childNodes.length; i++) {
+        <span class="cm">// Skip text nodes (Firefox treats whitespace as TEXT_NODE)</span>
+        <span class="kw">if</span>(xml.documentElement.childNodes[i].nodeType == <span class="num">3</span>) <span class="kw">continue</span>;
+        <span class="kw">var</span> langTag = xml.documentElement.childNodes[i]
+          .<span class="fn">getElementsByTagName</span>(<span class="str">"lang"</span>)[<span class="num">0</span>].firstChild.nodeValue;
+        output.<span class="fn">appendChild</span>(document.<span class="fn">createTextNode</span>(langTag));
+        output.<span class="fn">appendChild</span>(document.<span class="fn">createTextNode</span>(<span class="str">" -- "</span>));
+        <span class="kw">var</span> textTag = xml.documentElement.childNodes[i]
+          .<span class="fn">getElementsByTagName</span>(<span class="str">"text"</span>)[<span class="num">0</span>].firstChild.nodeValue;
+        output.<span class="fn">appendChild</span>(document.<span class="fn">createTextNode</span>(textTag));
+        output.<span class="fn">appendChild</span>(document.<span class="fn">createElement</span>(<span class="str">"br"</span>));
+      }
+    }
+  };
+  req.<span class="fn">send</span>(<span class="kw">null</span>);  <span class="cm">// GET → null</span>
+}
+
+<span class="cm">// Cross-browser XMLHttpRequest factory</span>
+<span class="kw">function</span> <span class="fn">getXMLHttpRequest</span>() {
+  <span class="kw">if</span> (window.XMLHttpRequest) { <span class="kw">return new</span> <span class="fn">XMLHttpRequest</span>(); }
+  <span class="kw">else if</span> (window.ActiveXObject) {
+    <span class="kw">try</span> { <span class="kw">return new</span> <span class="fn">ActiveXObject</span>(<span class="str">"Msxml2.XMLHTTP"</span>); }
+    <span class="kw">catch</span>(e) {
+      <span class="kw">try</span> { <span class="kw">return new</span> <span class="fn">ActiveXObject</span>(<span class="str">"Microsoft.XMLHTTP"</span>); }
+      <span class="kw">catch</span>(e) { <span class="kw">return null</span>; }
+    }
+  }
+  <span class="kw">return false</span>;
+}</pre>
+    </div>
+
+    <div class="card">
+      <h3>The 3 Files (Hello World Example)</h3>
+      <ul>
+        <li><strong>helloworld.html</strong> — presentation; has <code>&lt;div id="present"&gt;&lt;/div&gt;</code> as reserved block; button calls <code>loadData()</code></li>
+        <li><strong>helloworld.js</strong> — client-side processing; contains the XMLHttpRequest logic</li>
+        <li><strong>helloworld.xml</strong> — content; parsed XML with &lt;lang&gt; and &lt;text&gt; tags in multiple languages</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ======= JSON ======= -->
+  <section id="json">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="accent-yellow">JSON — Alternative to XML</h2>
+    </div>
+
+    <div class="highlight">
+      <strong>X</strong> in AJAX stands for XML — but XML creates unnecessary overhead. <strong>JSON is the better alternative.</strong>
+    </div>
+
+    <div class="grid-2">
+      <div class="card yellow">
+        <h3>What is JSON?</h3>
+        <ul>
+          <li>JavaScript Object Notation</li>
+          <li>Lightweight data interchange <strong>text format</strong></li>
+          <li>Compact encoding, <strong>less overhead</strong> than XML</li>
+          <li>Language-independent (but uses C-family conventions)</li>
+          <li>Parsing native structures is <strong>faster</strong> than parsing XML</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>JSON Structures</h3>
+        <ul>
+          <li><strong>Object</strong> = unordered name/value pairs → <code>{...}</code>, separated by <code>:</code> and <code>,</code></li>
+          <li><strong>Array</strong> = ordered collection → <code>[...]</code>, values separated by <code>,</code></li>
+          <li><strong>Values</strong> = string (<code>"..."</code>), number, boolean, object, array → <em>can be nested!</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>JSON Example — Hello World</h3>
+      <pre>{
+  <span class="str">"helloworld"</span>: [
+    { <span class="str">"lang"</span>: <span class="str">"English"</span>, <span class="str">"text"</span>: <span class="str">"Hello World!"</span> },
+    { <span class="str">"lang"</span>: <span class="str">"French"</span>,  <span class="str">"text"</span>: <span class="str">"Salut le Monde!"</span> },
+    { <span class="str">"lang"</span>: <span class="str">"German"</span>,  <span class="str">"text"</span>: <span class="str">"Hallo Welt!"</span> }
+  ]
+}</pre>
+    </div>
+  </section>
+
+  <!-- ======= COMET ======= -->
+  <section id="comet">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="accent-purple">Model 3a: Comet (Asynchronous)</h2>
+    </div>
+
+    <div class="card purple">
+      <h3>What is Comet?</h3>
+      <p>Named in a <strong>March 2006</strong> weblog article by <strong>Alex Russell</strong> (project leader of Dojo Toolkit — an Ajax framework). Comet stands for nothing (like AJAX, it's a buzzword). Uses already existing technologies.</p>
+      <div class="trick" style="margin-top:12px;">
+        <div class="trick-label">Note</div>
+        Comet methodology was used in apps BEFORE the phrase "Comet" was coined.
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card green">
+        <h3>✅ Key Feature</h3>
+        <p>Server can send data to client with <strong>only an initial HTTP Request</strong>. After that, NO need for client to request data. → <strong>Completely asynchronous / low-latency</strong> data transfer.</p>
+        <p style="margin-top:8px;">AJAX high coupling problem → SOLVED ✓</p>
+      </div>
+      <div class="card">
+        <h3>🎯 Scope of Application</h3>
+        <ul>
+          <li>Applications where available data should be transmitted in <strong>real-time</strong></li>
+          <li>Chat applications</li>
+          <li>Stock exchange applications</li>
+          <li>Next-gen eBay (always inform latest info without extra clicks)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card blue">
+      <h3>How Comet Works (Long-Polling / HTTP Streaming)</h3>
+      <ul>
+        <li>Establishes initially a <strong>long-living HTTP connection</strong> → used only for <strong>data push</strong> (server→client)</li>
+        <li>Data push is triggered by <strong>server event output</strong></li>
+        <li>For uploading data <strong>to</strong> the server → a <strong>second connection</strong> to HTTP server is necessary</li>
+        <li>Method also named: <strong>"server push"</strong> or <strong>"HTTP streaming"</strong></li>
+      </ul>
+    </div>
+
+    <div class="card red">
+      <h3>🔴 Shortcomings of Comet (Long-Polling)</h3>
+      <ul>
+        <li>Overhead due to HTTP headers</li>
+        <li>Unnecessary HTTP requests in long-polling approaches</li>
+        <li>Communication channel is <strong>unidirectional</strong> → separate HTTP requests needed for bidirectional exchange</li>
+      </ul>
+      <p style="margin-top:8px; color:var(--accent3);">→ These drawbacks led to: <strong>WebSockets</strong></p>
+    </div>
+  </section>
+
+  <!-- ======= WEBSOCKETS ======= -->
+  <section id="websockets">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2 class="accent-green">WebSockets (HTML5)</h2>
+    </div>
+
+    <div class="grid-2">
+      <div class="card green">
+        <h3>What are WebSockets?</h3>
+        <ul>
+          <li>Standard for <strong>TCP-based bidirectional communication channels</strong></li>
+          <li>Avoids HTTP overhead and unnecessary requests</li>
+          <li>Part of <strong>HTML5</strong></li>
+          <li>Already widely supported in modern browsers and web servers</li>
+          <li>Established using the <strong>existing TCP connection</strong> via HTTP protocol</li>
+          <li>Data encapsulated in <strong>frames</strong> → exchanged in <strong>full-duplex mode</strong></li>
+          <li>Supports <strong>Binary</strong> and <strong>UTF-8</strong> messages</li>
+        </ul>
+      </div>
+      <div class="card blue">
+        <h3>Two Specifications</h3>
+        <ul>
+          <li><span class="badge badge-purple">Protocol</span> Defined by <strong>IETF in RFC 6455</strong> → covers: establishing connection (handshake) + data exchange</li>
+          <li style="margin-top:8px;"><span class="badge badge-blue">JavaScript API</span> Defined by <strong>W3C</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card yellow">
+      <h3>WebSocket Connection — 3 Steps</h3>
+      <div class="flow" style="flex-wrap:wrap;">
+        <div class="flow-step" style="border-color:var(--accent4); color:var(--accent4)">Step 1: HTTP Upgrade Request (browser→server)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-color:var(--accent4); color:var(--accent4)">Step 2: HTTP 101 Switching Protocols (server→browser)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-color:var(--accent1); color:var(--accent1)">Step 3: WebSocket connection ESTABLISHED (bidirectional!)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Handshake Details (RFC 6455)</h3>
+      <div class="handshake">
+        <div>
+          <div class="hs-label">CLIENT → SERVER</div>
+          <div class="hs-client">
+            <span style="color:var(--accent2)">GET /chat HTTP/1.1</span><br>
+            Host: server.example.com<br>
+            <span style="color:var(--accent1)">Upgrade: websocket</span><br>
+            <span style="color:var(--accent1)">Connection: Upgrade</span><br>
+            Sec-WebSocket-Key: <span style="color:var(--accent4)">dGhlIH...</span><br>
+            Origin: http://example.com<br>
+            Sec-WebSocket-Protocol: <span style="color:var(--accent5)">chat, superchat</span><br>
+            Sec-WebSocket-Version: 13
+          </div>
+          <p style="font-size:11px; color:var(--muted); margin-top:6px;">Key = arbitrarily generated Base64-encoded string</p>
+          <p style="font-size:11px; color:var(--muted);">Protocol = requested app-specific protocols on top of WS</p>
+        </div>
+        <div class="hs-arrows">
+          <span style="color:var(--accent1); font-size:22px;">⇄</span>
+        </div>
+        <div>
+          <div class="hs-label">SERVER → CLIENT</div>
+          <div class="hs-server">
+            <span style="color:var(--accent1)">HTTP/1.1 101 Switching Protocols</span><br>
+            <span style="color:var(--accent1)">Upgrade: websocket</span><br>
+            <span style="color:var(--accent1)">Connection: Upgrade</span><br>
+            Sec-WebSocket-Accept: <span style="color:var(--accent4)">s3pPL...</span><br>
+            Sec-WebSocket-Protocol: <span style="color:var(--accent5)">chat</span>
+          </div>
+          <p style="font-size:11px; color:var(--muted); margin-top:6px;">Accept = SHA-1 hash of (client key + magic string "258EAFA5-E914-47DA-95CA-C5AB0DC85B11") then Base64-encoded</p>
+          <p style="font-size:11px; color:var(--muted);">Accept value indicates server willingness to accept connection</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card blue">
+      <h3>WebSocket JavaScript API (W3C)</h3>
+      <pre><span class="cm">// Create WebSocket connection</span>
+<span class="kw">var</span> ws = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">"ws://localhost:9998/chat"</span>);
+
+<span class="cm">// Event listeners</span>
+ws.onopen = <span class="kw">function</span>() {
+  ws.<span class="fn">send</span>(<span class="str">"Example message..."</span>);  <span class="cm">// send() method</span>
+  <span class="fn">alert</span>(<span class="str">"Message is sent..."</span>);
+};
+
+ws.onmessage = <span class="kw">function</span>(evt) {
+  <span class="kw">var</span> received_msg = evt.data;
+  <span class="fn">alert</span>(<span class="str">"Message is received..."</span>);
+};
+
+ws.onclose = <span class="kw">function</span>() {
+  <span class="fn">alert</span>(<span class="str">"Connection is closed..."</span>);
+};
+
+ws.<span class="fn">close</span>();  <span class="cm">// close() method</span></pre>
+    </div>
+
+    <div class="card green">
+      <h3>4 Event Listeners + 2 Methods</h3>
+      <div class="grid-2">
+        <div>
+          <h3 style="color:var(--accent2); font-size:14px; margin-bottom:8px;">Events</h3>
+          <ul>
+            <li><code>onopen</code> — connection established</li>
+            <li><code>onclose</code> — connection closed</li>
+            <li><code>onerror</code> — connection/communication error</li>
+            <li><code>onmessage</code> — message arrives from server</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:var(--accent1); font-size:14px; margin-bottom:8px;">Methods</h3>
+          <ul>
+            <li><code>send(string)</code> — send message to server</li>
+            <li><code>close()</code> — close the connection</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= FULL COMPARISON ======= -->
+  <section id="comparison">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2 class="accent-yellow">Full Comparison & Conclusion</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th style="color:var(--accent3)">Synchronous</th>
+            <th style="color:var(--accent1)">AJAX (Non-Blocking)</th>
+            <th style="color:var(--accent5)">Comet</th>
+            <th style="color:var(--accent2)">WebSockets</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>User Blocked?</strong></td>
+            <td style="color:var(--accent3)">✅ YES</td>
+            <td style="color:var(--accent1)">❌ NO</td>
+            <td style="color:var(--accent1)">❌ NO</td>
+            <td style="color:var(--accent1)">❌ NO</td>
+          </tr>
+          <tr>
+            <td><strong>HTTP Coupling</strong></td>
+            <td>HIGH</td>
+            <td>HIGH</td>
+            <td>MINIMUM</td>
+            <td>MINIMUM</td>
+          </tr>
+          <tr>
+            <td><strong>Server Push?</strong></td>
+            <td style="color:var(--accent3)">❌ NO</td>
+            <td style="color:var(--accent3)">❌ NO</td>
+            <td style="color:var(--accent1)">✅ YES</td>
+            <td style="color:var(--accent1)">✅ YES</td>
+          </tr>
+          <tr>
+            <td><strong>Bidirectional?</strong></td>
+            <td style="color:var(--accent3)">❌ NO</td>
+            <td style="color:var(--accent3)">❌ NO</td>
+            <td>⚠️ 2 connections needed</td>
+            <td style="color:var(--accent1)">✅ YES (full-duplex)</td>
+          </tr>
+          <tr>
+            <td><strong>Protocol</strong></td>
+            <td>HTTP</td>
+            <td>HTTP</td>
+            <td>HTTP long-poll</td>
+            <td>TCP (via HTTP upgrade)</td>
+          </tr>
+          <tr>
+            <td><strong>Page Refresh?</strong></td>
+            <td style="color:var(--accent3)">Full page</td>
+            <td style="color:var(--accent1)">Partial only</td>
+            <td style="color:var(--accent1)">None needed</td>
+            <td style="color:var(--accent1)">None needed</td>
+          </tr>
+          <tr>
+            <td><strong>Standard</strong></td>
+            <td>—</td>
+            <td>Multiple technologies</td>
+            <td>Buzzword (Alex Russell, 2006)</td>
+            <td>RFC 6455 (IETF) + W3C API</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="grid-3">
+      <div class="card red">
+        <h3>❌ Synchronous</h3>
+        <p>Slow, unreliable, low productivity, low interactivity, inefficient</p>
+        <p><strong>Verdict:</strong> Outdated paradigm</p>
+      </div>
+      <div class="card green">
+        <h3>⚡ AJAX</h3>
+        <p>Smarter, more responsive, more interactive. No "click, wait, refresh". Partial page updates.</p>
+        <p><strong>BUT:</strong> Still high coupling — not truly async</p>
+      </div>
+      <div class="card blue">
+        <h3>🚀 Comet + WebSockets</h3>
+        <p>Complete async. Comet shortcoming: overhead & inefficiency. WebSockets: TCP-based bi-directional, solves all Comet drawbacks.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= QUICK QUIZ ======= -->
+  <div class="quiz-section" id="quiz">
+    <h2>⚡ Quick Exam Quiz</h2>
+    <p style="color:var(--muted); font-size:13px; margin:8px 0 20px;">Click each question to reveal the answer</p>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q1: What are the 2 steps of interaction in the WWW?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">1) Communication between User ↔ Application. 2) Communication between Client ↔ Server.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q2: What is the "classic web" paradigm called?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">"Click, wait, and refresh user interaction paradigm"</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q3: What does AJAX stand for? Who coined the term and when?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">Asynchronous JavaScript + XML. Coined by Jesse James Garrett in 2005.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q4: What was the first AJAX-like app? Who made it and when?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">Microsoft's "Outlook Web Access" in 1999, using the XMLHttpRequest approach.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q5: Why is AJAX NOT truly asynchronous?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">Because it still has HIGH dependence between HTTP Request and HTTP Response — for every server-side processed update, a full request/response round trip is necessary.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q6: What are the 5 readyState values?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">0=Uninitialized (object created, open() not called), 1=Loading (open() called, not sent), 2=Loaded (request sent), 3=Interactive (partial response received), 4=Complete (all data received, connection closed)</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q7: What are the 3 methods of XMLHttpRequest?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">open("method","URL",[async,user,pass]) — send("data") — abort()</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q8: Who coined "Comet"? When? What is it named after?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">Alex Russell, project leader of Dojo Toolkit, in March 2006. "Comet" stands for nothing — it's a buzzword like AJAX.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q9: What is the WebSocket protocol standard? Who defines the API?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">Protocol: IETF RFC 6455 (covers handshake + data exchange). JavaScript API: defined by W3C.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q10: What are the 2 shortcomings of HTTP-based streaming (Comet)?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">1) Overhead due to HTTP header and unnecessary HTTP requests in long-polling. 2) Channel is unidirectional — separate HTTP requests needed for bidirectional exchange.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q11: What magic string is used in the WebSocket handshake?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">"258EAFA5-E914-47DA-95CA-C5AB0DC85B11" — concatenated with the client's Sec-WebSocket-Key, then SHA-1 hashed, then Base64-encoded to produce Sec-WebSocket-Accept.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q12: What is the default value of "async" in open()? What does it mean?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">Default async = false (synchronous). For AJAX async behavior, set it to true.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q13: Why is JSON better than XML for AJAX?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">XML creates unnecessary overhead. JSON is lightweight, compact, less overhead, language-independent, and parsing native data structures is faster than parsing XML.</div>
+    </div>
+
+    <div class="quiz-item" onclick="this.classList.toggle('open')">
+      <div class="quiz-q">Q14: What are the 4 WebSocket event listeners?</div>
+      <div class="quiz-hint">↓ click to reveal</div>
+      <div class="quiz-a">onopen (connection established), onclose (connection closed), onerror (connection/communication error), onmessage (message arrives from server)</div>
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>
