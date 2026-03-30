@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet Applications - Lecture 3 </title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Fira+Code:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --card: #151d2e;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --green: #10b981;
+    --yellow: #fbbf24;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --sync-color: #ef4444;
+    --ajax-color: #00d4ff;
+    --comet-color: #7c3aed;
+    --ws-color: #10b981;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent3); border-radius: 3px; }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(0,212,255,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(124,58,237,0.05) 0%, transparent 60%);
+    animation: pulse-bg 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-bg {
+    0% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.1) rotate(5deg); }
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--accent3), var(--accent));
+    color: white;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  header h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--accent), #a78bfa, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  header p {
+    color: var(--text2);
+    font-size: 18px;
+    position: relative;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  nav::-webkit-scrollbar { display: none; }
+
+  nav a {
+    display: inline-block;
+    padding: 14px 18px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+
+  nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ===== MAIN ===== */
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 20px 100px; }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-bottom: 60px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .section-header h2 {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 900;
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent3); transform: translateY(-2px); }
+
+  .card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ===== ENGLISH TERM BOX ===== */
+  .en-term {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    direction: ltr;
+    text-align: left;
+  }
+
+  .en-term .label {
+    font-family: 'Cairo', sans-serif;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* ===== ARABIC EXPLANATION ===== */
+  .ar-explain {
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.25);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 16px;
+    line-height: 1.9;
+  }
+
+  .ar-explain .emoji { font-size: 20px; margin-left: 6px; }
+
+  /* ===== HIGHLIGHT ===== */
+  .hl-blue { color: var(--accent); font-weight: 700; }
+  .hl-orange { color: var(--accent2); font-weight: 700; }
+  .hl-green { color: var(--green); font-weight: 700; }
+  .hl-yellow { color: var(--yellow); font-weight: 700; }
+  .hl-red { color: var(--red); font-weight: 700; }
+  .hl-purple { color: #a78bfa; font-weight: 700; }
+  .hl-pink { color: var(--pink); font-weight: 700; }
+
+  /* ===== WARNING / TIP BOXES ===== */
+  .warn-box {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.35);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .warn-box .icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+
+  .tip-box {
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.35);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .tip-box .icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+
+  .info-box {
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  /* ===== CODE BLOCK ===== */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+    overflow-x: auto;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .code-block .code-title {
+    font-family: 'Cairo', sans-serif;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .code-block pre {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .str { color: #f1fa8c; }
+  .com { color: #6272a4; }
+  .var { color: #8be9fd; }
+  .num { color: #bd93f9; }
+  .prop { color: #ffb86c; }
+
+  /* ===== DIAGRAM ===== */
+  .diagram-wrap {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+
+  .diagram-wrap h4 {
+    color: var(--text2);
+    font-size: 13px;
+    margin-bottom: 16px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ===== TIMELINE DIAGRAM ===== */
+  .timeline {
+    display: grid;
+    gap: 0;
+    position: relative;
+    padding: 20px 0;
+    direction: ltr;
+  }
+
+  .tl-row {
+    display: grid;
+    grid-template-columns: 140px 60px 1fr;
+    align-items: center;
+    min-height: 50px;
+    gap: 8px;
+  }
+
+  .tl-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+    padding-right: 12px;
+    color: var(--text2);
+  }
+
+  .tl-center { display: flex; justify-content: center; }
+
+  .tl-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tl-line-v {
+    position: absolute;
+    left: 167px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .tl-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  /* ===== COMPARISON TABLE ===== */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    direction: rtl;
+  }
+
+  .comp-table th {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .comp-table td {
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .comp-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* ===== FLOW DIAGRAM SVG ===== */
+  svg text { font-family: 'Cairo', 'Fira Code', sans-serif; }
+
+  /* ===== MODEL CARDS ===== */
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .model-card {
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid;
+    transition: transform 0.2s;
+  }
+
+  .model-card:hover { transform: translateY(-4px); }
+
+  .model-card.sync {
+    background: rgba(239,68,68,0.07);
+    border-color: rgba(239,68,68,0.3);
+  }
+
+  .model-card.ajax {
+    background: rgba(0,212,255,0.07);
+    border-color: rgba(0,212,255,0.3);
+  }
+
+  .model-card.comet {
+    background: rgba(124,58,237,0.07);
+    border-color: rgba(124,58,237,0.3);
+  }
+
+  .model-card.ws {
+    background: rgba(16,185,129,0.07);
+    border-color: rgba(16,185,129,0.3);
+  }
+
+  .model-card .mc-icon { font-size: 32px; margin-bottom: 10px; }
+  .model-card .mc-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+  .model-card .mc-ar { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+  /* ===== TRICKY SECTION ===== */
+  .tricky-item {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+
+  .tricky-item h4 {
+    color: var(--yellow);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ===== SUMMARY SECTION ===== */
+  .summary-section {
+    background: linear-gradient(135deg, #0f172a, #1a1040);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 20px;
+    padding: 36px;
+    margin-top: 60px;
+  }
+
+  .summary-section h2 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #a78bfa;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .sum-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .sum-card h4 {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sum-card ul {
+    list-style: none;
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 2;
+  }
+
+  .sum-card ul li::before {
+    content: '▸ ';
+    color: var(--accent3);
+    font-size: 12px;
+  }
+
+  /* ===== READYSTATE TABLE ===== */
+  .rs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .rs-table th {
+    background: #1a1040;
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .rs-table td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    vertical-align: top;
+  }
+
+  .rs-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .rs-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  /* ===== EXAM BADGE ===== */
+  .exam-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(90deg, #7c3aed, #ec4899);
+    color: white;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 4px;
+  }
+
+  /* ===== STEP FLOW ===== */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 16px 0;
+    direction: ltr;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--accent3), var(--accent));
+    color: white;
+  }
+
+  .step-body {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    text-align: right;
+    direction: rtl;
+  }
+
+  .step-body strong { color: var(--accent); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .tl-row { grid-template-columns: 90px 40px 1fr; }
+    .tl-line-v { left: 108px; }
+    .model-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Internet Applications — Lecture 3</div>
+  <h1>Interaction Models in the World Wide Web</h1>
+  <p>شرح  🚀</p>
+</header>
+
+<nav>
+  <a href="#intro">📌 Intro</a>
+  <a href="#sync">🔴 Synchronous</a>
+  <a href="#ajax">🔵 AJAX</a>
+  <a href="#xmlhttprequest">⚡ XMLHttpRequest</a>
+  <a href="#json">📦 JSON</a>
+  <a href="#comet">🟣 Comet</a>
+  <a href="#websockets">🟢 WebSockets</a>
+  <a href="#tricky">⚠️ الفنيات</a>
+  <a href="#summary">📚 الملخص</a>
+</nav>
+
+<main>
+
+<!-- ===================== INTRO ===================== -->
+<section class="section" id="intro">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#7c3aed,#00d4ff);color:white;">0</div>
+    <h2>What is Interaction? — إيه هو الـ Interaction؟</h2>
+  </div>
+
+  <div class="card">
+    <div class="en-term">
+      <span class="label">Definition</span>
+      Communication between User↔Application AND Client↔Server — 2 steps
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🧠</span>
+      الـ <strong class="hl-blue">Interaction</strong> ده بيبقى على مستويين: الأول بين <strong class="hl-green">الـ User والـ Application</strong>، والتاني بين <strong class="hl-orange">الـ Client والـ Server</strong>. 
+      يعني لما بتكتب في Google وبتدوس Search، في خطوتين بتحصلوا في نفس الوقت — إنت بتتفاعل مع الـ UI، والـ browser بيتكلم مع الـ Server.
+    </div>
+
+    <div class="info-box">
+      <div class="icon">💡</div>
+      <div>
+        <strong>الـ Communication بتاعة الـ Client-Server</strong> هي اللي المادة دي كلها عنها — إيه أسرع وأذكى طريقة تبعت وتستقبل Data بيها؟
+      </div>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card sync">
+        <div class="mc-icon">🔴</div>
+        <div class="mc-title" style="color:#ef4444;">Synchronous Model</div>
+        <div class="mc-ar">الموديل الكلاسيكي — "دوس واستنى وشيل الصفحة". المستخدم محجوز لحد ما السيرفر يرد.</div>
+      </div>
+      <div class="model-card ajax">
+        <div class="mc-icon">🔵</div>
+        <div class="mc-title" style="color:#00d4ff;">Non-blocking (AJAX)</div>
+        <div class="mc-ar">بعت الطلب وفضلت شغال — مش بيستنى. بس كل ريسبونس محتاج ريكويست قبله.</div>
+      </div>
+      <div class="model-card comet">
+        <div class="mc-icon">🟣</div>
+        <div class="mc-title" style="color:#a78bfa;">Asynchronous (Comet)</div>
+        <div class="mc-ar">السيرفر بيبعت Data وقت ما يحب من غير ما الـ Client يطلب. Real-time فعلي.</div>
+      </div>
+      <div class="model-card ws">
+        <div class="mc-icon">🟢</div>
+        <div class="mc-title" style="color:#10b981;">WebSockets</div>
+        <div class="mc-ar">خط مفتوح بين Client وServer — بيكلموا بعض في أي وقت من غير Overhead.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SYNCHRONOUS ===================== -->
+<section class="section" id="sync">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#ef4444,#f97316);color:white;">1</div>
+    <h2>Synchronous Communication Model 🔴</h2>
+  </div>
+
+  <div class="card">
+    <h3>🔴 "Click, Wait, and Refresh" — الموديل القديم</h3>
+
+    <div class="en-term">
+      <span class="label">Core Definition</span>
+      Synchronous: user actions are BLOCKED until an HTTP Response is received. High coupling between Request and Response — every data transfer requires a preceding request.
+    </div>
+
+    <div class="ar-explain">
+      <span class="emoji">🐌</span>
+      <strong class="hl-red">Synchronous</strong> يعني إيه؟ يعني لما تعمل أي حاجة — زي ما تدوس زرار — <strong class="hl-yellow">كل حاجة بتتجمد وتستنى</strong> لحد ما السيرفر يرد. زي ما تكون بتكلم حد على التليفون، قلتله كلام، وقعدت صامت تستنى رده — مش قادر تعمل أي حاجة تانية.
+    </div>
+
+    <div class="ar-explain">
+      <span class="emoji">📋</span>
+      <strong>مثال ملموس — فورم Registration:</strong><br>
+      ١- كتبت Username → دوست Submit<br>
+      ٢- الـ Browser بعت <strong class="hl-blue">HTTP Request</strong> للـ Server<br>
+      ٣- <strong class="hl-red">الصفحة كلها اتجمدت</strong> تستنى<br>
+      ٤- السيرفر رد بـ <strong class="hl-blue">HTTP Response</strong> فيه صفحة HTML كاملة جديدة<br>
+      ٥- الـ Browser <strong class="hl-orange">شال الصفحة كلها وحطها</strong> من أول وجديد — حتى الحاجات اللي ما اتغيرتش!
+    </div>
+
+    <!-- FLOW DIAGRAM -->
+    <div class="diagram-wrap">
+      <h4>Synchronous Flow — كل request بيجيب صفحة كاملة جديدة</h4>
+      <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+        <!-- Browser -->
+        <rect x="20" y="60" width="120" height="80" rx="10" fill="#1a2235" stroke="#ef4444" stroke-width="2"/>
+        <text x="80" y="95" fill="#ef4444" font-size="13" text-anchor="middle" font-weight="bold">Browser</text>
+        <text x="80" y="115" fill="#94a3b8" font-size="11" text-anchor="middle">🔴 BLOCKED</text>
+
+        <!-- Server -->
+        <rect x="560" y="60" width="120" height="80" rx="10" fill="#1a2235" stroke="#10b981" stroke-width="2"/>
+        <text x="620" y="95" fill="#10b981" font-size="13" text-anchor="middle" font-weight="bold">Server</text>
+        <text x="620" y="115" fill="#94a3b8" font-size="11" text-anchor="middle">🟢 Processing</text>
+
+        <!-- Request arrow -->
+        <line x1="145" y1="90" x2="555" y2="90" stroke="#00d4ff" stroke-width="2" stroke-dasharray="6,3"/>
+        <polygon points="555,85 565,90 555,95" fill="#00d4ff"/>
+        <text x="350" y="82" fill="#00d4ff" font-size="12" text-anchor="middle">HTTP Request →</text>
+
+        <!-- Response arrow -->
+        <line x1="555" y1="130" x2="145" y2="130" stroke="#ff6b35" stroke-width="2"/>
+        <polygon points="145,125 135,130 145,135" fill="#ff6b35"/>
+        <text x="350" y="150" fill="#ff6b35" font-size="12" text-anchor="middle">← Full HTML Page (Response)</text>
+
+        <!-- User blocked -->
+        <text x="80" y="160" fill="#6272a4" font-size="10" text-anchor="middle">User can't do anything!</text>
+      </svg>
+    </div>
+
+    <h3>⚠️ مشاكل الموديل ده (Shortcomings)</h3>
+    <div class="warn-box">
+      <div class="icon">🐢</div>
+      <div>
+        <strong>Slow Performance:</strong> كل حاجة بسيطة محتاجة تبعت HTTP Request وتستنى Full Page — <strong class="hl-red">بطئ جداً</strong>. تخيل كل ما تكتب حرف في Search Box الصفحة تتشال!
+      </div>
+    </div>
+    <div class="warn-box">
+      <div class="icon">💔</div>
+      <div>
+        <strong>Loss of Operation Context:</strong> لما الصفحة تتشال وترجع، <strong class="hl-red">بتفقد كل اللي كنت فيه</strong> — مثلاً لو كنت Scroll تحت، ترجع للأول. Scroll position، form data اللي ما اتبعتش — كله بيتمسح.
+      </div>
+    </div>
+    <div class="warn-box">
+      <div class="icon">📡</div>
+      <div>
+        <strong>Excessive Server Load & Bandwidth:</strong> بيبعت الصفحة كاملة كل مرة حتى لو <strong class="hl-red">بس حاجة صغيرة اتغيرت</strong> — ده بيحمل السيرفر أكتر من اللازم ويستهلك Bandwidth زيادة.
+      </div>
+    </div>
+    <div class="tip-box">
+      <div class="icon">📝</div>
+      <div>
+        <strong>النتيجة النهائية:</strong> <em>"Slow, unreliable, low productivity, low interactivity and inefficient web applications"</em> — ده الملخص الرسمي في الـ Slide. <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AJAX ===================== -->
+<section class="section" id="ajax">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#00d4ff,#0ea5e9);color:#0a0e1a;">2</div>
+    <h2>Non-Blocking Model — AJAX 🔵</h2>
+  </div>
+
+  <div class="card">
+    <h3>📜 تاريخ AJAX — المهم تعرفه</h3>
+    <div class="ar-explain">
+      <span class="emoji">📅</span>
+      التاريخ ده مهم جداً في الامتحانات، خليك فاكره:
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>1999</strong> — Microsoft أطلقت "Outlook Web Access" كأول تطبيق بيستخدم مبدأ AJAX. في الوقت ده كان اسمه <strong class="hl-blue">XMLHttpRequest</strong>. بس بس IE بس اللي كان بيدعمه.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>~2002</strong> — Mozilla و Netscape طبّقوا الـ XMLHttpRequest في Mozilla 1.0 و Netscape 7 — بس النجاح كان محدود.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>2005</strong> — الانفجار الحقيقي: <strong class="hl-yellow">Jesse James Garrett</strong> كتب مقاله الشهير وأطلق اسم <strong class="hl-accent" style="color:#00d4ff;">"AJAX"</strong>. وGoogle Suggest و Google Maps اشتهروا باستخدام AJAX → <strong class="hl-green">Gained Popularity</strong>.</div>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <div class="icon">🎯</div>
+      <div>
+        <strong class="hl-yellow">حاجة مهمة جداً:</strong> IE5 و IE6 كانوا بيستخدموا <strong class="hl-orange">ActiveXObject</strong> مش XMLHttpRequest الـ native. IE7 بس اللي بدأ يدعم الـ native XMLHttpRequest. ده سؤال كتير بيجي في الامتحانات! <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔵 AJAX — تعريف Jesse James Garrett</h3>
+    <div class="en-term">
+      <span class="label">Official Definition</span>
+      "AJAX isn't a technology. It's really several technologies, each flourishing in its own right, coming together in powerful new ways."
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🧩</span>
+      <strong class="hl-blue">AJAX مش تكنولوجيا واحدة!</strong> ده مجموعة تكنولوجيات متجمعة مع بعض:
+    </div>
+
+    <div class="diagram-wrap" style="direction:ltr;">
+      <h4>AJAX = Bundle of Technologies</h4>
+      <svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+        <!-- Center -->
+        <circle cx="340" cy="140" r="55" fill="#0d1b35" stroke="#00d4ff" stroke-width="2.5"/>
+        <text x="340" y="135" fill="#00d4ff" font-size="16" text-anchor="middle" font-weight="bold">AJAX</text>
+        <text x="340" y="153" fill="#94a3b8" font-size="10" text-anchor="middle">The Engine</text>
+
+        <!-- XHTML+CSS -->
+        <rect x="10" y="20" width="150" height="50" rx="8" fill="#1a2235" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="85" y="42" fill="#ef4444" font-size="12" text-anchor="middle" font-weight="bold">XHTML + CSS</text>
+        <text x="85" y="58" fill="#94a3b8" font-size="10" text-anchor="middle">Presentation Layer</text>
+        <line x1="160" y1="45" x2="288" y2="115" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- DOM -->
+        <rect x="10" y="210" width="150" height="50" rx="8" fill="#1a2235" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="85" y="232" fill="#fbbf24" font-size="12" text-anchor="middle" font-weight="bold">DOM</text>
+        <text x="85" y="248" fill="#94a3b8" font-size="10" text-anchor="middle">Dynamic Display</text>
+        <line x1="160" y1="235" x2="288" y2="165" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- XML+XSLT -->
+        <rect x="260" y="10" width="160" height="50" rx="8" fill="#1a2235" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="340" y="32" fill="#a78bfa" font-size="12" text-anchor="middle" font-weight="bold">XML + XSLT</text>
+        <text x="340" y="48" fill="#94a3b8" font-size="10" text-anchor="middle">Data Interchange</text>
+        <line x1="340" y1="60" x2="340" y2="85" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- XMLHttpRequest -->
+        <rect x="520" y="20" width="150" height="50" rx="8" fill="#1a2235" stroke="#10b981" stroke-width="1.5"/>
+        <text x="595" y="38" fill="#10b981" font-size="11" text-anchor="middle" font-weight="bold">XMLHttpRequest</text>
+        <text x="595" y="55" fill="#94a3b8" font-size="10" text-anchor="middle">Async Data Retrieval</text>
+        <line x1="520" y1="45" x2="395" y2="115" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- JavaScript -->
+        <rect x="520" y="210" width="150" height="50" rx="8" fill="#1a2235" stroke="#ff6b35" stroke-width="1.5"/>
+        <text x="595" y="232" fill="#ff6b35" font-size="12" text-anchor="middle" font-weight="bold">JavaScript</text>
+        <text x="595" y="248" fill="#94a3b8" font-size="10" text-anchor="middle">Binding Everything!</text>
+        <line x1="520" y1="235" x2="395" y2="165" stroke="#ff6b35" stroke-width="1" stroke-dasharray="4,3"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔵 كيف AJAX بيشتغل — الـ AJAX Engine</h3>
+    <div class="en-term">
+      <span class="label">Key Concept</span>
+      AJAX introduces an intermediary called the "AJAX Engine" — responsible for rendering UI AND communicating with server on user's behalf. User actions generate JavaScript calls to the engine, NOT HTTP Requests directly.
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">⚙️</span>
+      فكرة AJAX بيحط <strong class="hl-blue">وسيط "AJAX Engine"</strong> بين الـ User وبين الـ Server. 
+      بدل ما كل كليكة تبعت HTTP Request وتستنى، الـ User دلوقتي بيكلم الـ Engine بـ <strong class="hl-yellow">JavaScript Call</strong>، والـ Engine هو اللي بيقرر امتى يكلم السيرفر.
+    </div>
+
+    <!-- AJAX Flow Diagram -->
+    <div class="diagram-wrap">
+      <h4>AJAX Architecture — User actions → Engine → Server (maybe)</h4>
+      <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+        <!-- User -->
+        <rect x="10" y="65" width="90" height="50" rx="8" fill="#1a2235" stroke="#fbbf24" stroke-width="2"/>
+        <text x="55" y="88" fill="#fbbf24" font-size="11" text-anchor="middle" font-weight="bold">User</text>
+        <text x="55" y="104" fill="#94a3b8" font-size="9" text-anchor="middle">Click/Type</text>
+
+        <!-- Arrow User → Engine -->
+        <line x1="100" y1="90" x2="190" y2="90" stroke="#fbbf24" stroke-width="1.5"/>
+        <polygon points="190,85 200,90 190,95" fill="#fbbf24"/>
+        <text x="150" y="82" fill="#fbbf24" font-size="9" text-anchor="middle">JS Call</text>
+
+        <!-- AJAX Engine -->
+        <rect x="200" y="45" width="130" height="90" rx="10" fill="#0d1b35" stroke="#00d4ff" stroke-width="2.5"/>
+        <text x="265" y="80" fill="#00d4ff" font-size="12" text-anchor="middle" font-weight="bold">AJAX Engine</text>
+        <text x="265" y="96" fill="#94a3b8" font-size="9" text-anchor="middle">Validate/Process</text>
+        <text x="265" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">local OR fetch</text>
+
+        <!-- Arrow Engine → Server (conditional) -->
+        <line x1="330" y1="90" x2="440" y2="90" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <polygon points="440,85 450,90 440,95" fill="#00d4ff"/>
+        <text x="390" y="80" fill="#00d4ff" font-size="9" text-anchor="middle">HTTP Request</text>
+        <text x="390" y="105" fill="#64748b" font-size="9" text-anchor="middle">(only if needed!)</text>
+
+        <!-- Server -->
+        <rect x="450" y="50" width="110" height="80" rx="8" fill="#1a2235" stroke="#10b981" stroke-width="2"/>
+        <text x="505" y="86" fill="#10b981" font-size="12" text-anchor="middle" font-weight="bold">Server</text>
+        <text x="505" y="102" fill="#94a3b8" font-size="9" text-anchor="middle">XML / JSON</text>
+
+        <!-- Response arrow down -->
+        <line x1="450" y1="110" x2="340" y2="130" stroke="#ff6b35" stroke-width="1.5"/>
+        <polygon points="340,125 330,133 338,136" fill="#ff6b35"/>
+        <text x="400" y="148" fill="#ff6b35" font-size="9" text-anchor="middle">← Response (partial data)</text>
+
+        <!-- Engine updates UI -->
+        <line x1="265" y1="135" x2="265" y2="160" stroke="#a78bfa" stroke-width="1.5"/>
+        <polygon points="260,155 265,165 270,155" fill="#a78bfa"/>
+        <text x="265" y="178" fill="#a78bfa" font-size="9" text-anchor="middle">Update only part of page ✓</text>
+      </svg>
+    </div>
+
+    <div class="tip-box">
+      <div class="icon">💡</div>
+      <div>
+        <strong>الفرق الجوهري:</strong> الـ AJAX Engine ممكن يعمل حاجات من غير ما يكلم السيرفر خالص! زي: <strong class="hl-green">Data Validation</strong> (الـ email صح؟) أو <strong class="hl-green">Navigation</strong> أو <strong class="hl-green">Editing data in memory</strong>. بس لو محتاج data من السيرفر، بيبعت Request <strong class="hl-yellow">Asynchronously</strong> — يعني مش بيوقف الـ User.
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <div class="icon">🎯</div>
+      <div>
+        <strong>نقطة امتحان مهمة جداً!</strong> الـ AJAX يقولوا عليه <strong class="hl-red">"Non-blocking" مش "Asynchronous" الحقيقية</strong> لأن لكل Server-side update لازم يحصل Full Request/Response round-trip. يعني في <strong class="hl-red">High Dependence</strong> بين الـ Request والـ Response. <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== XMLHttpRequest ===================== -->
+<section class="section" id="xmlhttprequest">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#ff6b35,#fbbf24);color:#0a0e1a;">3</div>
+    <h2>XMLHttpRequest Object ⚡ — قلب AJAX</h2>
+  </div>
+
+  <div class="card">
+    <div class="en-term">
+      <span class="label">Definition</span>
+      XMLHttpRequest provides a client-side programming API for transfer of data via HTTP behind the scenes — without causing a complete page refresh.
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">❤️</span>
+      الـ <strong class="hl-blue">XMLHttpRequest</strong> ده هو <strong class="hl-orange">قلب AJAX</strong>. ده Object بيديك API تبعت بيه HTTP Requests في الـ Background من غير ما الصفحة تتشال. ببساطة: ده هو الحاجة اللي بتخليك تكلم السيرفر "سري".
+    </div>
+
+    <h3>🏗️ إزاي تعمل XMLHttpRequest Object</h3>
+    <div class="code-block">
+      <div class="code-title">📄 الطريقة الصح — Compatible مع كل المتصفحات</div>
+      <pre><span class="kw">function</span> <span class="fn">getXMLHttpRequest</span>() {
+  <span class="com">// Modern browsers (IE7+, Firefox, Chrome, Safari)</span>
+  <span class="kw">if</span> (window.XMLHttpRequest) {
+    <span class="kw">return new</span> <span class="fn">XMLHttpRequest</span>();
+  }
+  <span class="com">// IE6 and below — uses ActiveX!</span>
+  <span class="kw">else if</span> (window.ActiveXObject) {
+    <span class="kw">try</span> {
+      <span class="kw">return new</span> <span class="fn">ActiveXObject</span>(<span class="str">"Msxml2.XMLHTTP"</span>); <span class="com">// IE5, IE6</span>
+    } <span class="kw">catch</span>(e) {
+      <span class="kw">try</span> {
+        <span class="kw">return new</span> <span class="fn">ActiveXObject</span>(<span class="str">"Microsoft.XMLHTTP"</span>); <span class="com">// Older IE</span>
+      } <span class="kw">catch</span>(e) { <span class="kw">return null</span>; }
+    }
+  }
+  <span class="kw">return false</span>;
+}</pre>
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🔍</span>
+      بنبص الأول هل <code>window.XMLHttpRequest</code> موجود (المتصفحات الحديثة)، لو لأ بنجرب ActiveXObject (IE القديم). الـ <strong class="hl-yellow">try-catch</strong> عشان لو النسخة الأولى ما نجحتش نجرب التانية.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Methods — الأوامر</h3>
+
+    <div class="en-term">
+      <span class="label">Method 1</span>
+      open("method", "URL", [async, userName, password]) — Pre-sets up a connection. async defaults to FALSE!
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🔧</span>
+      <strong>open()</strong> بتحضر الـ Connection — بتقوله:
+      <br>- الـ Method هايبعت بيها (GET أو POST)
+      <br>- الـ URL اللي هايبعت عليها
+      <br>- <strong class="hl-red">async بـ default = false!</strong> يعني لو ما كتبتش true، هيبقى synchronous
+    </div>
+    <div class="warn-box">
+      <div class="icon">⚠️</div>
+      <div>
+        <strong class="hl-red">نقطة خطيرة جداً!</strong> الـ async parameter الـ Default بتاعه هو <strong class="hl-red">false</strong>. يعني لو كتبت <code>req.open("GET", "url")</code> من غير الـ true، <strong>هيبقى Synchronous</strong> وهيحجز الـ User! لازم تكتب <code>req.open("GET", "url", true)</code> عشان يبقى Async. <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+
+    <div class="en-term">
+      <span class="label">Method 2</span>
+      send("data") — Activates the open() settings and sends the request. GET → send(null). POST → send("key=val&key2=val2")
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🚀</span>
+      <strong>send()</strong> بيبعت الـ Request فعلاً. لو GET → تبعت <code>null</code>. لو POST → تبعت الـ Data زي: <code>"page=1&section=4"</code>
+    </div>
+
+    <div class="en-term">
+      <span class="label">Method 3</span>
+      abort() — Cancels the current request
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🛑</span>
+      <strong>abort()</strong> ببساطة بيلغي الـ Request اللي ماشي.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 Properties — الخصائص المهمة جداً</h3>
+
+    <div class="en-term">
+      <span class="label">Key Property</span>
+      onreadystatechange — Event handler pointing to the callback function. Fires every time readyState changes.
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">📡</span>
+      <strong class="hl-blue">onreadystatechange</strong> ده Event Handler. كل ما الـ <code>readyState</code> يتغير، الـ Function اللي حاطها هنا بتتنفذ. <strong class="hl-yellow">هو قلب الـ Async processing!</strong>
+    </div>
+
+    <div class="en-term">
+      <span class="label">Critical Property — readyState</span>
+      Returns current HTTP Request processing status. Five values: 0=Uninitialized, 1=Loading, 2=Loaded, 3=Interactive, 4=Complete
+    </div>
+
+    <div class="diagram-wrap">
+      <h4>readyState Values — الحالات الخمسة</h4>
+      <table class="rs-table">
+        <tr>
+          <th>Value</th>
+          <th>Name</th>
+          <th>ما اللي بيحصل</th>
+        </tr>
+        <tr>
+          <td><span class="rs-num" style="background:rgba(239,68,68,0.2);color:#ef4444;">0</span></td>
+          <td style="color:#ef4444;font-weight:700;">Uninitialized</td>
+          <td style="color:#94a3b8;">الـ Object اتعمل بس الـ open() ما اتكلتش عليه لسه</td>
+        </tr>
+        <tr>
+          <td><span class="rs-num" style="background:rgba(251,191,36,0.2);color:#fbbf24;">1</span></td>
+          <td style="color:#fbbf24;font-weight:700;">Loading</td>
+          <td style="color:#94a3b8;">الـ open() اتكلت بس الـ send() لسه ما اتبعتش</td>
+        </tr>
+        <tr>
+          <td><span class="rs-num" style="background:rgba(255,107,53,0.2);color:#ff6b35;">2</span></td>
+          <td style="color:#ff6b35;font-weight:700;">Loaded</td>
+          <td style="color:#94a3b8;">الـ Request اتبعت</td>
+        </tr>
+        <tr>
+          <td><span class="rs-num" style="background:rgba(0,212,255,0.2);color:#00d4ff;">3</span></td>
+          <td style="color:#00d4ff;font-weight:700;">Interactive</td>
+          <td style="color:#94a3b8;">جزء من الـ Response وصل — ناقص</td>
+        </tr>
+        <tr>
+          <td><span class="rs-num" style="background:rgba(16,185,129,0.2);color:#10b981;">4</span></td>
+          <td style="color:#10b981;font-weight:700;">Complete</td>
+          <td style="color:#94a3b8;">كل الـ Data وصلت والـ Connection اتغلق ✅</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="warn-box">
+      <div class="icon">🎯</div>
+      <div>
+        <strong>دايماً بتشيك على:</strong> <code>readyState == 4 && status == 200</code> — يعني "الـ Response كامل وناجح". ٤ تعني Complete و٢٠٠ هو HTTP Status Code بمعنى OK. <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+
+    <div class="en-term">
+      <span class="label">Response Properties</span>
+      responseText → response as string | responseXML → response in XML format | status → numeric HTTP code | statusText → text of HTTP code
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">📥</span>
+      بعد ما يكتمل الـ Response عندك:
+      <br>- <strong class="hl-blue">responseText</strong>: الـ Response كـ String عادي
+      <br>- <strong class="hl-purple">responseXML</strong>: الـ Response كـ XML Document جاهز تتعامل معاه بالـ DOM
+      <br>- <strong class="hl-green">status</strong>: الكود الرقمي (200, 404, 500...)
+      <br>- <strong class="hl-yellow">statusText</strong>: النص المقابل ("OK", "Not Found", "Internal Server Error"...)
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>💻 AJAX Hello World Example — مثال كامل</h3>
+    <div class="ar-explain">
+      <span class="emoji">📁</span>
+      المثال فيه <strong class="hl-blue">٣ ملفات</strong>: helloworld.html (الـ UI) + helloworld.js (الـ Logic) + helloworld.xml (الـ Data). الفكرة: لما تضغط Button، يجيب الـ XML ويعرضه في الصفحة من غير Refresh.
+    </div>
+
+    <div class="code-block">
+      <div class="code-title">📄 helloworld.html — الـ UI</div>
+      <pre><span class="kw">&lt;html&gt;</span>
+<span class="kw">&lt;head&gt;</span>
+  <span class="kw">&lt;script</span> type=<span class="str">"text/javascript"</span> src=<span class="str">"helloworld.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+<span class="kw">&lt;/head&gt;</span>
+<span class="kw">&lt;body&gt;</span>
+  <span class="com">&lt;!-- زرار بيستدعي الـ loadData() --&gt;</span>
+  <span class="kw">&lt;input</span> type=<span class="str">"button"</span> onclick=<span class="str">"javascript:loadData();"</span>
+         value=<span class="str">"Get XML data"</span><span class="kw">/&gt;</span>
+  
+  <span class="com">&lt;!-- المكان اللي هيتحدث من غير Refresh --&gt;</span>
+  <span class="kw">&lt;div</span> id=<span class="str">"present"</span><span class="kw">&gt;&lt;/div&gt;</span>
+<span class="kw">&lt;/body&gt;</span>
+<span class="kw">&lt;/html&gt;</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-title">📄 helloworld.xml — البيانات</div>
+      <pre><span class="kw">&lt;?xml</span> version=<span class="str">"1.0"</span> encoding=<span class="str">"UTF-8"</span><span class="kw">?&gt;</span>
+<span class="kw">&lt;helloworld&gt;</span>
+  <span class="kw">&lt;message&gt;&lt;lang&gt;</span>Chinese<span class="kw">&lt;/lang&gt;&lt;text&gt;</span>你好世界!<span class="kw">&lt;/text&gt;&lt;/message&gt;</span>
+  <span class="kw">&lt;message&gt;&lt;lang&gt;</span>English<span class="kw">&lt;/lang&gt;&lt;text&gt;</span>Hello world!<span class="kw">&lt;/text&gt;&lt;/message&gt;</span>
+  <span class="kw">&lt;message&gt;&lt;lang&gt;</span>French<span class="kw">&lt;/lang&gt;&lt;text&gt;</span>Salut le monde!<span class="kw">&lt;/text&gt;&lt;/message&gt;</span>
+<span class="kw">&lt;/helloworld&gt;</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-title">📄 helloworld.js — الـ Logic الكاملة</div>
+      <pre><span class="kw">function</span> <span class="fn">loadData</span>() {
+  <span class="com">// ١- جيب Object</span>
+  <span class="kw">var</span> <span class="var">req</span> = <span class="fn">getXMLHttpRequest</span>();
+  
+  <span class="com">// ٢- حضّر الـ Request (GET, URL, async=true)</span>
+  <span class="var">req</span>.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"helloworld.xml"</span>, <span class="kw">true</span>);
+  
+  <span class="com">// ٣- حدد الـ Callback — هتتنفذ كل ما readyState تتغير</span>
+  <span class="var">req</span>.<span class="prop">onreadystatechange</span> = <span class="kw">function</span>() {
+    <span class="com">// ٤- اشتغل بس لما الـ Response كامل وناجح</span>
+    <span class="kw">if</span>(<span class="var">req</span>.<span class="prop">readyState</span> == <span class="num">4</span> && <span class="var">req</span>.<span class="prop">status</span> == <span class="num">200</span>) {
+      
+      <span class="com">// ٥- حط Table جوه الـ div</span>
+      <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">"present"</span>).<span class="prop">innerHTML</span> = 
+        <span class="str">"&lt;table&gt;&lt;tr&gt;&lt;td id=\"content\"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</span>;
+      
+      <span class="kw">var</span> <span class="var">output</span> = <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">"content"</span>);
+      <span class="kw">var</span> <span class="var">xml</span> = <span class="var">req</span>.<span class="prop">responseXML</span>;  <span class="com">// XML Document</span>
+      
+      <span class="com">// ٦- Loop على الـ childNodes</span>
+      <span class="kw">for</span>(<span class="kw">var</span> <span class="var">i</span>=<span class="num">0</span>; <span class="var">i</span>&lt;<span class="var">xml</span>.<span class="prop">documentElement</span>.<span class="prop">childNodes</span>.<span class="prop">length</span>; <span class="var">i</span>++) {
+        
+        <span class="com">// ⚠️ Firefox: فراغات بتبقى TEXT_NODE — skip them!</span>
+        <span class="kw">if</span>(<span class="var">xml</span>.<span class="prop">documentElement</span>.<span class="prop">childNodes</span>[<span class="var">i</span>].<span class="prop">nodeType</span> == <span class="num">3</span>) <span class="kw">continue</span>;
+        
+        <span class="com">// اجيب الـ lang text</span>
+        <span class="kw">var</span> <span class="var">langTag</span> = <span class="var">xml</span>.<span class="prop">documentElement</span>
+          .<span class="prop">childNodes</span>[<span class="var">i</span>]
+          .<span class="fn">getElementsByTagName</span>(<span class="str">"lang"</span>)[<span class="num">0</span>]
+          .<span class="prop">firstChild</span>.<span class="prop">nodeValue</span>;
+        
+        <span class="var">output</span>.<span class="fn">appendChild</span>(<span class="var">document</span>.<span class="fn">createTextNode</span>(<span class="var">langTag</span>));
+        <span class="var">output</span>.<span class="fn">appendChild</span>(<span class="var">document</span>.<span class="fn">createTextNode</span>(<span class="str">" -- "</span>));
+        
+        <span class="com">// اجيب الـ text value</span>
+        <span class="kw">var</span> <span class="var">textTag</span> = <span class="var">xml</span>.<span class="prop">documentElement</span>
+          .<span class="prop">childNodes</span>[<span class="var">i</span>]
+          .<span class="fn">getElementsByTagName</span>(<span class="str">"text"</span>)[<span class="num">0</span>]
+          .<span class="prop">firstChild</span>.<span class="prop">nodeValue</span>;
+        
+        <span class="var">output</span>.<span class="fn">appendChild</span>(<span class="var">document</span>.<span class="fn">createTextNode</span>(<span class="var">textTag</span>));
+        <span class="var">output</span>.<span class="fn">appendChild</span>(<span class="var">document</span>.<span class="fn">createElement</span>(<span class="str">"br"</span>));
+      }
+    }
+  };
+  
+  <span class="com">// ٧- ابعت الـ Request (GET → null)</span>
+  <span class="var">req</span>.<span class="fn">send</span>(<span class="kw">null</span>);
+}</pre>
+    </div>
+
+    <div class="warn-box">
+      <div class="icon">🦊</div>
+      <div>
+        <strong class="hl-yellow">Firefox Gotcha!</strong> الـ <code>nodeType == 3</code> check ده مهم جداً! Firefox بيفسر الـ spaces والـ line breaks بين الـ XML tags كـ <strong>TEXT_NODE</strong>. لو ما عملتش الـ check ده، الـ loop هيعطيك Error عشان هيحاول يعمل getElementsByTagName على Text Node. <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== JSON ===================== -->
+<section class="section" id="json">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0a0e1a;">4</div>
+    <h2>JSON — البديل الأخف 📦</h2>
+  </div>
+
+  <div class="card">
+    <div class="en-term">
+      <span class="label">Why JSON?</span>
+      X in AJAX = XML. But XML creates unnecessary overhead. JSON is: lightweight, compact, language-independent, faster to parse than XML.
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">⚖️</span>
+      الـ X في AJAX يعني XML — بس XML فيها <strong class="hl-red">overhead زيادة</strong> (Tags طويلة، Parsing بطيء). الـ <strong class="hl-yellow">JSON</strong> بقى هو البديل الأشهر دلوقتي لأنه:
+      <br>• <strong class="hl-green">Compact</strong> — أقل bytes، أقل bandwidth
+      <br>• <strong class="hl-green">Lightweight</strong> — Parsing أسرع من XML
+      <br>• <strong class="hl-green">Language-independent</strong> — بيتعامل معاه أي لغة
+      <br>• <strong class="hl-green">Familiar</strong> — بيستخدم syntax قريبة من C-family
+    </div>
+
+    <h3>🏗️ JSON Structure — التركيب</h3>
+
+    <div class="diagram-wrap" style="direction:ltr;">
+      <h4>JSON Building Blocks</h4>
+      <svg viewBox="0 0 660 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:660px;display:block;margin:0 auto;">
+        <!-- Object -->
+        <rect x="20" y="20" width="180" height="90" rx="10" fill="#1a2235" stroke="#fbbf24" stroke-width="2"/>
+        <text x="110" y="48" fill="#fbbf24" font-size="14" text-anchor="middle" font-weight="bold">Object {}</text>
+        <text x="110" y="68" fill="#94a3b8" font-size="11" text-anchor="middle">Unordered name/value pairs</text>
+        <text x="110" y="84" fill="#10b981" font-size="12" text-anchor="middle">{"name": "Ahmed"}</text>
+        <text x="110" y="100" fill="#94a3b8" font-size="10" text-anchor="middle">Colon: name:value | Comma between</text>
+
+        <!-- Array -->
+        <rect x="240" y="20" width="180" height="90" rx="10" fill="#1a2235" stroke="#00d4ff" stroke-width="2"/>
+        <text x="330" y="48" fill="#00d4ff" font-size="14" text-anchor="middle" font-weight="bold">Array []</text>
+        <text x="330" y="68" fill="#94a3b8" font-size="11" text-anchor="middle">Ordered collection</text>
+        <text x="330" y="84" fill="#10b981" font-size="12" text-anchor="middle">["one", "two", "three"]</text>
+        <text x="330" y="100" fill="#94a3b8" font-size="10" text-anchor="middle">Values separated by commas</text>
+
+        <!-- Values -->
+        <rect x="460" y="20" width="180" height="150" rx="10" fill="#1a2235" stroke="#a78bfa" stroke-width="2"/>
+        <text x="550" y="48" fill="#a78bfa" font-size="14" text-anchor="middle" font-weight="bold">Values</text>
+        <text x="550" y="68" fill="#f1fa8c" font-size="11" text-anchor="middle">"string"</text>
+        <text x="550" y="88" fill="#bd93f9" font-size="11" text-anchor="middle">42 (Number)</text>
+        <text x="550" y="108" fill="#10b981" font-size="11" text-anchor="middle">true / false (Boolean)</text>
+        <text x="550" y="128" fill="#fbbf24" font-size="11" text-anchor="middle">{} Object</text>
+        <text x="550" y="148" fill="#00d4ff" font-size="11" text-anchor="middle">[] Array</text>
+        <text x="550" y="165" fill="#6272a4" font-size="10" text-anchor="middle">Can be NESTED!</text>
+
+        <!-- Note about nesting -->
+        <text x="110" y="150" fill="#a78bfa" font-size="11" text-anchor="middle">These structures</text>
+        <text x="110" y="165" fill="#a78bfa" font-size="11" text-anchor="middle">can be NESTED!</text>
+        <text x="330" y="150" fill="#a78bfa" font-size="11" text-anchor="middle">Objects inside arrays</text>
+        <text x="330" y="165" fill="#a78bfa" font-size="11" text-anchor="middle">arrays inside objects...</text>
+      </svg>
+    </div>
+
+    <div class="code-block">
+      <div class="code-title">📄 JSON Example — نفس الـ Hello World بس بـ JSON</div>
+      <pre>{
+  <span class="str">"helloworld"</span>: [
+    { <span class="str">"lang"</span>: <span class="str">"English"</span>, <span class="str">"text"</span>: <span class="str">"Hello World!"</span> },
+    { <span class="str">"lang"</span>: <span class="str">"French"</span>,  <span class="str">"text"</span>: <span class="str">"Salut le Monde!"</span> },
+    { <span class="str">"lang"</span>: <span class="str">"German"</span>,  <span class="str">"text"</span>: <span class="str">"Hallo Welt!"</span> }
+  ]
+}
+<span class="com">// هنا "helloworld" هو Object key، وقيمته Array من Objects</span>
+<span class="com">// كل Object جواه فيه "lang" و "text"</span></pre>
+    </div>
+
+    <div class="tip-box">
+      <div class="icon">⚖️</div>
+      <div>
+        <strong>XML vs JSON — المقارنة السريعة:</strong> نفس الـ Data، الـ JSON أقصر وأسرع في الـ Parsing. الـ JavaScript بتعامل معاه بشكل Native بـ <code>JSON.parse()</code>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMET ===================== -->
+<section class="section" id="comet">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;">5</div>
+    <h2>Asynchronous Model — Comet 🟣</h2>
+  </div>
+
+  <div class="card">
+    <div class="en-term">
+      <span class="label">Core Concept</span>
+      Comet enables web servers to send data to the client with only an initial HTTP Request — without the client needing to request data again. Completely asynchronous → low-latency data transfer.
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">📡</span>
+      المشكلة في AJAX إنه لكل بيانات جديدة محتاج الـ Client يبعت Request جديد. <strong class="hl-purple">Comet</strong> حل ده — الـ Client بيبعت Request واحد بس، والسيرفر بيفضل يبعت Data في أي وقت من غير ما يستنى حد يطلبه. <strong class="hl-green">= Real-time push!</strong>
+    </div>
+
+    <div class="warn-box">
+      <div class="icon">📅</div>
+      <div>
+        <strong>التاريخ مهم:</strong> في <strong class="hl-yellow">March 2006</strong>، <strong class="hl-yellow">Alex Russell</strong> (project leader of Dojo Toolkit — Ajax framework) صاغ مصطلح "Comet". <strong>Comet مش اختصار لحاجة!</strong> زي AJAX، ده buzzword. <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="icon">🎯</div>
+      <div>
+        <strong>Scope of Application — إمتى تستخدمه؟</strong> التطبيقات اللي محتاج فيها Real-time data زي: <strong class="hl-blue">Chat applications</strong>، <strong class="hl-green">Stock exchange</strong> (البورصة)، <strong class="hl-orange">eBay next-gen</strong> (يعرفك أحدث عرض من غير ما تضغط Refresh).
+      </div>
+    </div>
+
+    <h3>⚙️ إزاي Comet بيشتغل — Long-Polling</h3>
+
+    <div class="diagram-wrap">
+      <h4>Comet Long-Polling — خط مفتوح مع السيرفر</h4>
+      <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+        <!-- Client -->
+        <rect x="20" y="80" width="120" height="100" rx="10" fill="#1a2235" stroke="#a78bfa" stroke-width="2"/>
+        <text x="80" y="110" fill="#a78bfa" font-size="13" text-anchor="middle" font-weight="bold">Browser</text>
+        <text x="80" y="128" fill="#94a3b8" font-size="10" text-anchor="middle">Comet Engine</text>
+        <text x="80" y="145" fill="#10b981" font-size="10" text-anchor="middle">🟢 Free to use</text>
+        <text x="80" y="162" fill="#94a3b8" font-size="9" text-anchor="middle">UI not blocked</text>
+
+        <!-- Server -->
+        <rect x="560" y="30" width="120" height="190" rx="10" fill="#1a2235" stroke="#a78bfa" stroke-width="2"/>
+        <text x="620" y="58" fill="#a78bfa" font-size="13" text-anchor="middle" font-weight="bold">Server</text>
+        <text x="620" y="78" fill="#94a3b8" font-size="10" text-anchor="middle">Comet Event Bus</text>
+        <text x="620" y="100" fill="#fbbf24" font-size="10" text-anchor="middle">⏳ Waiting for</text>
+        <text x="620" y="116" fill="#fbbf24" font-size="10" text-anchor="middle">events...</text>
+
+        <!-- Long connection arrow -->
+        <line x1="145" y1="100" x2="555" y2="60" stroke="#a78bfa" stroke-width="2.5"/>
+        <polygon points="555,55 565,63 556,68" fill="#a78bfa"/>
+        <text x="350" y="55" fill="#a78bfa" font-size="11" text-anchor="middle">Initial HTTP Request (opens connection)</text>
+
+        <!-- Data push arrows -->
+        <line x1="555" y1="130" x2="145" y2="140" stroke="#10b981" stroke-width="2"/>
+        <polygon points="145,135 135,143 144,148" fill="#10b981"/>
+        <text x="350" y="122" fill="#10b981" font-size="11" text-anchor="middle">← Data Push (event happened!)</text>
+
+        <line x1="555" y1="170" x2="145" y2="175" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <polygon points="145,170 135,178 144,183" fill="#10b981"/>
+        <text x="350" y="165" fill="#10b981" font-size="11" text-anchor="middle">← Data Push (another event)</text>
+
+        <!-- Upload connection -->
+        <line x1="145" y1="185" x2="555" y2="210" stroke="#ff6b35" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <polygon points="555,205 565,213 556,218" fill="#ff6b35"/>
+        <text x="350" y="225" fill="#ff6b35" font-size="10" text-anchor="middle">Separate HTTP connection for UPLOADING data</text>
+      </svg>
+    </div>
+
+    <div class="ar-explain">
+      <span class="emoji">🔑</span>
+      الـ Comet بيعمل:
+      <br>• <strong class="hl-purple">Long-living HTTP Connection</strong> — بيفتح Connection واحد وبيفضله مفتوح
+      <br>• <strong class="hl-green">Server Push</strong> — السيرفر بيبعت Data وقت ما يجيله Event
+      <br>• لو الـ Client هيبعت Data للسيرفر، <strong class="hl-orange">محتاج Connection تاني</strong> منفصل
+      <br>• ده بيتسمى برضو <strong class="hl-yellow">"HTTP Streaming"</strong>
+    </div>
+
+    <div class="warn-box">
+      <div class="icon">⚠️</div>
+      <div>
+        <strong>مشاكل Long-Polling:</strong>
+        <br>١- <strong class="hl-red">Overhead</strong> من HTTP Headers
+        <br>٢- <strong class="hl-red">Inefficiency</strong> — الـ Connection مفتوح حتى لو ما فيش أي events
+        <br>→ الحل: WebSockets! <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WEBSOCKETS ===================== -->
+<section class="section" id="websockets">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#10b981,#059669);color:white;">6</div>
+    <h2>WebSockets 🟢 — الحل الأمثل</h2>
+  </div>
+
+  <div class="card">
+    <h3>❓ ليه WebSockets؟ مشاكل HTTP Streaming</h3>
+    <div class="en-term">
+      <span class="label">HTTP Streaming Shortcomings</span>
+      1. Overhead due to HTTP headers and unnecessary HTTP requests in long-polling. 2. Communication channel is UNIDIRECTIONAL — separate HTTP requests needed for bidirectional exchange.
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🔧</span>
+      مشكلتين رئيسيتين في الـ HTTP-based solutions:
+      <br>١- <strong class="hl-red">Overhead:</strong> كل HTTP Request فيه Header كبيرة — لو بتبعت messages صغيرة كتير، الـ Header أكبر من الـ Data نفسها!
+      <br>٢- <strong class="hl-red">Unidirectional:</strong> الـ HTTP Connection بيتفتح في اتجاه واحد. عشان تبعت وتستقبل في نفس الوقت محتاج Connections منفصلة.
+    </div>
+
+    <div class="en-term">
+      <span class="label">WebSockets Solution</span>
+      Standard for TCP-based BIDIRECTIONAL communication channels. Associated with HTML5. Widely supported in modern browsers and web servers. Defined by IETF in RFC 6455 (Protocol) and W3C (JavaScript API).
+    </div>
+    <div class="ar-explain">
+      <span class="emoji">🚀</span>
+      الـ <strong class="hl-green">WebSockets</strong> بيعمل:
+      <br>• <strong class="hl-blue">TCP-based</strong> — بيستخدم TCP مباشرة مش HTTP فوقيه
+      <br>• <strong class="hl-green">Bidirectional (Full-Duplex)</strong> — Client وServer يكلموا بعض في نفس الوقت على نفس الـ Connection
+      <br>• <strong class="hl-yellow">HTML5 Standard</strong> — مش تجربة، ده Standard رسمي
+      <br>• <strong class="hl-purple">RFC 6455</strong> بيعرف الـ Protocol، <strong class="hl-purple">W3C</strong> بيعرف الـ JavaScript API
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🤝 WebSocket Handshake — كيف يتفتح الـ Connection</h3>
+    <div class="en-term">
+      <span class="label">Process</span>
+      WebSocket connection established using existing TCP connection via HTTP protocol. Three steps: Client sends HTTP Upgrade Request → Server responds with HTTP 101 Switching Protocols → WebSocket messages exchanged.
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>HTTP Upgrade Request:</strong> الـ Client بيبعت HTTP Request عادي بس فيه Header خاص <code>Upgrade: websocket</code> يقول "عايز أترقى لـ WebSocket"</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>HTTP 101 Switching Protocols:</strong> السيرفر لو موافق بيرد بـ Status Code 101 — يعني "تمام، بنتحول"</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>WebSocket Connection Established:</strong> دلوقتي عندك خط مفتوح TCP، تقدر تبعت وتستقبل Binary أو UTF-8 messages في أي اتجاه في أي وقت!</div>
+      </div>
+    </div>
+
+    <h3>🔐 Handshake Details — التفاصيل الفنية</h3>
+    <div class="code-block">
+      <div class="code-title">📤 Client Request</div>
+      <pre><span class="kw">GET</span> /chat HTTP/1.1
+<span class="prop">Host:</span> server.example.com
+<span class="prop">Upgrade:</span> <span class="str">websocket</span>          <span class="com">← اللي بيقول "عايز WebSocket"</span>
+<span class="prop">Connection:</span> <span class="str">Upgrade</span>
+<span class="prop">Sec-WebSocket-Key:</span> <span class="str">dGhlIHNhbXBsZSBub25jZQ==</span>  <span class="com">← Base64 Random String</span>
+<span class="prop">Origin:</span> http://example.com
+<span class="prop">Sec-WebSocket-Protocol:</span> <span class="str">chat, superchat</span>  <span class="com">← App-specific protocols</span>
+<span class="prop">Sec-WebSocket-Version:</span> <span class="num">13</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-title">📥 Server Response</div>
+      <pre><span class="kw">HTTP/1.1</span> <span class="num">101</span> Switching Protocols     <span class="com">← 101 = Switch accepted!</span>
+<span class="prop">Upgrade:</span> <span class="str">websocket</span>
+<span class="prop">Connection:</span> <span class="str">Upgrade</span>
+<span class="prop">Sec-WebSocket-Accept:</span> <span class="str">s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</span>  <span class="com">← Derived from Key</span>
+<span class="prop">Sec-WebSocket-Protocol:</span> <span class="str">chat</span>   <span class="com">← Protocol accepted</span></pre>
+    </div>
+
+    <div class="warn-box">
+      <div class="icon">🔑</div>
+      <div>
+        <strong class="hl-yellow">الـ Key/Accept Logic — مهم جداً:</strong>
+        <br>الـ Client بيبعت <code>Sec-WebSocket-Key</code> وهو Base64-encoded random string.
+        <br>السيرفر بياخد الـ Key ده + بيضيفله string ثابت هو: <code>"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"</code>
+        <br>بيعمل SHA-1 hash للـ concatenation ده
+        <br>بيعمل Base64-encode للـ hash
+        <br>النتيجة دي هي الـ <code>Sec-WebSocket-Accept</code>
+        <br>→ ده بيثبت إن السيرفر <strong>فاهم WebSocket</strong> وموافق على الـ Connection. <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>💻 WebSocket JavaScript API</h3>
+    <div class="code-block">
+      <div class="code-title">📄 WebSocket API — الـ Events والـ Methods</div>
+      <pre><span class="com">// إنشاء WebSocket connection</span>
+<span class="kw">var</span> <span class="var">ws</span> = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">"ws://localhost:9998/chat"</span>);
+<span class="com">// لاحظ: ws:// مش http://</span>
+
+<span class="com">// Event: Connection opened</span>
+<span class="var">ws</span>.<span class="prop">onopen</span> = <span class="kw">function</span>() {
+  <span class="var">ws</span>.<span class="fn">send</span>(<span class="str">"Hello Server!"</span>);  <span class="com">// بعت message</span>
+  <span class="fn">alert</span>(<span class="str">"Connected & message sent!"</span>);
+};
+
+<span class="com">// Event: Message received FROM server</span>
+<span class="var">ws</span>.<span class="prop">onmessage</span> = <span class="kw">function</span>(<span class="var">evt</span>) {
+  <span class="kw">var</span> <span class="var">received</span> = <span class="var">evt</span>.<span class="prop">data</span>;  <span class="com">// الـ message اللي جت</span>
+  <span class="fn">alert</span>(<span class="str">"Received: "</span> + <span class="var">received</span>);
+};
+
+<span class="com">// Event: Connection closed</span>
+<span class="var">ws</span>.<span class="prop">onclose</span> = <span class="kw">function</span>() {
+  <span class="fn">alert</span>(<span class="str">"Connection closed"</span>);
+};
+
+<span class="com">// Event: Error occurred</span>
+<span class="var">ws</span>.<span class="prop">onerror</span> = <span class="kw">function</span>(<span class="var">error</span>) {
+  <span class="fn">console</span>.<span class="fn">error</span>(<span class="str">"WebSocket error: "</span> + <span class="var">error</span>);
+};
+
+<span class="com">// إغلاق الـ connection</span>
+<span class="var">ws</span>.<span class="fn">close</span>();</pre>
+    </div>
+
+    <div class="tip-box">
+      <div class="icon">📝</div>
+      <div>
+        <strong>الـ 4 Events:</strong> <code>onopen</code> / <code>onclose</code> / <code>onerror</code> / <code>onmessage</code>
+        <br><strong>الـ 2 Methods:</strong> <code>send(string)</code> / <code>close()</code>
+        <br>الـ URL بتبدأ بـ <code>ws://</code> (أو <code>wss://</code> للـ secure) مش <code>http://</code>
+        <span class="exam-badge">⚠️ امتحان</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRICKY ===================== -->
+<section class="section" id="tricky">
+  <div class="section-header">
+    <div class="section-num" style="background:linear-gradient(135deg,#fbbf24,#ef4444);color:white;">⚠️</div>
+    <h2>الفنيات والحاجات اللي بتلغبط 🎯</h2>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ أخطر الـ Tricky Points — اللي بيلغبط في الامتحان</h3>
+
+    <div class="tricky-item">
+      <h4>⚡ 1. async Default = false !</h4>
+      <div>
+        الـ <code>open()</code> method الـ Parameter التالت <code>async</code> الـ <strong class="hl-red">Default بتاعه false</strong> — مش true!
+        <br>لو كتبت <code>req.open("GET", "url")</code> من غير <code>true</code> → هيبقى <strong>Synchronous</strong> وهيحجز الـ User!
+        <br>دايماً لازم تكتب: <code>req.open("GET", "url", true)</code>
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 2. AJAX مش Asynchronous حقيقية!</h4>
+      <div>
+        رغم إن الاسم فيه "Asynchronous"، الـ AJAX يتوصف في الـ Lecture بـ <strong class="hl-red">"Non-blocking"</strong> مش "Asynchronous" كاملة.
+        <br>السبب: فيه <strong class="hl-red">High Dependence</strong> بين Request وResponse — كل response من السيرفر محتاج Request كامل قبله.
+        <br>بينما Comet وWebSockets دول اللي فيهم <strong class="hl-green">Minimum Dependence</strong> — يعني الـ True Asynchronous.
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 3. IE Browser History — مهم جداً</h4>
+      <div>
+        <strong class="hl-yellow">IE5/IE6:</strong> بيستخدموا <code>new ActiveXObject("Msxml2.XMLHTTP")</code> أو <code>"Microsoft.XMLHTTP"</code>
+        <br><strong class="hl-green">IE7+:</strong> بيدعم native <code>new XMLHttpRequest()</code>
+        <br>الترتيب في الكود: الأول نشيك على <code>window.XMLHttpRequest</code>، لو مش موجود نشيك على <code>window.ActiveXObject</code>
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 4. Firefox nodeType==3 Bug</h4>
+      <div>
+        لما بتقرأ XML في JavaScript، Firefox بيعتبر الـ whitespace والـ newlines بين الـ Tags كـ <strong class="hl-red">TEXT_NODE (type 3)</strong>.
+        <br>لو عملت loop على الـ childNodes من غير check، هتاخد Error لما تحاول تعمل <code>getElementsByTagName</code> على Text Node.
+        <br>الحل: <code>if(node.nodeType == 3) continue;</code>
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 5. readyState==4 && status==200</h4>
+      <div>
+        <strong class="hl-red">مش بس readyState==4 كفاية!</strong> لازم كمان <code>status==200</code> (OK).
+        <br>ممكن تاخد readyState==4 مع status==404 (Not Found) أو 500 (Server Error).
+        <br>لو شيكت بس على readyState، هتعمل معالجة على response فاشل!
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 6. Comet للـ Upload محتاج Connection تاني</h4>
+      <div>
+        الـ Comet Long-polling Connection مخصوص <strong class="hl-red">فقط للـ Data Push (Server → Client)</strong>.
+        <br>لو الـ Client عايز يبعت Data للسيرفر، <strong class="hl-red">محتاج يفتح Connection HTTP تاني</strong> منفصل.
+        <br>ده من مشاكل HTTP Streaming اللي الـ WebSockets حلتها.
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 7. WebSocket URL — ws:// مش http://</h4>
+      <div>
+        الـ WebSocket URL بيبدأ بـ <code>ws://</code> مش <code>http://</code>.
+        <br>للـ secure version: <code>wss://</code> (زي https للـ HTTP).
+        <br>مثال: <code>new WebSocket("ws://localhost:9998/chat")</code>
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 8. Sec-WebSocket-Key Algorithm</h4>
+      <div>
+        السيرفر بياخد الـ Key من الـ Client + يـ Concatenate مع <code>"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"</code> → SHA-1 Hash → Base64 Encode → يبعت في الـ Accept header.
+        <br>الغرض: يثبت إن السيرفر فهم ومتعمد الـ WebSocket connection مش بالغلط.
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 9. AJAX مش تكنولوجيا واحدة!</h4>
+      <div>
+        حرفياً Jesse Garrett قال: <em>"AJAX isn't a technology"</em> — ده مجموعة تكنولوجيات.
+        <br>لو جالك سؤال "AJAX هو تكنولوجيا جديدة؟" الإجابة <strong class="hl-red">لأ!</strong>
+        <br>ده combination من: XHTML+CSS, DOM, XML+XSLT, XMLHttpRequest, JavaScript.
+      </div>
+    </div>
+
+    <div class="tricky-item">
+      <h4>⚡ 10. Comet مش اختصار</h4>
+      <div>
+        AJAX = Asynchronous JavaScript + XML (اختصار حقيقي)
+        <br><strong class="hl-red">Comet مش اختصار لأي حاجة</strong> — Alex Russell اختار الاسم ده بشكل عشوائي (زي ما AJAX كان اسم شركة منظفات ووقتها Comet كمان اسم شركة منظفات تانية!)
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="diagram-wrap" style="overflow-x:auto;">
+      <h4>Comparison Table — الجدول المقارن الكامل</h4>
+      <table class="comp-table">
+        <tr>
+          <th>Criteria</th>
+          <th style="color:#ef4444;">Synchronous</th>
+          <th style="color:#00d4ff;">AJAX (Non-blocking)</th>
+          <th style="color:#a78bfa;">Comet / WebSockets (Async)</th>
+        </tr>
+        <tr>
+          <td><strong>Method</strong></td>
+          <td>Synchronous<br><small style="color:#94a3b8;">User blocked</small></td>
+          <td>Asynchronous<br><small style="color:#94a3b8;">User not blocked</small></td>
+          <td>Asynchronous<br><small style="color:#94a3b8;">User not blocked</small></td>
+        </tr>
+        <tr>
+          <td><strong>Request/Response Dependence</strong></td>
+          <td style="color:#ef4444;">HIGH</td>
+          <td style="color:#fbbf24;">HIGH</td>
+          <td style="color:#10b981;">MINIMUM</td>
+        </tr>
+        <tr>
+          <td><strong>Server Push?</strong></td>
+          <td style="color:#ef4444;">❌ No</td>
+          <td style="color:#ef4444;">❌ No</td>
+          <td style="color:#10b981;">✅ Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Page Refresh?</strong></td>
+          <td style="color:#ef4444;">Full Page</td>
+          <td style="color:#10b981;">Partial Only</td>
+          <td style="color:#10b981;">No Refresh</td>
+        </tr>
+        <tr>
+          <td><strong>Real-time?</strong></td>
+          <td style="color:#ef4444;">❌ No</td>
+          <td style="color:#fbbf24;">⚠️ Near</td>
+          <td style="color:#10b981;">✅ Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Protocol</strong></td>
+          <td>HTTP</td>
+          <td>HTTP</td>
+          <td>TCP (WebSockets)</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SUMMARY ===================== -->
+<section class="section" id="summary">
+  <div class="summary-section">
+    <h2>📚 EXAM SUMMARY — اللي يخليك تقفل أي امتحان</h2>
+
+    <div class="sum-card">
+      <h4><span style="color:#ef4444;">🔴</span> 1. Synchronous Model — "Click, Wait, Refresh"</h4>
+      <ul>
+        <li>User actions are <strong>BLOCKED</strong> until HTTP Response received</li>
+        <li>Every data transfer needs a preceding HTTP Request (HIGH coupling)</li>
+        <li>Server sends a <strong>COMPLETE HTML page</strong> every time</li>
+        <li>Problems: Slow, loss of context, excessive server load, redundant refreshes</li>
+        <li>Result: "slow, unreliable, low productivity, low interactivity and inefficient"</li>
+      </ul>
+    </div>
+
+    <div class="sum-card">
+      <h4><span style="color:#00d4ff;">🔵</span> 2. AJAX — Non-Blocking Model</h4>
+      <ul>
+        <li>Introduced by Microsoft (1999, Outlook Web Access) as "XMLHttpRequest" — IE only</li>
+        <li>Mozilla/Netscape added native support ~2002 in their browsers</li>
+        <li>Named "AJAX" by <strong>Jesse James Garrett in 2005</strong> — popularized by Google Suggest/Maps</li>
+        <li>AJAX = NOT a single technology — bundle of: XHTML+CSS, DOM, XML+XSLT, XMLHttpRequest, JavaScript</li>
+        <li>Introduces "AJAX Engine" as intermediary — handles UI + server communication</li>
+        <li>User actions → JS calls to Engine (NOT directly HTTP Requests)</li>
+        <li>Engine can process locally (validation, navigation) without calling server</li>
+        <li>Still HIGH dependence: each server update needs full request/response round-trip</li>
+        <li>So AJAX = <strong>"Non-blocking"</strong>, NOT truly asynchronous!</li>
+        <li>IE5/IE6: ActiveXObject("Msxml2.XMLHTTP") | IE7+: native XMLHttpRequest</li>
+      </ul>
+    </div>
+
+    <div class="sum-card">
+      <h4><span style="color:#00d4ff;">⚡</span> 2b. XMLHttpRequest — The Heart of AJAX</h4>
+      <ul>
+        <li>Methods: open(method, URL, [async=<strong>false!</strong>]) | send(data) | abort()</li>
+        <li>open() async parameter DEFAULT = <strong>false</strong> — must set true for async!</li>
+        <li>GET requests: send(<strong>null</strong>) | POST requests: send("key=val&key2=val2")</li>
+        <li>Properties: onreadystatechange | readyState (0-4) | responseText | responseXML | status | statusText</li>
+        <li>readyState values: 0=Uninitialized, 1=Loading (open called), 2=Loaded (sent), 3=Interactive (partial), 4=<strong>Complete</strong></li>
+        <li>Always check: <strong>readyState==4 && status==200</strong></li>
+        <li>Firefox issue: whitespace between XML tags = TEXT_NODE (type 3) → must skip with continue</li>
+      </ul>
+    </div>
+
+    <div class="sum-card">
+      <h4><span style="color:#fbbf24;">📦</span> 2c. JSON vs XML</h4>
+      <ul>
+        <li>X in AJAX = XML — but XML creates unnecessary overhead</li>
+        <li>JSON = JavaScript Object Notation: lightweight, compact, faster parsing</li>
+        <li>JSON structures: Object {} (unordered name/value pairs) | Array [] (ordered collection)</li>
+        <li>JSON values: string, number, boolean (true/false), object, array — can be nested</li>
+        <li>Language-independent, familiar to C-family programmers</li>
+      </ul>
+    </div>
+
+    <div class="sum-card">
+      <h4><span style="color:#a78bfa;">🟣</span> 3. Comet — Asynchronous Model (Long-Polling)</h4>
+      <ul>
+        <li>Named by <strong>Alex Russell</strong> (Dojo Toolkit leader) in <strong>March 2006</strong></li>
+        <li>Comet is NOT an acronym — just a buzzword (like AJAX)</li>
+        <li>Server sends data WITHOUT client needing to request it → truly asynchronous</li>
+        <li>Works via "long-living HTTP connections" that stay open</li>
+        <li>Server-side events trigger data push to client</li>
+        <li>Also called "server push" or "HTTP streaming"</li>
+        <li>For uploading: requires a <strong>second separate HTTP connection</strong></li>
+        <li>Use cases: chat, stock exchange, real-time notifications</li>
+        <li>Shortcomings: HTTP header overhead, inefficiency of long-polling</li>
+      </ul>
+    </div>
+
+    <div class="sum-card">
+      <h4><span style="color:#10b981;">🟢</span> 4. WebSockets — The Complete Solution</h4>
+      <ul>
+        <li>Defined by IETF in <strong>RFC 6455</strong> (Protocol) | W3C defines JavaScript API</li>
+        <li>Associated with <strong>HTML5</strong></li>
+        <li>TCP-based <strong>bidirectional (full-duplex)</strong> communication</li>
+        <li>Established using HTTP Upgrade mechanism (reuses existing TCP connection)</li>
+        <li>Steps: HTTP Upgrade Request → Server: 101 Switching Protocols → WebSocket messages</li>
+        <li>Handshake: Client sends Sec-WebSocket-Key (Base64 random) → Server concatenates with magic GUID → SHA-1 → Base64 = Sec-WebSocket-Accept</li>
+        <li>Magic GUID: "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"</li>
+        <li>API: new WebSocket("ws://...") | Events: onopen, onclose, onerror, onmessage | Methods: send(), close()</li>
+        <li>URL scheme: <strong>ws://</strong> (or wss:// for secure) — NOT http://</li>
+        <li>Messages can be Binary or UTF-8</li>
+        <li>Fixes both Comet problems: no HTTP overhead, true bidirectional!</li>
+      </ul>
+    </div>
+
+    <!-- Final comparison -->
+    <div style="margin-top:28px;padding:20px;background:rgba(0,0,0,0.3);border-radius:12px;text-align:center;">
+      <p style="color:#64748b;font-size:13px;margin-bottom:12px;">THE EVOLUTION PATH</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:14px;">
+        <span style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);padding:8px 16px;border-radius:8px;color:#ef4444;font-weight:700;">Synchronous<br><small>Block & Wait</small></span>
+        <span style="color:#64748b;font-size:20px;">→</span>
+        <span style="background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.4);padding:8px 16px;border-radius:8px;color:#00d4ff;font-weight:700;">AJAX<br><small>Non-blocking</small></span>
+        <span style="color:#64748b;font-size:20px;">→</span>
+        <span style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.4);padding:8px 16px;border-radius:8px;color:#a78bfa;font-weight:700;">Comet<br><small>Server Push</small></span>
+        <span style="color:#64748b;font-size:20px;">→</span>
+        <span style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);padding:8px 16px;border-radius:8px;color:#10b981;font-weight:700;">WebSockets<br><small>Full Duplex</small></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// Smooth scroll for nav links
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+// Highlight current section in nav
+const sections = document.querySelectorAll('.section, .summary-section');
+const navLinks = document.querySelectorAll('nav a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if(window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#'+current ? 'var(--accent)' : '';
+    a.style.borderBottomColor = a.getAttribute('href') === '#'+current ? 'var(--accent)' : 'transparent';
+  });
+});
+</script>
+
+</body>
+</html>
