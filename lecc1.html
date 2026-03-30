@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet & Web Applications – Lecture 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --green: #10b981;
+    --yellow: #fbbf24;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border: rgba(0,212,255,0.15);
+    --glow: 0 0 30px rgba(0,212,255,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ANIMATED BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(0,212,255,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,58,237,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(0,212,255,0); }
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--accent3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .hero p {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,14,26,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover, .tab-btn.active {
+    background: rgba(0,212,255,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--glow);
+  }
+
+  /* MAIN CONTENT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section { display: none; animation: fadeIn 0.4s ease; }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TOPIC CARDS */
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .topic-card:hover {
+    border-color: rgba(0,212,255,0.4);
+    box-shadow: var(--glow);
+  }
+
+  .topic-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topic-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .topic-title {
+    flex: 1;
+  }
+
+  .topic-title h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .topic-title .eng {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .topic-body { padding: 24px; }
+
+  /* EXPLANATION BLOCKS */
+  .explain-block {
+    margin-bottom: 20px;
+    padding: 18px 20px;
+    background: rgba(0,212,255,0.03);
+    border-radius: 12px;
+    border-right: 4px solid var(--accent);
+  }
+
+  .explain-block h4 {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 13px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+
+  .explain-block p {
+    line-height: 1.9;
+    color: var(--text);
+    font-size: 15px;
+  }
+
+  .arabic-explain {
+    background: rgba(124,58,237,0.08);
+    border-right: 4px solid var(--accent3);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  .arabic-explain .label {
+    color: var(--accent3);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    overflow-x: auto;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #e2e8f0;
+  }
+
+  .kw { color: #ff79c6; }
+  .tag { color: #50fa7b; }
+  .attr { color: #8be9fd; }
+  .val { color: #f1fa8c; }
+  .cm { color: #6272a4; font-style: italic; }
+  .str { color: #f1fa8c; }
+  .fn { color: #50fa7b; }
+
+  /* WARNING / TRICKY BOXES */
+  .warn-box {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .warn-box .warn-title {
+    color: var(--red);
+    font-weight: 900;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .warn-box p { font-size: 14px; line-height: 1.8; }
+
+  .tip-box {
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .tip-box .tip-title {
+    color: var(--green);
+    font-weight: 900;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .tip-box p { font-size: 14px; line-height: 1.8; }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    direction: rtl;
+  }
+
+  .compare-table th {
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    padding: 12px 16px;
+    text-align: right;
+    font-weight: 700;
+    border: 1px solid var(--border);
+  }
+
+  .compare-table td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+
+  .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* TREE DIAGRAM */
+  .tree-diagram {
+    direction: ltr;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: #0d1117;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    margin: 16px 0;
+    line-height: 2;
+  }
+
+  .tree-diagram .node { color: var(--accent); }
+  .tree-diagram .attr-node { color: var(--yellow); }
+  .tree-diagram .text-node { color: var(--green); }
+
+  /* SUMMARY SECTION */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .summary-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 13px;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+
+  .summary-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .summary-card ul li {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .summary-card ul li:last-child { border-bottom: none; }
+
+  .summary-card ul li::before {
+    content: '▸ ';
+    color: var(--accent);
+  }
+
+  /* EXAM HIGHLIGHT */
+  .exam-box {
+    background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(255,107,53,0.08));
+    border: 1px solid rgba(251,191,36,0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .exam-box .exam-title {
+    color: var(--yellow);
+    font-weight: 900;
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .exam-box ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .exam-box ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(251,191,36,0.1);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .exam-box ul li::before { content: '⚡ '; }
+
+  /* VISUAL DIAGRAMS */
+  .diagram-box {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    margin-right: 8px;
+  }
+
+  .badge-hard { background: rgba(239,68,68,0.2); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .badge-medium { background: rgba(251,191,36,0.2); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); }
+  .badge-easy { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+
+  /* FINAL SUMMARY */
+  .mega-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+  }
+
+  .mega-summary h2 {
+    font-size: 22px;
+    color: var(--accent);
+    font-family: 'Space Grotesk', sans-serif;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mega-summary p, .mega-summary li {
+    font-size: 14px;
+    line-height: 1.9;
+    direction: ltr;
+    text-align: left;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text);
+  }
+
+  .mega-summary h3 {
+    color: var(--accent2);
+    font-size: 16px;
+    margin: 20px 0 10px;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .mega-summary ul { padding-right: 20px; }
+  .mega-summary ul li { margin-bottom: 8px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.3); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .topic-header { flex-direction: column; align-items: flex-start; }
+    .topic-body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">LECTURE 01 — INTERNET & WEB APPLICATIONS</div>
+  <h1>مذاكرة بالعربي 🧠<br>Internet & Web Applications</h1>
+  <p>شرح كل حاجة بالمصري مع أمثلة + ملخص للامتحان</p>
+</div>
+
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="showTab('web')">🌐 Web & Web 2.0 & 3.0</button>
+  <button class="tab-btn" onclick="showTab('xml')">📄 XML</button>
+  <button class="tab-btn" onclick="showTab('xhtml')">🏗️ XHTML & DOM & SAX</button>
+  <button class="tab-btn" onclick="showTab('other')">⚙️ CSS & JS & YAML</button>
+  <button class="tab-btn" onclick="showTab('tricky')">⚠️ الحاجات الصعبة</button>
+  <button class="tab-btn" onclick="showTab('summary')">📋 ملخص الامتحان</button>
+</nav>
+
+<div class="container">
+
+<!-- ============ SECTION: WEB ============ -->
+<div id="sec-web" class="section active">
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(0,212,255,0.1)">🌍</div>
+      <div class="topic-title">
+        <h3>The World Wide Web</h3>
+        <div class="eng">INTERNET vs WEB — مش نفس الحاجة!</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>The World Wide Web is a system of <strong>hypertext documents</strong> that are viewable by a web browser. It runs as a <strong>service/application on top of the Internet protocols</strong>.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        الإنترنت ده زي الطريق السريع — شبكة ضخمة من الكابلات والاتصالات.<br><br>
+        الـ Web مش هو الإنترنت! الـ Web ده <strong>تطبيق بيشتغل فوق</strong> الإنترنت. زي ما الأتوبيس بيشتغل فوق الطريق — الطريق هو الإنترنت، الأتوبيس هو الـ Web.<br><br>
+        <strong>Hypertext</strong> يعني إيه؟ يعني نص فيه لينكات توصلك لوثائق تانية — زي لما بتضغط على لينك في صفحة ويب توصلك لصفحة تانية.
+      </div>
+
+      <div class="exam-box">
+        <div class="exam-title">⚡ The 3 Fundamental Mechanisms of the Web</div>
+        <ul>
+          <li><strong>HTTP</strong> (Hypertext Transfer Protocol) — بروتوكول التواصل بين المتصفح والسيرفر</li>
+          <li><strong>HTML</strong> (Hypertext Markup Language) — لغة وصف الوثائق</li>
+          <li><strong>URI</strong> (Uniform Resource Identifiers) — عنوان أي مورد على الإنترنت</li>
+        </ul>
+      </div>
+
+      <div class="arabic-explain">
+        <span class="label">🗣️ تصور الموضوع</span>
+        عايز تبعت رسالة لصاحبك؟<br>
+        ✉️ الـ <strong>URI</strong> = عنوان صاحبك (العنوان الإلكتروني)<br>
+        📬 الـ <strong>HTTP</strong> = نظام البريد (الطريقة اللي الرسالة بتتبعت بيها)<br>
+        📝 الـ <strong>HTML</strong> = محتوى الرسالة نفسها (شكل الكلام والتنسيق)
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(255,107,53,0.1)">🚀</div>
+      <div class="topic-title">
+        <h3>Web 2.0</h3>
+        <div class="eng">The Social & Interactive Web</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>Web 2.0 is a buzzword for <strong>modern forms of applications and services</strong> accessible by browser such as wikis or weblogs. They have a high <strong>social component</strong>, appealing user interfaces, and enhanced interaction models.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        الويب 1.0 كان بتدخل وتقرأ بس — زي ما تقرأ جرنال.<br>
+        الـ Web 2.0 بقى تقدر <strong>تتفاعل</strong> — تكتب تعليق، تشارك، تعمل محتوى بنفسك. فيسبوك، يوتيوب، ويكيبيديا — دي كلها Web 2.0.
+      </div>
+
+      <table class="compare-table">
+        <tr>
+          <th>الميزة</th>
+          <th>التقنية المستخدمة</th>
+          <th>الشرح</th>
+        </tr>
+        <tr>
+          <td>Increasing client-side logic</td>
+          <td>JavaScript, Ajax, WebSockets</td>
+          <td>المنطق بدأ ينزل عند المستخدم مش على السيرفر بس</td>
+        </tr>
+        <tr>
+          <td>New document formats</td>
+          <td>(X)HTML, RSS, Atom, RDF, HTML5</td>
+          <td>صيغ جديدة لتمثيل البيانات</td>
+        </tr>
+        <tr>
+          <td>Protocol improvements</td>
+          <td>Ajax, Comet/HTTP Streaming, WebSockets</td>
+          <td>طرق أسرع وأحدث للتواصل</td>
+        </tr>
+        <tr>
+          <td>Social communities</td>
+          <td>Social Software</td>
+          <td>شبكات اجتماعية ومجتمعات</td>
+        </tr>
+        <tr>
+          <td>New business models</td>
+          <td>—</td>
+          <td>نماذج تجارية جديدة ظهرت مع الويب</td>
+        </tr>
+      </table>
+
+      <div class="warn-box">
+        <div class="warn-title">⚠️ مهم جداً!</div>
+        <p>الـ Lecture بيقول Web 2.0 هي <strong>technological evolution</strong> (تطور تكنولوجي) — يعني الأدوات اتغيرت. لكن Web 3.0 هي <strong>conceptual evolution</strong> (تطور في الفكرة).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(124,58,237,0.1)">🔮</div>
+      <div class="topic-title">
+        <h3>Web 3.0 / Semantic Web</h3>
+        <div class="eng">The Web that Machines Can Understand</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>Web 3.0 is a vision of <strong>semantically interconnected data</strong>. Focus is not on <strong>documents</strong> but on <strong>data</strong> — thus becoming <strong>Linked Data</strong>. Key formats: RDF, RDFS, OWL, Microformats.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        دلوقتي لو بحثت عن "مباريات النهارده"، الكمبيوتر بيفهم كلمة "مباريات" ككلمة بس مش كمفهوم رياضي.<br><br>
+        الـ Semantic Web بيقول: خليني أفهم <strong>معنى</strong> البيانات، مش بس الكلام. الكمبيوتر يفهم إن "القاهرة" هي عاصمة مصر وفيها تعداد سكاني كذا، وهي مرتبطة بـ"مصر" كدولة — مش بس كلمة.<br><br>
+        ده اللي Tim Berners-Lee (مخترع الويب) حلم بيه: آلات تتكلم مع بعض وتفهم البيانات.
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-title">💡 الفرق الجوهري</div>
+        <p>
+          <strong>Web 1.0:</strong> اقرأ بس — Read only<br>
+          <strong>Web 2.0:</strong> اقرأ واكتب — Read + Write (Social)<br>
+          <strong>Web 3.0:</strong> اقرأ واكتب والآلات تفهم — Read + Write + Machine Understanding
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECTION: XML ============ -->
+<div id="sec-xml" class="section">
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(16,185,129,0.1)">📄</div>
+      <div class="topic-title">
+        <h3>XML — ما هو وليه مهم</h3>
+        <div class="eng">Extensible Markup Language</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>XML is a <strong>general purpose meta-language</strong> for <strong>representation, exchange and processing of data</strong>. XML documents are organised in a <strong>simple tree structure</strong> with elements as nodes.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        XML مش لغة برمجة — هي لغة <strong>لوصف البيانات</strong>. متخيلهاش زي Python أو Java. خيلها زي اللوحة اللي بتكتب عليها بياناتك بشكل منظم يأي برنامج في أي لغة يفهمه.<br><br>
+        كلمة <strong>meta-language</strong> يعني: هي لغة بتعرّف لغات تانية! خلتنا نبني HTML, XHTML, RSS, Atom, RDF كلهم فوقيها.
+      </div>
+
+      <p style="font-size:14px; color: var(--text-muted); margin-bottom: 12px;">أمثلة لحاجات اتبنت على XML:</p>
+      <div class="diagram-box">
+        <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:700px; display:block; margin:0 auto;">
+          <!-- Center XML -->
+          <rect x="290" y="75" width="120" height="50" rx="10" fill="#00d4ff" fill-opacity="0.15" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="350" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#00d4ff" font-weight="bold">XML</text>
+          <!-- Branches -->
+          <line x1="290" y1="100" x2="200" y2="55" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+          <line x1="290" y1="100" x2="140" y2="130" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+          <line x1="410" y1="100" x2="480" y2="55" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+          <line x1="410" y1="100" x2="530" y2="130" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+          <line x1="350" y1="75" x2="350" y2="25" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+          <!-- Nodes -->
+          <rect x="135" y="32" width="80" height="30" rx="8" fill="#7c3aed" fill-opacity="0.2" stroke="#7c3aed" stroke-width="1"/>
+          <text x="175" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#a78bfa">XHTML</text>
+          <rect x="70" y="115" width="80" height="30" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="1"/>
+          <text x="110" y="135" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#10b981">XSL</text>
+          <rect x="455" y="32" width="80" height="30" rx="8" fill="#ff6b35" fill-opacity="0.2" stroke="#ff6b35" stroke-width="1"/>
+          <text x="495" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#ff6b35">RSS/Atom</text>
+          <rect x="490" y="115" width="80" height="30" rx="8" fill="#fbbf24" fill-opacity="0.2" stroke="#fbbf24" stroke-width="1"/>
+          <text x="530" y="135" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#fbbf24">XML Schema</text>
+          <rect x="305" y="5" width="90" height="25" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="1"/>
+          <text x="350" y="22" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#ef4444">RDF (Atom)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(251,191,36,0.1)">🌳</div>
+      <div class="topic-title">
+        <h3>XML Tree Structure & Terminology</h3>
+        <div class="eng">Root, Parent, Child, Sibling, Attribute, Content Types</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري — هيكل شجرة XML</span>
+        XML بتتنظم زي <strong>شجرة عيلة</strong>! فيه:<br>
+        🌱 <strong>Root Element</strong>: أصل الشجرة — element جامع واحد بس يحتوي على الكل<br>
+        👪 <strong>Parent/Child</strong>: كل element ممكن يحتوي على elements جوه (أولاده)<br>
+        👫 <strong>Siblings</strong>: الـ elements اللي في نفس المستوى وتحت نفس الـ parent<br>
+        🏷️ <strong>Attribute</strong>: معلومة إضافية داخل الـ tag زي id="42"
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+
+<span class="tag">&lt;bookstock&gt;</span>               <span class="cm">&lt;!-- ROOT ELEMENT --&gt;</span>
+  <span class="tag">&lt;book</span> <span class="attr">id</span>=<span class="val">"42"</span><span class="tag">&gt;</span>           <span class="cm">&lt;!-- CHILD of bookstock, PARENT of title/author/isbn --&gt;</span>
+    <span class="tag">&lt;title&gt;</span>TCP/IP Illustrated<span class="tag">&lt;/title&gt;</span>    <span class="cm">&lt;!-- SIBLING of author --&gt;</span>
+    <span class="tag">&lt;author&gt;</span>W.R. Stevens<span class="tag">&lt;/author&gt;</span>     <span class="cm">&lt;!-- Simple Content (text) --&gt;</span>
+    <span class="tag">&lt;isbn&gt;</span>0201633469<span class="tag">&lt;/isbn&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+  <span class="tag">&lt;book</span> <span class="attr">id</span>=<span class="val">"43"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span>Mobile Web Services<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+<span class="tag">&lt;/bookstock&gt;</span>
+<span class="cm">&lt;!-- End of document --&gt;</span></pre>
+      </div>
+
+      <div class="arabic-explain">
+        <span class="label">🗣️ أنواع الـ Content</span>
+        1️⃣ <strong>Empty Content</strong>: مفيش حاجة جوه &lt;br/&gt;<br>
+        2️⃣ <strong>Simple Content</strong>: نص عادي &lt;title&gt;TCP/IP&lt;/title&gt;<br>
+        3️⃣ <strong>Element Content</strong>: بيحتوي elements تانية &lt;book&gt;&lt;title/&gt;&lt;/book&gt;<br>
+        4️⃣ <strong>Mixed Content</strong>: نص وعناصر مع بعض
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(239,68,68,0.1)">📏</div>
+      <div class="topic-title">
+        <h3>XML Syntax Rules — Well-Formed</h3>
+        <div class="eng">قواعد لازم تتحفظها غيباً!</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري — قواعد XML الإلزامية</span>
+        لو مش بتحترم القواعد دي، الـ XML مش هيتقرأش! لازم الوثيقة تكون <strong>Well-Formed</strong>.
+      </div>
+
+      <table class="compare-table">
+        <tr>
+          <th>القاعدة</th>
+          <th>صح ✅</th>
+          <th>غلط ❌</th>
+          <th>الشرح</th>
+        </tr>
+        <tr>
+          <td>كل tag له close tag</td>
+          <td>&lt;X&gt;content&lt;/X&gt;</td>
+          <td>&lt;X&gt;content</td>
+          <td>مش زي HTML اللي بيسمح بحاجات مفتوحة</td>
+        </tr>
+        <tr>
+          <td>Empty element ليه شكل مخصوص</td>
+          <td>&lt;X/&gt;</td>
+          <td>&lt;X&gt;&lt;/X&gt; (مقبول لكن)</td>
+          <td>الشكل المختصر للعنصر الفاضي</td>
+        </tr>
+        <tr>
+          <td>Root element واحد بس</td>
+          <td>&lt;root&gt;...&lt;/root&gt;</td>
+          <td>&lt;A/&gt;&lt;B/&gt; (في نفس المستوى)</td>
+          <td>لازم يكون في عنصر واحد جامع</td>
+        </tr>
+        <tr>
+          <td>Attributes بين quotes</td>
+          <td>id="42"</td>
+          <td>id=42</td>
+          <td>Quotes إلزامية، سواء single أو double</td>
+        </tr>
+        <tr>
+          <td>Tags مش بتتشابك</td>
+          <td>&lt;X&gt;&lt;Y&gt;&lt;/Y&gt;&lt;/X&gt;</td>
+          <td>&lt;X&gt;&lt;Y&gt;&lt;/X&gt;&lt;/Y&gt;</td>
+          <td>لازم تقفل الجواني الأول</td>
+        </tr>
+        <tr>
+          <td>Case Sensitive</td>
+          <td>&lt;Book&gt;...&lt;/Book&gt;</td>
+          <td>&lt;Book&gt;...&lt;/book&gt;</td>
+          <td>كبير وصغير مختلفين تماماً!</td>
+        </tr>
+      </table>
+
+      <div class="warn-box">
+        <div class="warn-title">⚠️ الفرق بين Well-Formed و Valid</div>
+        <p>
+          <strong>Well-Formed:</strong> بيحترم قواعد XML الأساسية<br>
+          <strong>Valid:</strong> Well-Formed + بيتوافق مع Schema أو DTD محددة<br>
+          <br>
+          كل Valid document هو well-formed، بس مش كل well-formed document هو valid!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(124,58,237,0.1)">🏷️</div>
+      <div class="topic-title">
+        <h3>XML Namespaces</h3>
+        <div class="eng">حل مشكلة تعارض الأسماء</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="arabic-explain">
+        <span class="label">🗣️ المشكلة</span>
+        تخيل عندك ملف XML بيجمع بيانات عن كتاب <strong>وعن</strong> بيانات الملف نفسه. الاتنين فيهم عنصر اسمه &lt;title&gt;. لما الكمبيوتر يدور على "title"، يجيب إيه؟ 😱
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm">&lt;!-- المشكلة --&gt;</span>
+<span class="tag">&lt;datafile&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Book list<span class="tag">&lt;/title&gt;</span>        <span class="cm">&lt;!-- title الملف --&gt;</span>
+  <span class="tag">&lt;book&gt;</span>
+    <span class="tag">&lt;title&gt;</span>TCP/IP Illustrated<span class="tag">&lt;/title&gt;</span> <span class="cm">&lt;!-- title الكتاب --&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+<span class="tag">&lt;/datafile&gt;</span>
+
+<span class="cm">&lt;!-- الحل: Namespaces --&gt;</span>
+<span class="tag">&lt;datafile</span> <span class="attr">xmlns:a</span>=<span class="val">"http://www.example.com/doc/"</span>
+          <span class="attr">xmlns:b</span>=<span class="val">"http://www.example.com/myNs/"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;a:title&gt;</span>Book list<span class="tag">&lt;/a:title&gt;</span>        <span class="cm">&lt;!-- namespace "a" --&gt;</span>
+  <span class="tag">&lt;b:book&gt;</span>
+    <span class="tag">&lt;b:title&gt;</span>TCP/IP Illustrated<span class="tag">&lt;/b:title&gt;</span> <span class="cm">&lt;!-- namespace "b" --&gt;</span>
+  <span class="tag">&lt;/b:book&gt;</span>
+<span class="tag">&lt;/datafile&gt;</span></pre>
+      </div>
+
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        الـ Namespace زي <strong>اللقب</strong>. عندك في الشغل محمد أحمد ومحمد خالد — الاتنين اسمهم محمد. لو قلت "محمد" مش هيعرفوا مين. لكن لو قلت "محمد أحمد" — اتحدد!<br><br>
+        الـ <strong>xmlns:a</strong> = بتعرّف prefix اسمه "a" وبتربطه بـ URL (الـ URL ممكن ميوصلش أي حاجة، بس بيعمل identifier فريد).
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">⚠️ نقطة مهمة جداً!</div>
+        <p>الـ namespace URL (زي http://www.example.com/doc/) <strong>مش لازم يوصل لحاجة حقيقية</strong>! هو بس identifier — زي الرقم القومي، بيعرّف بس.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(16,185,129,0.1)">✅</div>
+      <div class="topic-title">
+        <h3>XML Validity: DTD vs XML Schema</h3>
+        <div class="eng">إزاي بنتحقق إن الـ XML صح في الشكل والبيانات</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        Well-formed = البنية صح.<br>
+        Valid = البنية صح <strong>وكمان</strong> البيانات بتطابق قواعد محددة اتحددت في DTD أو XML Schema.<br><br>
+        زي استمارة حكومية: محتاج تملأها صح (well-formed) وكمان البيانات اللي بتكتبها لازم تكون من نوع معين (valid).
+      </div>
+
+      <table class="compare-table">
+        <tr>
+          <th>الخاصية</th>
+          <th>DTD</th>
+          <th>XML Schema</th>
+        </tr>
+        <tr>
+          <td>لغته</td>
+          <td>لغة خاصة مختلفة</td>
+          <td>XML نفسه! (dialect)</td>
+        </tr>
+        <tr>
+          <td>أنواع البيانات</td>
+          <td>محدودة جداً (PCDATA بس)</td>
+          <td>غنية: string, integer, date, …</td>
+        </tr>
+        <tr>
+          <td>Namespaces</td>
+          <td>دعم محدود</td>
+          <td>دعم كامل</td>
+        </tr>
+        <tr>
+          <td>الاستخدام</td>
+          <td>قديم، أبسط</td>
+          <td>الأحدث والأقوى</td>
+        </tr>
+      </table>
+
+      <div class="code-block">
+        <pre><span class="cm">&lt;!-- DTD Example --&gt;</span>
+<span class="kw">&lt;!DOCTYPE</span> note [
+  <span class="kw">&lt;!ELEMENT</span> book (title,author,isbn)<span class="kw">&gt;</span>
+  <span class="kw">&lt;!ELEMENT</span> title (<span class="val">#PCDATA</span>)<span class="kw">&gt;</span>   <span class="cm">&lt;!-- PCDATA = نص عادي فقط --&gt;</span>
+  <span class="kw">&lt;!ELEMENT</span> author (<span class="val">#PCDATA</span>)<span class="kw">&gt;</span>
+  <span class="kw">&lt;!ELEMENT</span> isbn (<span class="val">#PCDATA</span>)<span class="kw">&gt;</span>
+]<span class="kw">&gt;</span>
+
+<span class="cm">&lt;!-- XML Schema Example --&gt;</span>
+<span class="tag">&lt;xs:schema</span> <span class="attr">xmlns:xs</span>=<span class="val">"http://www.w3.org/2001/XMLSchema"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;xs:element</span> <span class="attr">name</span>=<span class="val">"book"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;xs:complexType&gt;</span>
+      <span class="tag">&lt;xs:sequence&gt;</span>
+        <span class="tag">&lt;xs:element</span> <span class="attr">name</span>=<span class="val">"title"</span>  <span class="attr">type</span>=<span class="val">"xs:string"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;xs:element</span> <span class="attr">name</span>=<span class="val">"author"</span> <span class="attr">type</span>=<span class="val">"xs:string"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;xs:element</span> <span class="attr">name</span>=<span class="val">"isbn"</span>   <span class="attr">type</span>=<span class="val">"xs:string"</span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;/xs:sequence&gt;</span>
+    <span class="tag">&lt;/xs:complexType&gt;</span>
+  <span class="tag">&lt;/xs:element&gt;</span>
+<span class="tag">&lt;/xs:schema&gt;</span></pre>
+      </div>
+
+      <div class="arabic-explain">
+        <span class="label">🗣️ الـ XML Schema أقوى ليه؟</span>
+        في DTD، كل حاجة بتبقى PCDATA (نص). في XML Schema تقدر تقول:<br>
+        — هذا الحقل <strong>integer</strong> (رقم صحيح)<br>
+        — هذا الحقل <strong>date</strong> بتاريخ معين<br>
+        — هذا الحقل <strong>string</strong> طوله بين 5 و 20 حرف<br>
+        أقوى بكتير في التحقق من صحة البيانات!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECTION: XHTML DOM SAX ============ -->
+<div id="sec-xhtml" class="section">
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(0,212,255,0.1)">🏗️</div>
+      <div class="topic-title">
+        <h3>XHTML</h3>
+        <div class="eng">XML Reformulation of HTML</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>XHTML is an <strong>XML reformulation of HTML</strong>. Stricter syntax + standard XML tools work on it + extensible with other XML languages like MathML.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        HTML كانت متساهلة — تقدر تكتب tag مش مقفول، attribute من غير quotes، وكمان المتصفح هيشتغل.<br><br>
+        XHTML = HTML بس بقواعد XML الصارمة. يعني:<br>
+        ✅ كل tag لازم مقفول (&lt;br/&gt; مش &lt;br&gt;)<br>
+        ✅ كل attribute بين quotes<br>
+        ✅ تقدر تستخدم أدوات XML العادية عليها (parsers, validators, …)<br>
+        ✅ تقدر تمدها بـ MathML و SVG وغيرها
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cm">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;</span>
+
+<span class="tag">&lt;html</span> <span class="attr">xmlns</span>=<span class="val">"http://www.w3.org/1999/xhtml"</span> <span class="attr">xml:lang</span>=<span class="val">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>XHTML Example<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h3&gt;</span>Available books<span class="tag">&lt;/h3&gt;</span>
+  <span class="tag">&lt;br/&gt;</span>  <span class="cm">&lt;!-- Empty elements MUST be closed! --&gt;</span>
+  <span class="tag">&lt;table&gt;</span>
+    <span class="tag">&lt;tr&gt;&lt;td&gt;</span>Title<span class="tag">&lt;/td&gt;&lt;td&gt;</span>Author<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="tag">&lt;/table&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(255,107,53,0.1)">🌲</div>
+      <div class="topic-title">
+        <h3>DOM — Document Object Model</h3>
+        <div class="eng">Tree-Based XML Processing</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>DOM is a <strong>W3C-standardised API</strong> for accessing and manipulating XML documents. It loads the <strong>entire document as a tree</strong> in memory, allowing traversal and direct element access by ID.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        الـ DOM بيقرأ الملف كله وبيعمله <strong>شجرة في الـ RAM</strong>. زي ما تاخد كتاب وتحفظ تقريباً كل حاجة فيه في دماغك — تقدر بعدين تتنقل وتدور في أي حتة بسهولة.<br><br>
+        <strong>ميزة:</strong> سهل تتنقل فيه وتعدّل في أي مكان<br>
+        <strong>عيب:</strong> لو الملف كبير جداً، الذاكرة هتتملى!
+      </div>
+
+      <div class="diagram-box">
+        <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:600px; display:block; margin:0 auto;" direction="ltr">
+          <!-- Root -->
+          <rect x="220" y="10" width="130" height="35" rx="8" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="285" y="32" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#00d4ff">bookstock</text>
+          <!-- book 42 -->
+          <rect x="60" y="80" width="120" height="35" rx="8" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="120" y="102" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#a78bfa">book id=42</text>
+          <!-- book 43 -->
+          <rect x="220" y="80" width="120" height="35" rx="8" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="280" y="102" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#a78bfa">book id=43</text>
+          <!-- book 44 -->
+          <rect x="400" y="80" width="120" height="35" rx="8" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="460" y="102" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#a78bfa">book id=44</text>
+          <!-- Lines root to books -->
+          <line x1="285" y1="45" x2="120" y2="80" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="285" y1="45" x2="280" y2="80" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="285" y1="45" x2="460" y2="80" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <!-- children of book 42 -->
+          <rect x="10" y="160" width="70" height="28" rx="6" fill="none" stroke="#10b981" stroke-width="1"/>
+          <text x="45" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#10b981">author</text>
+          <rect x="90" y="160" width="60" height="28" rx="6" fill="none" stroke="#10b981" stroke-width="1"/>
+          <text x="120" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#10b981">title</text>
+          <rect x="160" y="160" width="50" height="28" rx="6" fill="none" stroke="#10b981" stroke-width="1"/>
+          <text x="185" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#10b981">isbn</text>
+          <line x1="120" y1="115" x2="45" y2="160" stroke="#7c3aed" stroke-width="1" opacity="0.5"/>
+          <line x1="120" y1="115" x2="120" y2="160" stroke="#7c3aed" stroke-width="1" opacity="0.5"/>
+          <line x1="120" y1="115" x2="185" y2="160" stroke="#7c3aed" stroke-width="1" opacity="0.5"/>
+          <!-- Labels -->
+          <text x="285" y="210" text-anchor="middle" font-family="Tajawal" font-size="12" fill="#94a3b8">DOM Tree في الذاكرة</text>
+        </svg>
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm">// DOM JavaScript API</span>
+<span class="kw">var</span> elem = document.<span class="fn">getElementById</span>(<span class="val">"42"</span>);
+<span class="kw">var</span> child = elem.<span class="fn">getElementsByTagName</span>(<span class="val">"author"</span>)[<span class="val">0</span>];
+<span class="kw">var</span> secondChild = child.childNode;
+<span class="kw">var</span> value = secondChild.nodeValue;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(16,185,129,0.1)">⚡</div>
+      <div class="topic-title">
+        <h3>SAX — Simple API for XML</h3>
+        <div class="eng">Event-Based XML Processing</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>SAX is an <strong>event-based mechanism</strong> for XML processing. A program registers event handlers at a SAX parser. The parser reads the document <strong>sequentially</strong> and fires events for each element, attribute, and character.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري — SAX vs DOM</span>
+        الـ DOM = بتقرأ الكتاب كله وبعدين بتدور فيه.<br>
+        الـ SAX = زي ما تقرأ كل سطر وتعمل حاجة فوراً وبعدين تمشي — <strong>ما بتحفظش الكتاب</strong>!<br><br>
+        <strong>ميزة SAX:</strong> أسرع بكتير للملفات الكبيرة ومش بياكل RAM<br>
+        <strong>عيب SAX:</strong> ما تقدرش ترجع لجزء سبق، وصعب تعدّل في البيانات
+      </div>
+
+      <div class="arabic-explain">
+        <span class="label">🗣️ إزاي SAX بيشتغل؟</span>
+        1️⃣ برنامجك بيسجّل <strong>Event Handlers</strong> عند SAX Parser<br>
+        2️⃣ الـ Parser بيقرأ الملف سطر بسطر<br>
+        3️⃣ كل ما يلاقي element أو attribute أو نص — بيطلق <strong>Event</strong><br>
+        4️⃣ الـ Event Handler بتاعك بيشتغل وبيعمل اللي انت عايزه
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm">// SAX Handler Events</span>
+<span class="kw">public void</span> <span class="fn">startDocument</span>() { <span class="cm">// اتفتح الملف</span>
+    System.out.println(<span class="str">"Start document"</span>);
+}
+<span class="kw">public void</span> <span class="fn">startElement</span>(...) { <span class="cm">// لقينا &lt;tag&gt;</span>
+    ...
+}
+<span class="kw">public void</span> <span class="fn">characters</span>(...) { <span class="cm">// محتوى نصي</span>
+    ...
+}
+<span class="kw">public void</span> <span class="fn">endElement</span>(...) { <span class="cm">// لقينا &lt;/tag&gt;</span>
+    ...
+}
+<span class="kw">public void</span> <span class="fn">endDocument</span>() { <span class="cm">// انتهى الملف</span>
+    System.out.println(<span class="str">"End document"</span>);
+}</pre>
+      </div>
+
+      <table class="compare-table">
+        <tr>
+          <th>المقارنة</th>
+          <th>DOM</th>
+          <th>SAX</th>
+        </tr>
+        <tr>
+          <td>طريقة العمل</td>
+          <td>Tree in memory</td>
+          <td>Event-based, sequential</td>
+        </tr>
+        <tr>
+          <td>استهلاك الذاكرة</td>
+          <td>عالي (الملف كله)</td>
+          <td>منخفض جداً</td>
+        </tr>
+        <tr>
+          <td>السرعة</td>
+          <td>أبطأ للملفات الكبيرة</td>
+          <td>أسرع</td>
+        </tr>
+        <tr>
+          <td>التعديل</td>
+          <td>سهل جداً</td>
+          <td>صعب/مستحيل</td>
+        </tr>
+        <tr>
+          <td>العودة لجزء سابق</td>
+          <td>ممكن</td>
+          <td>مستحيل</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECTION: CSS JS YAML ============ -->
+<div id="sec-other" class="section">
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(251,191,36,0.1)">🎨</div>
+      <div class="topic-title">
+        <h3>CSS — Cascading Style Sheets</h3>
+        <div class="eng">Client-side layout language for markup elements</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>CSS is a <strong>client-side language</strong> for defining the <strong>layout</strong> of markup language elements. Can be embedded in HTML or linked as external file — enabling one CSS file to control the layout of all associated pages.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        الـ HTML بيقول "فيه heading وباراجراف وجدول".<br>
+        الـ CSS بيقول "الـ heading لونه أحمر وكبير، والباراجراف فونته Garamond".<br><br>
+        أهم ميزة: لو عندك 100 صفحة ويب وعايز تغير لون الـ background — <strong>بتعدل ملف CSS واحد بس</strong> وكل الصفحات بتتغير!
+      </div>
+
+      <div class="arabic-explain">
+        <span class="label">🗣️ أنواع الـ Selectors</span>
+        🔵 <strong>Tag Selector</strong>: <code>p { ... }</code> — بيأثر على كل &lt;p&gt; في الصفحة<br>
+        🟡 <strong>Class Selector</strong>: <code>.top { ... }</code> — بيأثر على أي element فيه class="top"<br>
+        🔴 <strong>ID Selector</strong>: <code>#fat { ... }</code> — بيأثر على element معين بـ id="fat" <strong>فقط</strong>
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm">/* main.css */</span>
+<span class="tag">input</span> {
+    font-size: <span class="val">110%</span>;
+    color: <span class="val">red</span>;
+    background: <span class="val">#ffff00</span>;
+}
+
+<span class="tag">.top</span> {                   <span class="cm">/* Class selector */</span>
+    padding-top: <span class="val">20px</span>;
+}
+
+<span class="tag">p</span> {
+    font-size: <span class="val">16pt</span>;
+    font-family: <span class="val">"Garamond"</span>, serif;
+    font-weight: <span class="val">bold</span>;
+}
+
+<span class="tag">#fat</span> {                  <span class="cm">/* ID selector */</span>
+    font-weight: <span class="val">bold</span>;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(255,107,53,0.1)">⚙️</div>
+      <div class="topic-title">
+        <h3>JavaScript</h3>
+        <div class="eng">Client-side scripting + Sandbox principle</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>DEFINITION</h4>
+        <p>JavaScript is an <strong>object-based script language</strong> (standardised as ECMAScript), often used for <strong>client-side execution</strong>. It may be embedded in HTML or linked from it. The JavaScript engine executes it and the result can influence the document's content.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        الـ HTML و CSS بيعملوا الشكل. JavaScript بيعمل <strong>الحركة والتفاعل</strong>.<br>
+        لما بتضغط زرار ويحصل حاجة من غير ما الصفحة تتحمل من جديد — ده JavaScript.<br><br>
+        <strong>Client-side</strong> يعني بيشتغل في المتصفح عند المستخدم، مش على السيرفر.
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">⚠️ Sandbox Principle — مهم جداً للامتحان!</div>
+        <p>
+          الـ JavaScript بيشتغل في <strong>sandbox</strong> — بيعني إنه ما يقدرش يوصل لـ:<br>
+          ❌ File System (ملفات الكمبيوتر)<br>
+          ❌ Network resources خارج المتصفح (تحت قيود)<br>
+          ✅ Objects داخل المتصفح بس (DOM, window, …)<br><br>
+          ده لأمان المستخدم — لو مكانش في sandbox، أي موقع يزوره يقدر يقرأ ملفاتك!
+        </p>
+      </div>
+
+      <div class="arabic-explain">
+        <span class="label">🗣️ JavaScript + DOM</span>
+        الكومبو الشهير: JavaScript + DOM.<br>
+        JavaScript بتستخدم DOM API عشان تعدّل في الـ HTML ديناميكياً — تضيف element، تشيل، تغير لون — <strong>من غير ما تعيد تحميل الصفحة</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(124,58,237,0.1)">📦</div>
+      <div class="topic-title">
+        <h3>YAML & Content Types</h3>
+        <div class="eng">Alternatives to XML + MIME Types</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="explain-block">
+        <h4>YAML</h4>
+        <p>YAML Ain't Markup Language — compact, human-readable data serialization format. It is a <strong>superset of JSON</strong>. Uses <strong>indentation</strong> for hierarchies instead of tags. Offers lists, associative arrays, and scalars.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        XML فيها overhead كتير — كل بيانة محاطة بتاج افتتاح وتاج إغلاق. YAML أخف وزناً وأسهل قراءة.<br>
+        الـ Indentation (المسافات) بيعمل نفس دور الـ Tags في XML.
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm"># YAML Example (بدل XML)</span>
+lectures:
+  - <span class="val">'Internet and Web Applications'</span>
+  - <span class="val">'Distributed Systems'</span>
+  - <span class="val">'Mobile Communication and Computing'</span>
+
+<span class="cm"># نفس الحاجة في XML:</span>
+<span class="tag">&lt;lectures&gt;</span>
+  <span class="tag">&lt;lecture&gt;</span>Internet and Web Applications<span class="tag">&lt;/lecture&gt;</span>
+  <span class="tag">&lt;lecture&gt;</span>Distributed Systems<span class="tag">&lt;/lecture&gt;</span>
+<span class="tag">&lt;/lectures&gt;</span></pre>
+      </div>
+
+      <div class="explain-block">
+        <h4>Content Types (MIME Types)</h4>
+        <p>Format: <code>Content-Type: type/subtype</code><br>
+        Used in HTTP headers to tell the client what kind of content it received, so it can find the right interpreter.</p>
+      </div>
+      <div class="arabic-explain">
+        <span class="label">🗣️ بالمصري</span>
+        السيرفر لما يبعتلك ملف، بيقولك نوعه في الـ Header. المتصفح بيقرأ النوع ده ويبعته لبرنامج مناسب.<br>
+        زي ما لو اشتريت حاجة أونلاين وعليها كتابة "هش — لا ترمي" — الـ content type هو ده الكتابة دي.
+      </div>
+
+      <table class="compare-table">
+        <tr>
+          <th>Content-Type</th>
+          <th>النوع</th>
+        </tr>
+        <tr><td>application/xml</td><td>ملف XML عام</td></tr>
+        <tr><td>text/html</td><td>صفحة HTML</td></tr>
+        <tr><td>image/jpeg</td><td>صورة JPEG</td></tr>
+        <tr><td>video/mpeg</td><td>فيديو MPEG</td></tr>
+        <tr><td>text/plain</td><td>نص عادي</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECTION: TRICKY ============ -->
+<div id="sec-tricky" class="section">
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-icon" style="background:rgba(239,68,68,0.1)">⚠️</div>
+      <div class="topic-title">
+        <h3>الحاجات اللي بتلغبط الناس</h3>
+        <div class="eng">Common Exam Traps & Hard Concepts</div>
+      </div>
+    </div>
+    <div class="topic-body">
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 1: Internet ≠ Web <span class="badge badge-hard">HARD</span></div>
+        <p>
+          الإنترنت هو الشبكة التحتية (TCP/IP, routers, cables, …)<br>
+          الـ Web هو <strong>تطبيق واحد</strong> يشتغل فوق الإنترنت (زي Email, FTP, BitTorrent — كلها تطبيقات على الإنترنت).<br>
+          السؤال في الامتحان: "Does the Web = the Internet?" → لا!
+        </p>
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 2: Well-Formed vs Valid <span class="badge badge-hard">HARD</span></div>
+        <p>
+          Well-Formed = XML syntax صح (tags مقفولة، root واحد، …)<br>
+          Valid = Well-formed + بيتطابق مع DTD أو Schema<br>
+          <strong>كل valid document هو well-formed، بس العكس مش صح!</strong>
+        </p>
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 3: Namespace URL مش URL حقيقي <span class="badge badge-medium">MEDIUM</span></div>
+        <p>
+          لما بتكتب xmlns:a="http://www.example.com/doc/" — الـ URL ده <strong>ما بيروحش</strong> لحاجة حقيقية على الإنترنت في الغالب!<br>
+          هو بس <strong>identifier فريد</strong> — زي رقم قومي، مهمته التمييز فقط.
+        </p>
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 4: SAX vs DOM — إمتى تستخدم إيه؟ <span class="badge badge-hard">HARD</span></div>
+        <p>
+          SAX: ملفات كبيرة، محتاج تقرأ بس (read-only), memory مش كتير<br>
+          DOM: محتاج تتنقل في الملف، تعدّل، تدور في أي مكان<br>
+          <strong>SAX ما بيبنيش tree في الذاكرة — de كل الفرق</strong>
+        </p>
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 5: XML Case Sensitive تماماً <span class="badge badge-easy">EASY</span></div>
+        <p>
+          &lt;Book&gt; مختلف عن &lt;book&gt; مختلف عن &lt;BOOK&gt;<br>
+          &lt;Book&gt;content&lt;/book&gt; = <strong>ERROR!</strong><br>
+          أي سؤال فيه خلط بين كبير وصغير — الإجابة غلط.
+        </p>
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 6: Web 2.0 = Technological, Web 3.0 = Conceptual <span class="badge badge-medium">MEDIUM</span></div>
+        <p>
+          Web 2.0 = <strong>technological evolution</strong> (أدوات وتقنيات جديدة)<br>
+          Web 3.0 = <strong>conceptual evolution</strong> (فكرة جديدة عن معنى البيانات)<br>
+          دي جملة من الـ Lecture نفسه — بتيجي في الامتحان!
+        </p>
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 7: JavaScript Sandbox <span class="badge badge-hard">HARD</span></div>
+        <p>
+          JavaScript في المتصفح ما بيقدرش يوصل لـ File System أو Network Resources خارج المتصفح بشكل مباشر.<br>
+          ده مش bug — ده feature أمني اسمه <strong>Sandbox Principle</strong>.
+        </p>
+      </div>
+
+      <div class="warn-box">
+        <div class="warn-title">🪤 فخ 8: DTD مش XML <span class="badge badge-medium">MEDIUM</span></div>
+        <p>
+          الـ DTD بيتكتب بـ syntax مختلفة خالص — مش XML!<br>
+          الـ XML Schema هو اللي بيتكتب بـ XML.<br>
+          ده فرق مهم لو الامتحان سأل "أي منهم يستخدم XML syntax؟" → XML Schema فقط.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECTION: SUMMARY ============ -->
+<div id="sec-summary" class="section">
+
+  <div class="mega-summary">
+    <h2>📋 Exam Summary — Internet & Web Applications Lecture 1</h2>
+
+    <h3>🌐 1. Web Fundamentals</h3>
+    <ul>
+      <li>The Web is NOT the Internet — it's an application running ON TOP of Internet protocols.</li>
+      <li>The Web is built on three pillars: HTTP (protocol), HTML (document format), URI (addressing).</li>
+      <li>Web 2.0 = technological evolution — social features, Ajax, WebSockets, user-generated content.</li>
+      <li>Web 3.0 = conceptual evolution — Semantic Web, Linked Data, machine-understandable data. Key formats: RDF, RDFS, OWL.</li>
+    </ul>
+
+    <h3>📄 2. XML Core Concepts</h3>
+    <ul>
+      <li>XML is a general-purpose meta-language for data representation, exchange, and processing.</li>
+      <li>XML documents are organized as trees with elements as nodes.</li>
+      <li>Content types: empty, simple (text), element (nested tags), mixed.</li>
+      <li>A Well-Formed document obeys XML syntax rules: one root, closed tags, quoted attributes, no overlapping tags, case-sensitive.</li>
+      <li>A Valid document is well-formed AND conforms to a DTD or XML Schema.</li>
+    </ul>
+
+    <h3>🏷️ 3. XML Namespaces</h3>
+    <ul>
+      <li>Namespaces solve name conflicts by qualifying elements with unique identifiers (URLs).</li>
+      <li>The namespace URI does NOT need to point to a real resource — it's just a unique identifier.</li>
+      <li>Syntax: xmlns:prefix="URI" then use prefix:elementName.</li>
+    </ul>
+
+    <h3>✅ 4. DTD vs XML Schema</h3>
+    <ul>
+      <li>DTD: Uses its own syntax (NOT XML), limited type support (only PCDATA), older.</li>
+      <li>XML Schema: Written in XML itself, rich data types (string, integer, date…), supports namespaces fully.</li>
+      <li>XML Schema defines: Simple types (string, integer…) and Complex types (sequences of other types).</li>
+    </ul>
+
+    <h3>🏗️ 5. XHTML</h3>
+    <ul>
+      <li>XHTML = HTML reformulated as XML — stricter syntax, processable by standard XML tools.</li>
+      <li>All tags must be closed (including empty ones: &lt;br/&gt;), attributes must be quoted, case-sensitive.</li>
+      <li>Can be validated by DTD (e.g., XHTML 1.1 DTD).</li>
+      <li>Extensible: can embed MathML, SVG, etc.</li>
+    </ul>
+
+    <h3>🌲 6. DOM vs SAX</h3>
+    <ul>
+      <li>DOM: Loads entire XML as tree in memory. Good for traversal and manipulation. High memory usage.</li>
+      <li>SAX: Event-based, sequential parsing. Low memory, fast, but no tree — cannot go back or modify easily.</li>
+      <li>Key DOM methods: getElementById(), getElementsByTagName(), childNode, nodeValue.</li>
+      <li>Key SAX events: startDocument(), startElement(), characters(), endElement(), endDocument().</li>
+    </ul>
+
+    <h3>🎨 7. CSS</h3>
+    <ul>
+      <li>Client-side language for defining layout of markup elements.</li>
+      <li>Can be external (linked), embedded, or inline.</li>
+      <li>Selectors: Tag (p {}), Class (.top {}), ID (#fat {}).</li>
+      <li>Single external CSS file can control layout of all associated pages.</li>
+    </ul>
+
+    <h3>⚙️ 8. JavaScript</h3>
+    <ul>
+      <li>Object-based scripting language, standardised as ECMAScript.</li>
+      <li>Runs client-side in the JavaScript engine inside the browser.</li>
+      <li>Sandbox principle: can only access browser objects by default — no direct file system or network access.</li>
+      <li>Often used with DOM API to dynamically change document structure.</li>
+    </ul>
+
+    <h3>📦 9. Content Types (MIME Types)</h3>
+    <ul>
+      <li>Format: Content-Type: type/subtype (e.g., application/xml, image/jpeg, text/plain).</li>
+      <li>Sent in HTTP headers to tell the client what type of content it received.</li>
+      <li>Client uses it to find the right interpreter/application for the content.</li>
+    </ul>
+
+    <h3>🔁 10. YAML (Alternative to XML)</h3>
+    <ul>
+      <li>YAML Ain't Markup Language — compact, human-readable data serialization.</li>
+      <li>Superset of JSON. Uses indentation for hierarchy (no tags).</li>
+      <li>Supports: lists, associative arrays, scalars, cross-references.</li>
+    </ul>
+
+    <h3>⚡ Quick-Fire Exam Facts</h3>
+    <ul>
+      <li>Web 2.0 = technological evolution; Web 3.0 = conceptual evolution.</li>
+      <li>XML namespace URLs do NOT need to point to real resources.</li>
+      <li>Well-Formed ≠ Valid. All Valid XML is Well-Formed, not vice versa.</li>
+      <li>XML is case-sensitive. &lt;Book&gt; ≠ &lt;book&gt;.</li>
+      <li>DTD uses non-XML syntax; XML Schema uses XML syntax.</li>
+      <li>SAX does NOT build a tree in memory.</li>
+      <li>JavaScript sandbox: no direct file system access by default.</li>
+      <li>Tim Berners-Lee invented the original Web and envisioned Web 3.0.</li>
+    </ul>
+  </div>
+
+  <div class="exam-box">
+    <div class="exam-title">⚡ أسئلة متوقعة في الامتحان</div>
+    <ul>
+      <li>What are the three fundamental mechanisms of the Web? → HTTP, HTML, URI</li>
+      <li>Difference between Web 2.0 and Web 3.0? → Technological vs Conceptual evolution</li>
+      <li>What makes an XML document "well-formed"? → 6 rules (see XML section)</li>
+      <li>Difference between DTD and XML Schema? → DTD: own syntax, limited types. Schema: XML-based, rich types</li>
+      <li>What is the DOM? → W3C API that loads XML as tree in memory</li>
+      <li>What is the SAX? → Event-based sequential XML parser, no tree</li>
+      <li>What is the Sandbox Principle in JavaScript? → JS can only access browser objects by default</li>
+      <li>What is a Content-Type/MIME Type? → HTTP header field describing the type of content sent</li>
+      <li>Why are XML Namespaces needed? → To resolve element name conflicts in mixed-vocabulary documents</li>
+      <li>YAML vs XML? → YAML: compact, indentation-based, superset of JSON</li>
+    </ul>
+  </div>
+
+</div>
+
+</div><!-- /container -->
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
