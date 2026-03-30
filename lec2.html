@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet Applications - Lecture 2 | شرح بالمصري</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --bg2: #0d1428;
+    --bg3: #111936;
+    --card: #141d35;
+    --card2: #1a2440;
+    --accent1: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --accent4: #10b981;
+    --accent5: #f43f5e;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: #1e2d4a;
+    --glow1: rgba(0,212,255,0.15);
+    --glow2: rgba(124,58,237,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #0a0f1e 0%, #0d1428 40%, #111936 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 20px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content:'';
+    position:absolute;
+    top:-50%;left:-50%;
+    width:200%;height:200%;
+    background: radial-gradient(ellipse at 30% 40%, rgba(0,212,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 60%, rgba(124,58,237,0.08) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes pulse { 0%{opacity:0.5} 100%{opacity:1} }
+  .hero-badge {
+    display:inline-block;
+    background: linear-gradient(90deg, var(--accent2), var(--accent1));
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    position:relative;z-index:1;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    position:relative;z-index:1;
+  }
+  .hero h1 span { color: var(--accent1); }
+  .hero p {
+    color: var(--text2);
+    font-size: 1.05rem;
+    max-width: 600px;
+    margin: 0 auto 24px;
+    position:relative;z-index:1;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    position:relative;z-index:1;
+  }
+  .stat {
+    text-align:center;
+  }
+  .stat .num { font-size: 1.8rem; font-weight: 900; color: var(--accent1); }
+  .stat .lbl { font-size: 0.75rem; color: var(--text3); }
+
+  /* ===== NAV ===== */
+  .toc {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .toc-inner {
+    display: flex;
+    gap: 4px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 8px 0;
+  }
+  .toc a {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 8px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .toc a:hover { background: var(--card); color: var(--accent1); }
+
+  /* ===== MAIN ===== */
+  .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-bottom: 60px;
+    animation: fadeUp 0.5s ease both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .section-num.c1 { background: linear-gradient(135deg, #00d4ff22, #00d4ff44); color: var(--accent1); border: 1px solid #00d4ff33; }
+  .section-num.c2 { background: linear-gradient(135deg, #7c3aed22, #7c3aed44); color: var(--accent2); border: 1px solid #7c3aed33; }
+  .section-num.c3 { background: linear-gradient(135deg, #f59e0b22, #f59e0b44); color: var(--accent3); border: 1px solid #f59e0b33; }
+  .section-num.c4 { background: linear-gradient(135deg, #10b98122, #10b98144); color: var(--accent4); border: 1px solid #10b98133; }
+  .section-num.c5 { background: linear-gradient(135deg, #f43f5e22, #f43f5e44); color: var(--accent5); border: 1px solid #f43f5e33; }
+  
+  .section-title { font-size: 1.5rem; font-weight: 800; }
+  .section-sub { color: var(--text3); font-size: 0.85rem; font-weight: 400; }
+
+  /* ===== CONCEPT CARD ===== */
+  .concept {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .concept:hover { border-color: #2a3d5a; box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+  
+  .concept-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .concept-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+  .concept-en {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    color: var(--accent1);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .concept-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+  
+  .concept-body { padding: 18px 22px; }
+  
+  .arabic-explain {
+    background: var(--bg3);
+    border-right: 3px solid var(--accent2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.9;
+  }
+  .arabic-explain strong { color: var(--accent3); }
+  
+  /* ===== DIAGRAM ===== */
+  .diagram-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 14px 0;
+    overflow-x: auto;
+  }
+  .diagram-box svg { display: block; margin: 0 auto; max-width: 100%; }
+
+  /* ===== CODE ===== */
+  .code-block {
+    background: #080d1a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.82rem;
+    color: #a8c0e0;
+    overflow-x: auto;
+    margin: 12px 0;
+    direction: ltr;
+    text-align: left;
+  }
+  .code-block .kw { color: #c792ea; }
+  .code-block .str { color: #c3e88d; }
+  .code-block .cmt { color: #546e7a; font-style: italic; }
+  .code-block .val { color: #f78c6c; }
+  .code-block .fn { color: #82aaff; }
+
+  /* ===== TABLE ===== */
+  .table-wrap { overflow-x: auto; margin: 14px 0; border-radius: 12px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--card2);
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent1);
+    text-align: right;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 10px 16px;
+    font-size: 0.88rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .code-cell { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: var(--accent4); direction: ltr; text-align: left; }
+
+  /* ===== ALERT BOXES ===== */
+  .alert {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 0.9rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alert-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .alert.info { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2); }
+  .alert.warn { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.25); }
+  .alert.danger { background: rgba(244,63,94,0.07); border: 1px solid rgba(244,63,94,0.25); }
+  .alert.success { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.25); }
+  .alert.warn .alert-body strong { color: var(--accent3); }
+  .alert.danger .alert-body strong { color: var(--accent5); }
+  .alert.info .alert-body strong { color: var(--accent1); }
+  .alert.success .alert-body strong { color: var(--accent4); }
+
+  /* ===== COMPARE ===== */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  @media(max-width:600px){.compare-grid{grid-template-columns:1fr;}}
+  .compare-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .compare-card h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-card.v1 h4 { color: var(--accent5); }
+  .compare-card.v2 h4 { color: var(--accent4); }
+  .compare-card ul { list-style: none; }
+  .compare-card ul li {
+    font-size: 0.85rem;
+    color: var(--text2);
+    padding: 4px 0;
+    padding-right: 20px;
+    position: relative;
+  }
+  .compare-card ul li::before {
+    content: '▸';
+    position: absolute;
+    right: 0;
+    color: var(--text3);
+  }
+
+  /* ===== STEP LIST ===== */
+  .steps { margin: 14px 0; }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent2), var(--accent1));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-body { flex: 1; }
+  .step-body strong { color: var(--accent1); display: block; margin-bottom: 4px; }
+  .step-body p { color: var(--text2); font-size: 0.9rem; }
+
+  /* ===== SUMMARY SECTION ===== */
+  .summary {
+    background: linear-gradient(135deg, #0d1428, #111936);
+    border: 2px solid var(--accent1);
+    border-radius: 20px;
+    padding: 32px;
+    margin-top: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary::before {
+    content:'EXAM SUMMARY';
+    position:absolute;
+    top:20px; right:24px;
+    font-size:0.6rem; letter-spacing:3px;
+    color: var(--accent1); opacity:0.4; font-weight:900;
+  }
+  .summary h2 {
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--accent1);
+    margin-bottom: 24px;
+    direction: ltr;
+    text-align: left;
+  }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .summary-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px;
+    direction: ltr;
+    text-align: left;
+  }
+  .summary-card h3 { color: var(--accent3); font-size: 0.85rem; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .summary-card ul { list-style: none; }
+  .summary-card ul li {
+    font-size: 0.82rem;
+    color: var(--text2);
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .summary-card ul li:last-child { border-bottom: none; }
+  .summary-card ul li span { color: var(--accent1); font-family: 'Fira Code', monospace; }
+
+  /* ===== TRICKY SECTION ===== */
+  .tricky {
+    background: linear-gradient(135deg, rgba(244,63,94,0.05), rgba(245,158,11,0.05));
+    border: 1px solid rgba(244,63,94,0.3);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 40px 0;
+  }
+  .tricky-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(244,63,94,0.2);
+  }
+  .tricky-header h2 { color: var(--accent5); font-size: 1.2rem; font-weight: 800; }
+  .tricky-item {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border-right: 3px solid var(--accent5);
+  }
+  .tricky-item:last-child { margin-bottom: 0; }
+  .tricky-item h4 { color: var(--accent3); font-size: 0.9rem; margin-bottom: 6px; }
+  .tricky-item p { color: var(--text2); font-size: 0.88rem; }
+
+  /* ===== TAG ===== */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin: 2px;
+  }
+  .tag.blue { background: rgba(0,212,255,0.15); color: var(--accent1); }
+  .tag.purple { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .tag.yellow { background: rgba(245,158,11,0.15); color: var(--accent3); }
+  .tag.red { background: rgba(244,63,94,0.15); color: var(--accent5); }
+  .tag.green { background: rgba(16,185,129,0.15); color: var(--accent4); }
+
+  /* footer */
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text3);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* smooth scroll */
+  html { scroll-behavior: smooth; }
+
+  /* ltr override for technical stuff */
+  .ltr { direction: ltr; text-align: left; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Internet Applications · Lecture 1</div>
+  <h1>Basic Aspects of <span>Web Applications</span></h1>
+</div>
+
+<!-- NAV -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#s1">🌐 REST Model</a>
+    <a href="#s2">🖥 Web Server</a>
+    <a href="#s3">🌍 Browser</a>
+    <a href="#s4">📡 HTTP</a>
+    <a href="#s5">🔐 Sessions</a>
+    <a href="#s6">⚡ HTTP/2</a>
+    <a href="#s7">🧩 HTML5</a>
+    <a href="#tricky">⚠️ الحاجات الصعبة</a>
+    <a href="#summary">📋 ملخص الامتحان</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ==================== INTRO ==================== -->
+<div class="section" style="animation-delay:0.1s">
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🏗</div>
+      <div>
+        <div class="concept-en">Web Application Architecture — The Big Picture</div>
+        <div class="concept-title">الصورة الكبيرة — إيه اللي بيحصل لما بتفتح موقع؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        تخيل إنك بتطلب أكل أونلاين. أنت (Client) بتبعت الطلب، في وسيط (HTTP) هو البريد اللي بيوصل الطلب، والمطعم (Server) هو اللي بيجهز الأكل ويرجعه ليك.
+
+        <br><br>في الـ Web Application في <strong>3 طبقات (Tiers)</strong>:
+        <br>🔵 <strong>Presentation (العرض):</strong> اللي بتشوفه على الشاشة — HTML, CSS
+        <br>🟡 <strong>Logic (المنطق):</strong> الكود اللي بيشتغل ويعمل حسابات — JavaScript على الكلاينت أو Java/PHP على السيرفر
+        <br>🟢 <strong>Data (البيانات):</strong> قاعدة البيانات — Database
+
+        <br><br>الكلاينت (المتصفح) بيبعت Request، السيرفر بيعملها Process، وبيرجع Response. ده هو الدورة كلها.
+      </div>
+
+      <!-- DIAGRAM: 3-tier -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" width="700" height="200">
+          <!-- Client -->
+          <rect x="20" y="40" width="160" height="120" rx="12" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="100" y="70" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="bold" font-family="Cairo">Client Side</text>
+          <text x="100" y="90" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Cairo">المتصفح</text>
+          <rect x="35" y="100" width="130" height="20" rx="4" fill="#0d1428" stroke="#7c3aed" stroke-width="1"/>
+          <text x="100" y="114" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Cairo">Presentation Logic</text>
+          <rect x="35" y="128" width="130" height="20" rx="4" fill="#0d1428" stroke="#10b981" stroke-width="1"/>
+          <text x="100" y="142" text-anchor="middle" fill="#10b981" font-size="9" font-family="Cairo">UI / HTML + JS</text>
+
+          <!-- Arrow 1 -->
+          <line x1="185" y1="100" x2="250" y2="100" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+          <polygon points="250,95 260,100 250,105" fill="#f59e0b"/>
+          <text x="222" y="88" text-anchor="middle" fill="#f59e0b" font-size="9" font-family="Cairo">HTTP Request</text>
+          <line x1="260" y1="120" x2="195" y2="120" stroke="#00d4ff" stroke-width="2" stroke-dasharray="5,3"/>
+          <polygon points="195,115 185,120 195,125" fill="#00d4ff"/>
+          <text x="222" y="140" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="Cairo">HTTP Response</text>
+
+          <!-- HTTP box -->
+          <rect x="255" y="80" width="100" height="60" rx="8" fill="#111936" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="305" y="107" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="bold" font-family="monospace">HTTP</text>
+          <text x="305" y="122" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">البروتوكول</text>
+
+          <!-- Arrow 2 -->
+          <line x1="360" y1="100" x2="420" y2="100" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+          <polygon points="420,95 430,100 420,105" fill="#f59e0b"/>
+
+          <!-- Server -->
+          <rect x="430" y="20" width="240" height="160" rx="12" fill="#1a2440" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="550" y="48" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="bold" font-family="Cairo">Server Side</text>
+          <rect x="445" y="58" width="210" height="22" rx="4" fill="#0d1428" stroke="#7c3aed" stroke-width="1"/>
+          <text x="550" y="73" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Cairo">Business Logic (PHP/Java/Python)</text>
+          <rect x="445" y="88" width="210" height="22" rx="4" fill="#0d1428" stroke="#10b981" stroke-width="1"/>
+          <text x="550" y="103" text-anchor="middle" fill="#10b981" font-size="9" font-family="Cairo">Application Engine</text>
+          <rect x="445" y="118" width="210" height="22" rx="4" fill="#0d1428" stroke="#f43f5e" stroke-width="1"/>
+          <text x="550" y="133" text-anchor="middle" fill="#f43f5e" font-size="9" font-family="Cairo">Data (Database)</text>
+          <rect x="445" y="148" width="210" height="20" rx="4" fill="#0d1428" stroke="#f59e0b" stroke-width="1"/>
+          <text x="550" y="162" text-anchor="middle" fill="#f59e0b" font-size="9" font-family="Cairo">(X)HTML Template Engine</text>
+        </svg>
+      </div>
+
+      <div class="alert info">
+        <div class="alert-icon">💡</div>
+        <div class="alert-body"><strong>لاحظ:</strong> في الـ Slide 5 بتوضح إن الـ Web Applications اتطورت — زمان كانت كل اللوجيك على السيرفر، دلوقتي جزء كبير بقى على الكلاينت (JavaScript). ده اللي بيخلي المواقع أسرع وأذكى.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== REST MODEL ==================== -->
+<div class="section" id="s1" style="animation-delay:0.15s">
+  <div class="section-header">
+    <div class="section-num c1">01</div>
+    <div>
+      <div class="section-title">REST Model</div>
+      <div class="section-sub">Representational State Transfer</div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🔄</div>
+      <div>
+        <div class="concept-en">REST = Representational State Transfer</div>
+        <div class="concept-title">نموذج REST — إيه هو بالظبط؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        REST ده <strong>نموذج (Model)</strong> للتواصل بين الأنظمة المتوزعة على الإنترنت. مش تقنية ولا لغة — ده <strong>أسلوب تفكير</strong>.
+        
+        <br><br>🔑 <strong>الفكرة الأساسية:</strong> بدل ما تنادي على Function أو Procedure زي RPC، أنت بتتعامل مع <strong>Resources (موارد/وثائق)</strong>. كل حاجة ليها عنوان واضح (URI).
+        
+        <br><br>مثال: بدل ما تقول "اجيبلي بيانات المستخدم رقم 5" بالكود، أنت بتعمل GET على <code>/users/5</code> وبتاخد البيانات.
+      </div>
+
+      <div class="alert warn">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-body"><strong>حاجة مهمة جداً:</strong> REST بيقول إن البروتوكول <strong>Stateless</strong> — يعني كل Request لازم يكون فيها كل المعلومات اللازمة. السيرفر مش بيفتكر حاجة من Request للتانية. ده مختلف عن الجلسة التقليدية.</div>
+      </div>
+
+      <!-- DIAGRAM: REST flow -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 650 170" xmlns="http://www.w3.org/2000/svg" width="650" height="170">
+          <!-- Client box -->
+          <rect x="20" y="50" width="130" height="80" rx="10" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="85" y="85" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="bold" font-family="monospace">Client</text>
+          <text x="85" y="103" text-anchor="middle" fill="#64748b" font-size="9" font-family="Cairo">المستخدم / المتصفح</text>
+          <text x="85" y="120" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Cairo">3. Manipulate doc</text>
+
+          <!-- Server box -->
+          <rect x="490" y="30" width="140" height="120" rx="10" fill="#1a2440" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="560" y="60" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="bold" font-family="monospace">Server</text>
+          <text x="560" y="78" text-anchor="middle" fill="#64748b" font-size="9" font-family="Cairo">REST Interface</text>
+          <rect x="505" y="88" width="110" height="18" rx="4" fill="#0d1428" stroke="#10b981" stroke-width="1"/>
+          <text x="560" y="100" text-anchor="middle" fill="#10b981" font-size="8" font-family="Cairo">Resources (Documents)</text>
+          <rect x="505" y="112" width="110" height="18" rx="4" fill="#0d1428" stroke="#f59e0b" stroke-width="1"/>
+          <text x="560" y="124" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Cairo">Unique URI for each</text>
+
+          <!-- Arrow 1: GET -->
+          <line x1="155" y1="75" x2="480" y2="75" stroke="#00d4ff" stroke-width="2"/>
+          <polygon points="480,70 490,75 480,80" fill="#00d4ff"/>
+          <text x="318" y="65" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="Cairo">① GET /users/5 — اجيبلي الريسورس</text>
+
+          <!-- Arrow 2: PUT -->
+          <line x1="480" y1="100" x2="155" y2="115" stroke="#f43f5e" stroke-width="2"/>
+          <polygon points="155,110 145,115 155,120" fill="#f43f5e"/>
+          <text x="318" y="135" text-anchor="middle" fill="#f43f5e" font-size="9" font-family="Cairo">④ PUT /users/5 — ابعت التعديلات</text>
+
+          <!-- Step 2 box -->
+          <rect x="240" y="145" width="170" height="22" rx="6" fill="#111936" stroke="#f59e0b" stroke-width="1"/>
+          <text x="325" y="160" text-anchor="middle" fill="#f59e0b" font-size="9" font-family="Cairo">② كلاينت بيعدل الـ Document محلياً</text>
+        </svg>
+      </div>
+
+      <div class="alert info">
+        <div class="alert-icon">🆚</div>
+        <div class="alert-body"><strong>REST vs RPC:</strong> في RPC أنت بتنادي على <em>function</em> زي <code>getUser(5)</code>. في REST أنت بتعنون <em>resource</em> زي <code>GET /users/5</code>. الفرق إن REST بيستخدم HTTP methods كـ interface موحد للعالم.</div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:14px">
+        <table>
+          <tr>
+            <th>خاصية REST</th>
+            <th>شرح</th>
+            <th>مثال</th>
+          </tr>
+          <tr>
+            <td><span class="tag blue">Client/Server</span></td>
+            <td>الكلاينت والسيرفر منفصلين</td>
+            <td>المتصفح ≠ السيرفر</td>
+          </tr>
+          <tr>
+            <td><span class="tag purple">Stateless</span></td>
+            <td>كل Request مستقلة — مفيش ذاكرة</td>
+            <td>كل call لازم تبعت التوكن فيها</td>
+          </tr>
+          <tr>
+            <td><span class="tag yellow">Resource-based</span></td>
+            <td>بتتعامل مع موارد مش إجراءات</td>
+            <td><code class="code-cell">GET /products/12</code></td>
+          </tr>
+          <tr>
+            <td><span class="tag green">Uniform Interface</span></td>
+            <td>GET, POST, PUT, DELETE — نفس اللغة</td>
+            <td>أي لغة تقدر تتكلم مع أي سيرفر</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== WEB SERVER ==================== -->
+<div class="section" id="s2" style="animation-delay:0.2s">
+  <div class="section-header">
+    <div class="section-num c2">02</div>
+    <div>
+      <div class="section-title">Web Server Architecture</div>
+      <div class="section-sub">معمار الـ Web Server من الداخل</div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🖥</div>
+      <div>
+        <div class="concept-en">Web Server = Software that delivers resources via HTTP</div>
+        <div class="concept-title">الـ Web Server إيه هو بالظبط؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        الـ Web Server ده <strong>Software (برنامج)</strong> بيشتغل على جهاز وبيخلي الـ Resources (ملفات، صفحات) متاحة عبر HTTP.
+
+        <br><br>لو المحتوى <strong>Static</strong> (ثابت) زي HTML files: السيرفر بس بياخد الملف من الـ File System ويبعته.
+        
+        <br><br>لو المحتوى <strong>Dynamic</strong> (متغير): السيرفر بيشغّل Logic (كود) ويولّد المحتوى لحظياً. ده اللي بيحصل في مواقع زي فيسبوك — صفحتك مش ملف ثابت، بتتبنى كل مرة.
+      </div>
+
+      <!-- Hierarchical Architecture Diagram -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" width="700" height="280">
+          <!-- Web Browser -->
+          <rect x="20" y="110" width="120" height="60" rx="8" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="80" y="137" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold" font-family="monospace">Web Browser</text>
+          <text x="80" y="155" text-anchor="middle" fill="#64748b" font-size="9" font-family="Cairo">المتصفح</text>
+
+          <!-- Arrow browser to connector -->
+          <line x1="145" y1="140" x2="185" y2="140" stroke="#f59e0b" stroke-width="2"/>
+          <polygon points="185,135 195,140 185,145" fill="#f59e0b"/>
+          <text x="165" y="132" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Cairo">TCP ②</text>
+
+          <!-- Web Server Box -->
+          <rect x="195" y="20" width="480" height="240" rx="12" fill="#0a0f1e" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="435" y="42" text-anchor="middle" fill="#7c3aed" font-size="10" font-weight="bold" font-family="Cairo">Web Server</text>
+
+          <!-- Connector Entity -->
+          <rect x="215" y="110" width="120" height="60" rx="8" fill="#1a2440" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="275" y="135" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="bold" font-family="Cairo">Connector Entity</text>
+          <text x="275" y="152" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">① بيفتح TCP Port</text>
+          <text x="275" y="162" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">③ بيعمل Client Descriptor</text>
+
+          <!-- Arrow connector to delegation -->
+          <line x1="340" y1="140" x2="380" y2="140" stroke="#f43f5e" stroke-width="2"/>
+          <polygon points="380,135 390,140 380,145" fill="#f43f5e"/>
+          <text x="360" y="132" text-anchor="middle" fill="#f43f5e" font-size="8" font-family="Cairo">④</text>
+
+          <!-- Delegation Process -->
+          <rect x="390" y="110" width="115" height="60" rx="8" fill="#1a2440" stroke="#f43f5e" stroke-width="1.5"/>
+          <text x="447" y="135" text-anchor="middle" fill="#f43f5e" font-size="9" font-weight="bold" font-family="Cairo">Delegation</text>
+          <text x="447" y="150" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">Process</text>
+          <text x="447" y="162" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">بيوزع الشغل</text>
+
+          <!-- Processing Pool -->
+          <rect x="520" y="50" width="135" height="190" rx="8" fill="#111936" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="587" y="72" text-anchor="middle" fill="#10b981" font-size="9" font-weight="bold" font-family="Cairo">Processing Pool</text>
+          <text x="587" y="86" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">① بتتعمل مسبقاً</text>
+
+          <!-- Processing entities -->
+          <rect x="530" y="95" width="115" height="30" rx="6" fill="#1a2440" stroke="#10b981" stroke-width="1"/>
+          <text x="587" y="114" text-anchor="middle" fill="#10b981" font-size="8" font-family="Cairo">Processing Entity ⑤</text>
+          <rect x="530" y="133" width="115" height="30" rx="6" fill="#1a2440" stroke="#10b981" stroke-width="1"/>
+          <text x="587" y="152" text-anchor="middle" fill="#10b981" font-size="8" font-family="Cairo">Processing Entity</text>
+          <rect x="530" y="171" width="115" height="30" rx="6" fill="#1a2440" stroke="#10b981" stroke-width="1"/>
+          <text x="587" y="190" text-anchor="middle" fill="#10b981" font-size="8" font-family="Cairo">Processing Entity</text>
+
+          <!-- Arrow delegation to pool -->
+          <line x1="510" y1="130" x2="525" y2="115" stroke="#10b981" stroke-width="2"/>
+          <polygon points="520,110 525,115 530,108" fill="#10b981"/>
+
+          <!-- Labels -->
+          <text x="435" y="260" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">⑤ HTTP Communication مع المتصفح</text>
+        </svg>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">①</div>
+          <div class="step-body">
+            <strong>Startup — بداية السيرفر</strong>
+            <p>لما السيرفر بيشتغل، بيعمل على طول "Processing Pool" — يعني بيجهّز مجموعة من الـ Processing Entities مسبقاً علشان يكون جاهز. ده أسرع من إنه ينشئ واحدة كل شغلة.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">②</div>
+          <div class="step-body">
+            <strong>Connection — المتصفح بيتصل</strong>
+            <p>المتصفح بيعمل TCP Connection مع السيرفر من خلال interface معين (Port). ده بيتعمل عبر الـ Connector Entity.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">③</div>
+          <div class="step-body">
+            <strong>Client Descriptor — بيانات الاتصال</strong>
+            <p>الـ Connector Entity بيعمل "Client Descriptor" — ده زي بيانات الاتصال بالعميل. بعدين بيبعته للـ Delegation Process.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">④</div>
+          <div class="step-body">
+            <strong>Delegation — التوزيع</strong>
+            <p>الـ Delegation Process بياخد الـ Client Descriptor ويديه لـ Processing Entity فاضية من الـ Pool.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">⑤</div>
+          <div class="step-body">
+            <strong>HTTP Communication — التواصل الفعلي</strong>
+            <p>دلوقتي الـ Processing Entity بتتكلم مع المتصفح مباشرة عبر HTTP. ده بيسمح بـ Parallel Processing — أكتر من متصفح في نفس الوقت.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert success">
+        <div class="alert-icon">✅</div>
+        <div class="alert-body"><strong>ليه Pool وليه مش ننشئ Entity كل مرة؟</strong> إنشاء Thread أو Process من الصفر بياخد وقت. لو عندنا 1000 Request في نفس الوقت وبننشئ Thread لكل واحدة — السيرفر هيانهار. الـ Pool بيحل المشكلة دي بإن الـ Entities جاهزة.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">⚙️</div>
+      <div>
+        <div class="concept-en">Server-side Logic — CGI, Servlet, Application Server</div>
+        <div class="concept-title">اللوجيك على السيرفر — إزاي بيتعمل المحتوى الديناميكي؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        المحتوى الديناميكي بيتعمل بـ 3 طرق رئيسية:
+
+        <br><br>🔹 <strong>CGI (Common Gateway Interface):</strong> أقدم طريقة. لكل Request السيرفر بيشغّل Script جديد. بطيء جداً لكن بسيط.
+        <br>🔹 <strong>Java Servlet Container:</strong> الـ Servlet بيشتغل جوه الـ Server مباشرةً. أسرع من CGI.
+        <br>🔹 <strong>Application Server:</strong> الأقوى — بيوفر Services إضافية زي: Transaction Management, Security, Directory Services. مناسب للأنظمة الكبيرة.
+
+        <br><br>بعدين في حاجة اسمها <strong>(X)HTML Engine</strong> — ده بياخد المحتوى الديناميكي ويدمجه في Templates HTML جاهزة. زي إنك بتعمل "قالب" للصفحة وبتملاه ببيانات.
+      </div>
+
+      <div class="diagram-box">
+        <svg viewBox="0 0 650 150" xmlns="http://www.w3.org/2000/svg" width="650" height="150">
+          <rect x="10" y="45" width="110" height="55" rx="8" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="65" y="70" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="Cairo">Web Browser</text>
+          <text x="65" y="85" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">Request</text>
+
+          <line x1="125" y1="72" x2="160" y2="72" stroke="#f59e0b" stroke-width="1.5"/>
+          <polygon points="160,67 170,72 160,77" fill="#f59e0b"/>
+          <text x="145" y="62" text-anchor="middle" fill="#f59e0b" font-size="7" font-family="Cairo">Request</text>
+
+          <rect x="170" y="30" width="105" height="90" rx="8" fill="#1a2440" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="222" y="52" text-anchor="middle" fill="#a78bfa" font-size="8" font-weight="bold" font-family="Cairo">Processing</text>
+          <text x="222" y="65" text-anchor="middle" fill="#64748b" font-size="7" font-family="Cairo">Entity</text>
+
+          <line x1="280" y1="72" x2="315" y2="72" stroke="#f59e0b" stroke-width="1.5"/>
+          <polygon points="315,67 325,72 315,77" fill="#f59e0b"/>
+
+          <rect x="325" y="20" width="180" height="110" rx="8" fill="#1a2440" stroke="#10b981" stroke-width="1.5"/>
+          <text x="415" y="42" text-anchor="middle" fill="#10b981" font-size="9" font-weight="bold" font-family="Cairo">Application Engine</text>
+          <rect x="335" y="52" width="160" height="20" rx="4" fill="#0d1428" stroke="#f43f5e" stroke-width="1"/>
+          <text x="415" y="66" text-anchor="middle" fill="#f43f5e" font-size="8" font-family="Cairo">Application Logic</text>
+          <rect x="335" y="78" width="160" height="20" rx="4" fill="#0d1428" stroke="#f59e0b" stroke-width="1"/>
+          <text x="415" y="92" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Cairo">(X)HTML Engine</text>
+          <rect x="335" y="104" width="160" height="18" rx="4" fill="#0d1428" stroke="#94a3b8" stroke-width="1"/>
+          <text x="415" y="117" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Cairo">(X)HTML Template</text>
+
+          <line x1="510" y1="72" x2="550" y2="72" stroke="#00d4ff" stroke-width="1.5"/>
+          <polygon points="545,67 555,72 545,77" fill="#00d4ff"/>
+
+          <rect x="555" y="50" width="85" height="45" rx="6" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="597" y="71" text-anchor="middle" fill="#00d4ff" font-size="8" font-family="Cairo">Generated</text>
+          <text x="597" y="84" text-anchor="middle" fill="#00d4ff" font-size="8" font-family="Cairo">HTML</text>
+
+          <text x="90" y="130" text-anchor="middle" fill="#7c3aed" font-size="8" font-family="Cairo">← Generated Content بيتبعت للمتصفح</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== WEB BROWSER ==================== -->
+<div class="section" id="s3" style="animation-delay:0.25s">
+  <div class="section-header">
+    <div class="section-num c3">03</div>
+    <div>
+      <div class="section-title">Web Browser Architecture</div>
+      <div class="section-sub">معمار المتصفح من الداخل</div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🌍</div>
+      <div>
+        <div class="concept-en">Browser Reference Architecture — 9 Components</div>
+        <div class="concept-title">المتصفح مش مجرد نافذة — جوّاه 9 مكونات!</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        المتصفح الأول كان بسيط جداً — بس بياخد HTML ويعرضه. دلوقتي أصبح نظام معقد جداً.
+      </div>
+
+      <!-- Browser Architecture Diagram -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" width="700" height="320">
+          <!-- Outer browser box -->
+          <rect x="10" y="10" width="680" height="300" rx="14" fill="#0a0f1e" stroke="#00d4ff" stroke-width="2"/>
+          <text x="350" y="35" text-anchor="middle" fill="#00d4ff" font-size="12" font-weight="bold" font-family="Cairo">Web Browser Reference Architecture</text>
+
+          <!-- User Interface -->
+          <rect x="30" y="50" width="640" height="38" rx="8" fill="#1a2440" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="350" y="72" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold" font-family="Cairo">User Interface — الواجهة اللي الأدرس بيشوفها (Address bar, tabs, buttons)</text>
+
+          <!-- Browser Engine -->
+          <rect x="30" y="98" width="200" height="38" rx="8" fill="#1a2440" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="130" y="120" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="bold" font-family="Cairo">Browser Engine</text>
+          <text x="130" y="132" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">وسيط مع Rendering Engine</text>
+
+          <!-- Rendering Engine -->
+          <rect x="240" y="98" width="210" height="38" rx="8" fill="#1a2440" stroke="#10b981" stroke-width="1.5"/>
+          <text x="345" y="120" text-anchor="middle" fill="#10b981" font-size="9" font-weight="bold" font-family="Cairo">Rendering Engine</text>
+          <text x="345" y="132" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">بيعمل Parse و Layout لـ HTML/CSS</text>
+
+          <!-- Networking -->
+          <rect x="460" y="98" width="210" height="38" rx="8" fill="#1a2440" stroke="#f43f5e" stroke-width="1.5"/>
+          <text x="565" y="120" text-anchor="middle" fill="#f43f5e" font-size="9" font-weight="bold" font-family="Cairo">Networking</text>
+          <text x="565" y="132" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">بيعمل HTTP Requests</text>
+
+          <!-- Row 3 -->
+          <rect x="30" y="148" width="155" height="38" rx="8" fill="#1a2440" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="107" y="170" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="bold" font-family="Cairo">Script Engine</text>
+          <text x="107" y="182" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">بيشغّل JavaScript</text>
+
+          <rect x="195" y="148" width="155" height="38" rx="8" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="272" y="170" text-anchor="middle" fill="#00d4ff" font-size="9" font-weight="bold" font-family="Cairo">XML Parser</text>
+          <text x="272" y="182" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">بـ Parse XML content</text>
+
+          <rect x="360" y="148" width="155" height="38" rx="8" fill="#1a2440" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="437" y="170" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="bold" font-family="Cairo">Display Backend</text>
+          <text x="437" y="182" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">رسم، ويندوز، خطوط (GTK+)</text>
+
+          <rect x="525" y="148" width="145" height="38" rx="8" fill="#1a2440" stroke="#10b981" stroke-width="1.5"/>
+          <text x="597" y="170" text-anchor="middle" fill="#10b981" font-size="9" font-weight="bold" font-family="Cairo">Plug-in Engine</text>
+          <text x="597" y="182" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">Extensions إضافية</text>
+
+          <!-- Row 4 -->
+          <rect x="30" y="198" width="310" height="38" rx="8" fill="#1a2440" stroke="#f43f5e" stroke-width="1.5"/>
+          <text x="185" y="220" text-anchor="middle" fill="#f43f5e" font-size="9" font-weight="bold" font-family="Cairo">Data Persistence</text>
+          <text x="185" y="232" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">Cached pages, Cookies, Local Storage</text>
+
+          <rect x="350" y="198" width="320" height="38" rx="8" fill="#1a2440" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="510" y="220" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold" font-family="Cairo">XSLT Processor (not shown)</text>
+          <text x="510" y="232" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">& other subsystems...</text>
+
+          <text x="350" y="280" text-anchor="middle" fill="#64748b" font-size="9" font-family="Cairo">كل المكونات دي بتشتغل مع بعض علشان تعرض الصفحة اللي أنت شايفها</text>
+        </svg>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>المكون</th><th>الوظيفة</th><th>مثال عملي</th></tr>
+          <tr><td><span class="tag yellow">User Interface</span></td><td>الواجهة للمستخدم</td><td>شريط العنوان، التبويبات، الأزرار</td></tr>
+          <tr><td><span class="tag purple">Browser Engine</span></td><td>وسيط للـ Rendering Engine</td><td>بيتحكم في ازاي المحتوى بيتعرض</td></tr>
+          <tr><td><span class="tag green">Rendering Engine</span></td><td>Parse وعرض HTML+CSS</td><td>Blink (Chrome), Gecko (Firefox)</td></tr>
+          <tr><td><span class="tag red">Networking</span></td><td>HTTP Communication</td><td>بيبعت ويستقبل الـ Requests</td></tr>
+          <tr><td><span class="tag yellow">Script Engine</span></td><td>تشغيل JavaScript</td><td>V8 (Chrome), SpiderMonkey (Firefox)</td></tr>
+          <tr><td><span class="tag blue">XML Parser</span></td><td>Parse XML content</td><td>قراءة RSS, SVG, etc.</td></tr>
+          <tr><td><span class="tag purple">Display Backend</span></td><td>رسم وعرض</td><td>GTK+ على Linux</td></tr>
+          <tr><td><span class="tag red">Data Persistence</span></td><td>تخزين البيانات</td><td>Cookies, Cache, LocalStorage</td></tr>
+          <tr><td><span class="tag green">Plug-in Engine</span></td><td>Extensions</td><td>PDF viewer, Web feed reader</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== HTTP ==================== -->
+<div class="section" id="s4" style="animation-delay:0.3s">
+  <div class="section-header">
+    <div class="section-num c4">04</div>
+    <div>
+      <div class="section-title">HTTP Protocol</div>
+      <div class="section-sub">الـ HTTP 1.1 بالتفصيل الممل — كل حاجة هتيجي في الامتحان</div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">📡</div>
+      <div>
+        <div class="concept-en">HTTP = HyperText Transfer Protocol (runs on top of TCP)</div>
+        <div class="concept-title">HTTP — البروتوكول اللي بيحكم كل حاجة على الإنترنت</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        HTTP ده بروتوكول <strong>Request-Response</strong> — يعني أنت بتطلب وهو بيرد. بيشتغل فوق TCP.
+
+        <br><br>كل Message (Request أو Response) بتنقسم لـ جزئين:
+        <br>📋 <strong>Header:</strong> المعلومات — إيه اللي أنت عايزه، مين أنت، إيه اللي مقبوله
+        <br>📦 <strong>Body:</strong> المحتوى الفعلي — الملف، البيانات، HTML
+
+        <br><br>الـ Resources بتتعنون بـ <strong>URI (Uniform Resource Identifier)</strong>:
+        <br>• Absolute URI: <code>http://www.example.com/index.html</code>
+        <br>• Absolute Path: <code>/index.html</code>
+        <br>• Asterisk <code>*</code>: لما مش في resource محدد
+      </div>
+
+      <!-- HTTP Message Structure Diagram -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" width="680" height="200">
+          <!-- REQUEST -->
+          <rect x="15" y="20" width="300" height="170" rx="10" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="165" y="42" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold" font-family="Cairo">HTTP Request Message</text>
+
+          <rect x="25" y="52" width="280" height="24" rx="4" fill="#0d1428" stroke="#f59e0b" stroke-width="1"/>
+          <text x="45" y="68" fill="#f59e0b" font-size="8" font-family="monospace">GET /news/index.html HTTP/1.1</text>
+          <text x="310" y="68" text-anchor="end" fill="#f59e0b" font-size="7" font-family="Cairo">Request Line</text>
+
+          <rect x="25" y="80" width="280" height="20" rx="4" fill="#0d1428" stroke="#94a3b8" stroke-width="1"/>
+          <text x="45" y="94" fill="#94a3b8" font-size="8" font-family="monospace">Connection: keep-alive</text>
+          <text x="310" y="94" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">General Header</text>
+
+          <rect x="25" y="104" width="280" height="20" rx="4" fill="#0d1428" stroke="#a78bfa" stroke-width="1"/>
+          <text x="45" y="118" fill="#a78bfa" font-size="8" font-family="monospace">Accept: text/html, */*</text>
+          <text x="310" y="118" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">Request Header</text>
+
+          <rect x="25" y="128" width="280" height="20" rx="4" fill="#0d1428" stroke="#10b981" stroke-width="1"/>
+          <text x="45" y="142" fill="#10b981" font-size="8" font-family="monospace">Content-Length: 41</text>
+          <text x="310" y="142" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">Entity Header</text>
+
+          <rect x="25" y="152" width="280" height="28" rx="4" fill="#0d1428" stroke="#f43f5e" stroke-width="1"/>
+          <text x="45" y="168" fill="#f43f5e" font-size="8" font-family="monospace">login=user&password=pass</text>
+          <text x="310" y="168" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">Message Body</text>
+          <text x="165" y="177" text-anchor="middle" fill="#64748b" font-size="7" font-family="Cairo">(separated by CRLF)</text>
+
+          <!-- RESPONSE -->
+          <rect x="365" y="20" width="300" height="170" rx="10" fill="#1a2440" stroke="#10b981" stroke-width="1.5"/>
+          <text x="515" y="42" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold" font-family="Cairo">HTTP Response Message</text>
+
+          <rect x="375" y="52" width="280" height="24" rx="4" fill="#0d1428" stroke="#f59e0b" stroke-width="1"/>
+          <text x="395" y="68" fill="#f59e0b" font-size="8" font-family="monospace">HTTP/1.1 200 OK</text>
+          <text x="655" y="68" text-anchor="end" fill="#f59e0b" font-size="7" font-family="Cairo">Status Line</text>
+
+          <rect x="375" y="80" width="280" height="20" rx="4" fill="#0d1428" stroke="#94a3b8" stroke-width="1"/>
+          <text x="395" y="94" fill="#94a3b8" font-size="8" font-family="monospace">Date: Mon 12 Jan 2025</text>
+          <text x="655" y="94" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">General Header</text>
+
+          <rect x="375" y="104" width="280" height="20" rx="4" fill="#0d1428" stroke="#a78bfa" stroke-width="1"/>
+          <text x="395" y="118" fill="#a78bfa" font-size="8" font-family="monospace">Server: Apache/2.4 (Unix)</text>
+          <text x="655" y="118" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">Response Header</text>
+
+          <rect x="375" y="128" width="280" height="20" rx="4" fill="#0d1428" stroke="#10b981" stroke-width="1"/>
+          <text x="395" y="142" fill="#10b981" font-size="8" font-family="monospace">Content-Length: 1922</text>
+          <text x="655" y="142" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">Entity Header</text>
+
+          <rect x="375" y="152" width="280" height="28" rx="4" fill="#0d1428" stroke="#f43f5e" stroke-width="1"/>
+          <text x="395" y="168" fill="#f43f5e" font-size="8" font-family="monospace">&lt;html&gt;...gzip encoded...</text>
+          <text x="655" y="168" text-anchor="end" fill="#64748b" font-size="7" font-family="Cairo">Message Body</text>
+        </svg>
+      </div>
+
+      <div class="alert warn">
+        <div class="alert-icon">🔑</div>
+        <div class="alert-body"><strong>CRLF مهم جداً:</strong> الـ Header والـ Body بيتفصلوا بـ CRLF (Carriage Return + Line Feed = <code>\r\n</code>). السطر الفاضي (CRLF وحده) هو اللي بيقول للسيرفر "الـ Header خلص، الـ Body بيبدأ هنا".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🔗</div>
+      <div>
+        <div class="concept-en">HTTP 1.0 vs HTTP 1.1 — Persistent Connections</div>
+        <div class="concept-title">الفرق بين 1.0 و 1.1 — التحسين الكبير</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        في <strong>HTTP 1.0</strong>: كل Request بتعمل TCP Connection جديدة وبتقفلها. ده زي إنك كل ما تعمل أوردر تتصل بالمطعم وبعد ما يردوا تقفل التليفون. بطيء جداً!
+
+        <br><br>في <strong>HTTP 1.1</strong>: بقى في Default الاتصال يفضل مفتوح — <code>Connection: keep-alive</code>. أنت بتعمل Request وتاني وتالت على نفس الـ TCP Connection. أسرع بكتير!
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card v1">
+          <h4>❌ HTTP 1.0 — قديم وبطيء</h4>
+          <ul>
+            <li>كل Request → TCP Connection جديدة</li>
+            <li>226 packets من الكلاينت</li>
+            <li>271 packets من السيرفر</li>
+            <li>إجمالي: 497 packets</li>
+            <li>overhead كبير جداً</li>
+          </ul>
+        </div>
+        <div class="compare-card v2">
+          <h4>✅ HTTP 1.1 — أسرع</h4>
+          <ul>
+            <li>Persistent Connection by default</li>
+            <li>70 packets من الكلاينت</li>
+            <li>153 packets من السيرفر</li>
+            <li>إجمالي: 223 packets</li>
+            <li>Pipeline: 83 packets فقط!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🚀</div>
+      <div>
+        <div class="concept-en">HTTP 1.1 Pipelining — Send requests without waiting</div>
+        <div class="concept-title">الـ Pipelining — إرسل من غير ما تستنى الرد</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        الـ Pipelining ده تقنية بتخليك تبعت Request 2 و Request 3 قبل ما تستقبل الرد على Request 1.
+        
+        <br><br>⚠️ <strong>تحذير مهم:</strong> الـ Responses لازم ترجع <strong>بنفس الترتيب</strong> اللي الـ Requests اتبعت بيه. لو Request 1 اتأخرت، Request 2 و3 بتستنى — ده اتسمى <strong>Head-of-Line Blocking</strong>.
+        
+        <br><br>🚨 <strong>مش كل المتصفحات بتدعمه</strong> — ده ضعف في الـ Pipelining.
+        
+        <br><br>كمان في الـ HTTP 1.1، رسايل HTTP متعددة ممكن تتبعت في نفس TCP Segment واحدة. ده بيوفر bandwidth.
+      </div>
+
+      <!-- Pipelining Diagram -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" width="640" height="200">
+          <!-- Client label -->
+          <text x="30" y="30" fill="#00d4ff" font-size="10" font-weight="bold" font-family="Cairo">Client (C)</text>
+          <!-- Server label -->
+          <text x="570" y="30" fill="#7c3aed" font-size="10" font-weight="bold" font-family="Cairo">Server (S)</text>
+
+          <!-- Timeline lines -->
+          <line x1="60" y1="40" x2="60" y2="185" stroke="#00d4ff" stroke-width="2"/>
+          <line x1="580" y1="40" x2="580" y2="185" stroke="#7c3aed" stroke-width="2"/>
+
+          <!-- TCP Establish -->
+          <line x1="60" y1="55" x2="580" y2="65" stroke="#f59e0b" stroke-width="1.5"/>
+          <polygon points="575,62 580,65 573,68" fill="#f59e0b"/>
+          <text x="320" y="52" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Cairo">Establish TCP Connection</text>
+
+          <!-- Req 1 -->
+          <line x1="60" y1="85" x2="580" y2="95" stroke="#10b981" stroke-width="1.5"/>
+          <polygon points="575,92 580,95 573,98" fill="#10b981"/>
+          <text x="250" y="84" text-anchor="middle" fill="#10b981" font-size="8" font-family="monospace">Req 1</text>
+
+          <!-- Req 2 (before response) -->
+          <line x1="60" y1="100" x2="580" y2="110" stroke="#10b981" stroke-width="1.5"/>
+          <polygon points="575,107 580,110 573,113" fill="#10b981"/>
+          <text x="250" y="98" text-anchor="middle" fill="#10b981" font-size="8" font-family="monospace">Req 2 (بدون انتظار)</text>
+
+          <!-- Req 3 -->
+          <line x1="60" y1="115" x2="580" y2="125" stroke="#10b981" stroke-width="1.5"/>
+          <polygon points="575,122 580,125 573,128" fill="#10b981"/>
+          <text x="250" y="113" text-anchor="middle" fill="#10b981" font-size="8" font-family="monospace">Req 3</text>
+
+          <!-- Resp 1 -->
+          <line x1="580" y1="135" x2="60" y2="148" stroke="#f43f5e" stroke-width="1.5"/>
+          <polygon points="65,145 60,148 67,151" fill="#f43f5e"/>
+          <text x="400" y="133" text-anchor="middle" fill="#f43f5e" font-size="8" font-family="monospace">Resp 1</text>
+
+          <!-- Resp 2 -->
+          <line x1="580" y1="152" x2="60" y2="162" stroke="#f43f5e" stroke-width="1.5"/>
+          <polygon points="65,159 60,162 67,165" fill="#f43f5e"/>
+          <text x="400" y="149" text-anchor="middle" fill="#f43f5e" font-size="8" font-family="monospace">Resp 2 (بنفس الترتيب)</text>
+
+          <!-- Resp 3 -->
+          <line x1="580" y1="168" x2="60" y2="178" stroke="#f43f5e" stroke-width="1.5"/>
+          <polygon points="65,175 60,178 67,181" fill="#f43f5e"/>
+          <text x="400" y="166" text-anchor="middle" fill="#f43f5e" font-size="8" font-family="monospace">Resp 3</text>
+
+          <!-- Note -->
+          <rect x="210" y="185" width="220" height="14" rx="4" fill="#111936" stroke="#f59e0b" stroke-width="1"/>
+          <text x="320" y="195" text-anchor="middle" fill="#f59e0b" font-size="7" font-family="Cairo">ردود بنفس ترتيب الطلبات دايماً!</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🛠</div>
+      <div>
+        <div class="concept-en">HTTP 1.1 Methods — GET, POST, PUT, DELETE, etc.</div>
+        <div class="concept-title">الـ HTTP Methods — إيه الفرق بينهم بالظبط؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        الـ Methods بتحدد <strong>إيه اللي عايزه</strong> من السيرفر. النجمة (*) بتتبعت لو مش في Resource محدد.
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Method</th><th>الوظيفة</th><th>في HTTP 1.0؟</th><th>مثال</th></tr>
+          <tr>
+            <td><span class="tag green">GET</span></td>
+            <td>اجيبلي الـ Resource</td>
+            <td>✅ نعم</td>
+            <td><code class="code-cell">GET /index.html</code></td>
+          </tr>
+          <tr>
+            <td><span class="tag blue">HEAD</span></td>
+            <td>زي GET بس من غير Body — بس Header</td>
+            <td>✅ نعم</td>
+            <td>لمعرفة حجم الملف قبل تحميله</td>
+          </tr>
+          <tr>
+            <td><span class="tag yellow">POST</span></td>
+            <td>ابعت بيانات للـ Resource</td>
+            <td>✅ نعم</td>
+            <td>Submit form, Login</td>
+          </tr>
+          <tr>
+            <td><span class="tag purple">PUT *</span></td>
+            <td>اعمل Resource جديد أو عدّله</td>
+            <td>❌ 1.1 فقط</td>
+            <td>Upload ملف</td>
+          </tr>
+          <tr>
+            <td><span class="tag red">DELETE *</span></td>
+            <td>امسح الـ Resource</td>
+            <td>❌ 1.1 فقط</td>
+            <td>حذف post</td>
+          </tr>
+          <tr>
+            <td><span class="tag blue">OPTIONS *</span></td>
+            <td>إيه الـ Methods اللي السيرفر بيدعمها؟</td>
+            <td>❌ 1.1 فقط</td>
+            <td>CORS Pre-flight</td>
+          </tr>
+          <tr>
+            <td><span class="tag green">TRACE *</span></td>
+            <td>السيرفر بيرجع الـ Request تاني — للتشخيص</td>
+            <td>❌ 1.1 فقط</td>
+            <td>Debugging</td>
+          </tr>
+          <tr>
+            <td><span class="tag purple">CONNECT *</span></td>
+            <td>محجوز للـ Proxy Servers</td>
+            <td>❌ 1.1 فقط</td>
+            <td>HTTPS tunneling</td>
+          </tr>
+        </table>
+      </div>
+      <div class="alert danger">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-body"><strong>HEAD method — سؤال امتحان شائع:</strong> HEAD هو نفس GET بالظبط، بس الرد بيجي من غير Message Body. مفيد لو عايز تعرف حجم الملف أو نوعه من غير ما تنزله كله.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🔢</div>
+      <div>
+        <div class="concept-en">HTTP Status Codes — 1xx, 2xx, 3xx, 4xx, 5xx</div>
+        <div class="concept-title">الـ Status Codes — رسايل السيرفر</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        الـ Status Code ده 3 أرقام — الرقم الأول بيحدد الفئة.
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>الكود</th><th>الفئة</th><th>المعنى</th><th>أمثلة مهمة</th></tr>
+          <tr>
+            <td><span class="tag blue">1xx</span></td>
+            <td>Informational</td>
+            <td>الطلب اتستقبل، استمر</td>
+            <td>100 Continue</td>
+          </tr>
+          <tr>
+            <td><span class="tag green">2xx</span></td>
+            <td>Success</td>
+            <td>تمام، نجح!</td>
+            <td><strong>200 OK</strong></td>
+          </tr>
+          <tr>
+            <td><span class="tag yellow">3xx</span></td>
+            <td>Redirection</td>
+            <td>الـ Resource اتنقل</td>
+            <td><strong>301 Moved Permanently</strong></td>
+          </tr>
+          <tr>
+            <td><span class="tag red">4xx</span></td>
+            <td>Client Error</td>
+            <td>غلطة من عندك أنت</td>
+            <td><strong>404 Not Found</strong></td>
+          </tr>
+          <tr>
+            <td><span class="tag purple">5xx</span></td>
+            <td>Server Error</td>
+            <td>غلطة من عند السيرفر</td>
+            <td><strong>501 Not Implemented</strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">💬</div>
+      <div>
+        <div class="concept-en">HTTP Communication Details — Real Examples</div>
+        <div class="concept-title">مثال حقيقي على Request و Response</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        دي أمثلة حقيقية من الـ Slides — ادرسهم كويس!
+      </div>
+      <p style="color:var(--text2); font-size:0.85rem; margin-bottom:8px;">مثال 1: HEAD Request (لو الملف مش موجود)</p>
+      <div class="code-block ltr">
+<span class="cmt">/* REQUEST */</span>
+<span class="kw">HEAD</span> /folder/<span class="val">indx</span>.html HTTP/1.1\r\n     <span class="cmt">← typo! اسم الملف غلط</span>
+Host: www.webmailer.ws\r\n
+Connection: <span class="str">close</span>\r\n
+Accept-Encoding: <span class="str">gzip</span>\r\n                  <span class="cmt">← بيقول: أنا باقبل gzip</span>
+Accept: text/xml,application/xml,text/html,*/*\r\n
+Accept-Language: en-gb\r\n
+User-Agent: Mozilla\r\n
+\r\n                                          <span class="cmt">← CRLF = نهاية الـ Header</span>
+
+<span class="cmt">/* RESPONSE */</span>
+HTTP/1.1 <span class="val">404</span> Not Found\r\n               <span class="cmt">← Status Code</span>
+Server: Apache (Unix) PHP\r\n
+Content-Type: text/html\r\n
+Content-Length: <span class="val">0</span>\r\n                    <span class="cmt">← HEAD = Body فاضي</span>
+Date: Fri, 12 Jan 14:25:15 GMT\r\n
+Connection: <span class="str">close</span>\r\n
+\r\n
+      </div>
+
+      <p style="color:var(--text2); font-size:0.85rem; margin-bottom:8px; margin-top:14px;">مثال 2: POST Login (بيانات الـ Form في الـ Body)</p>
+      <div class="code-block ltr">
+<span class="cmt">/* REQUEST */</span>
+<span class="kw">POST</span> /cgi/login HTTP/1.1\r\n
+Host: www.webmailer.ws\r\n
+Connection: <span class="str">Keep-Alive</span>\r\n               <span class="cmt">← Persistent Connection</span>
+Content-type: application/x-www-form-urlencoded\r\n
+Content-length: <span class="val">41</span>\r\n
+\r\n
+login=me@webmailer.ws&password=pass123      <span class="cmt">← البيانات في الـ Body</span>
+
+<span class="cmt">/* RESPONSE */</span>
+HTTP/1.1 <span class="val">200</span> OK\r\n
+Content-Encoding: <span class="str">gzip</span>\r\n               <span class="cmt">← الرد متضغوط بـ gzip</span>
+Content-Length: <span class="val">1922</span>\r\n
+Keep-Alive: timeout=<span class="val">5</span>, max=<span class="val">1024</span>\r\n    <span class="cmt">← Connection تفضل 5 ثواني، max 1024 request</span>
+\r\n
+<span class="str">...gzip encoded HTML content...</span>
+      </div>
+
+      <div class="alert info">
+        <div class="alert-icon">🧠</div>
+        <div class="alert-body"><strong>لاحظ الفرق:</strong> في POST الـ Form data بتتبعت في الـ Message Body. في GET الـ data بتتبعت في الـ URL نفسه (<code>?name=value&name2=value2</code>). ولكن GET مش مناسب لكلمات السر!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">📥</div>
+      <div>
+        <div class="concept-en">HTTP Download of Associated Resources</div>
+        <div class="concept-title">إزاي المتصفح بيجيب الـ CSS والصور؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        لما تطلب صفحة HTML، السيرفر بيبعت الـ HTML بس. المتصفح بعدين بيعمل Parse للـ HTML ويشوف فيها إيه — CSS، صور، scripts. وبعدين بيبعت Requests منفصلة لكل واحدة.
+
+        <br><br>مثلاً:
+        <br>① GET /index.html → يستقبل الـ HTML
+        <br>② بيشوف في الـ HTML: <code>&lt;link rel="stylesheet" href="main.css"&gt;</code> و <code>&lt;img src="banner.jpg"&gt;</code>
+        <br>③ بيبعت Request لـ main.css
+        <br>④ بيبعت Request لـ banner.jpg
+      </div>
+
+      <div class="alert warn">
+        <div class="alert-icon">⚡</div>
+        <div class="alert-body"><strong>Performance impact:</strong> لو صفحة فيها 50 صورة → 50 HTTP Request إضافية! عشان كده HTTP/2 جاء بالـ Multiplexing.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">📱</div>
+      <div>
+        <div class="concept-en">HTTP User Agent Detection — Adapt content to device</div>
+        <div class="concept-title">اكتشاف نوع الجهاز — User-Agent Header</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        كل Browser بيبعت في الـ Request Header حاجة اسمها <strong>User-Agent</strong> — دي string بيعرّف المتصفح والنظام.
+
+        <br><br>السيرفر بيقرأ الـ User-Agent ويبعت نوع مختلف من المحتوى. أمثلة:
+        <br>• <code>Mozilla (compatible; MSIE; Windows; .NET CLR)</code> → Windows IE
+        <br>• <code>Mozilla [en] (Android)</code> → Android phone
+        <br>• <code>Mozilla (compatible; MSIE; Windows Mobile; PPC; 240x320)</code> → Mobile 240×320px
+      </div>
+
+      <div class="code-block ltr">
+<span class="cmt">// Server-side code (Java)</span>
+String userAgent = request.<span class="fn">getUserAgent</span>();
+
+<span class="kw">if</span> (userAgent.<span class="fn">contains</span>(<span class="str">"Android"</span>))
+    pageType = <span class="val">HTML</span>;                      <span class="cmt">← Android phone → full HTML</span>
+<span class="kw">else if</span> (userAgent.<span class="fn">contains</span>(<span class="str">"240x320"</span>))
+    pageType = <span class="val">240_320_ADAPTED</span>;            <span class="cmt">← old mobile → adapted version</span>
+<span class="kw">else</span>
+    pageType = <span class="val">XHTML</span>;                      <span class="cmt">← default</span>
+      </div>
+
+      <div class="alert info">
+        <div class="alert-icon">🌐</div>
+        <div class="alert-body"><strong>نفس الفكرة مع اللغة:</strong> <code>Accept-Language: en-gb</code> → السيرفر ممكن يبعت الصفحة بالإنجليزي البريطاني. الـ HTTP Header بيدي معلومات كتير عن الكلاينت.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SESSIONS ==================== -->
+<div class="section" id="s5" style="animation-delay:0.35s">
+  <div class="section-header">
+    <div class="section-num c5">05</div>
+    <div>
+      <div class="section-title">Session Handling</div>
+      <div class="section-sub">إزاي السيرفر بيتعرف عليك بين الـ Requests؟</div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🔐</div>
+      <div>
+        <div class="concept-en">Sessions + Cookies — State management over stateless HTTP</div>
+        <div class="concept-title">الجلسات والكوكيز — إزاي المواقع بتفتكرك؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        HTTP هو <strong>Stateless</strong> — يعني السيرفر ما بيفتكرش أي حاجة بين الـ Requests. إذن إزاي فيسبوك عارف إنك لسه مسجّل دخول؟
+
+        <br><br>الحل: <strong>Sessions!</strong>
+        <br>① أنت بتعمل Login → السيرفر بيعمل Session Data Structure وبيديلها ID فريد (مثلاً: <code>1f2e22f467ab1</code>)
+        <br>② السيرفر بيبعت الـ Session ID للمتصفح عبر <strong>Cookie</strong>
+        <br>③ في كل Request جديدة، المتصفح بيبعت الـ Cookie أوتوماتيكياً
+        <br>④ السيرفر بيقرأ الـ Session ID من الـ Cookie ويعرف مين أنت
+
+        <br><br>الـ <strong>Cookie</strong> ده ببساطة بيانات صغيرة مخزّنة على الجهاز بتاعك.
+      </div>
+
+      <!-- Session Diagram -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" width="680" height="240">
+          <!-- Browser -->
+          <rect x="10" y="60" width="200" height="160" rx="10" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="110" y="82" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold" font-family="Cairo">Browser Data Persistence</text>
+          <rect x="20" y="92" width="180" height="55" rx="6" fill="#111936" stroke="#f59e0b" stroke-width="1"/>
+          <text x="110" y="110" text-anchor="middle" fill="#f59e0b" font-size="8" font-weight="bold" font-family="Cairo">Cookie-name1</text>
+          <text x="110" y="124" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">sid: 1f2e22f467ab1</text>
+          <text x="110" y="138" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">Source: webmailer.ws</text>
+
+          <rect x="20" y="155" width="180" height="55" rx="6" fill="#111936" stroke="#7c3aed" stroke-width="1"/>
+          <text x="110" y="173" text-anchor="middle" fill="#a78bfa" font-size="8" font-weight="bold" font-family="Cairo">Cookie-name2</text>
+          <text x="110" y="187" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">sid: 65136536fcea2</text>
+          <text x="110" y="201" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">Source: example.com</text>
+
+          <!-- Arrow: login -->
+          <line x1="215" y1="100" x2="330" y2="100" stroke="#f59e0b" stroke-width="1.5"/>
+          <polygon points="330,95 340,100 330,105" fill="#f59e0b"/>
+          <text x="272" y="92" text-anchor="middle" fill="#f59e0b" font-size="7" font-family="Cairo">① Login Request</text>
+
+          <!-- Arrow: set-cookie -->
+          <line x1="335" y1="125" x2="218" y2="125" stroke="#10b981" stroke-width="1.5"/>
+          <polygon points="218,120 210,125 218,130" fill="#10b981"/>
+          <text x="272" y="143" text-anchor="middle" fill="#10b981" font-size="7" font-family="Cairo">② Set-Cookie: sid=1f2e22f...</text>
+
+          <!-- Server -->
+          <rect x="340" y="20" width="330" height="200" rx="10" fill="#1a2440" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="505" y="42" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="bold" font-family="Cairo">Server — Session Data</text>
+
+          <rect x="355" y="52" width="300" height="70" rx="6" fill="#111936" stroke="#f59e0b" stroke-width="1"/>
+          <text x="505" y="70" text-anchor="middle" fill="#f59e0b" font-size="8" font-weight="bold" font-family="monospace">Session 1</text>
+          <text x="505" y="86" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">sid: 1f2e22f467ab1</text>
+          <text x="505" y="100" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">login: me@webmailer.ws</text>
+          <text x="505" y="114" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">logintime: 12:45 p.m.</text>
+
+          <rect x="355" y="132" width="300" height="70" rx="6" fill="#111936" stroke="#7c3aed" stroke-width="1"/>
+          <text x="505" y="150" text-anchor="middle" fill="#a78bfa" font-size="8" font-weight="bold" font-family="monospace">Session 2</text>
+          <text x="505" y="166" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">sid: 3134feabfe123</text>
+          <text x="505" y="180" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">login: herb@webmailer.ws</text>
+          <text x="505" y="194" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">logintime: 10:45 p.m.</text>
+
+          <!-- Arrow: subsequent request with cookie -->
+          <line x1="215" y1="170" x2="340" y2="170" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <polygon points="340,165 350,170 340,175" fill="#00d4ff"/>
+          <text x="272" y="162" text-anchor="middle" fill="#00d4ff" font-size="7" font-family="Cairo">③ كل Request بعدها: Cookie مع الـ sid</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== HTTP/2 ==================== -->
+<div class="section" id="s6" style="animation-delay:0.4s">
+  <div class="section-header">
+    <div class="section-num c1">06</div>
+    <div>
+      <div class="section-title">HTTP/2</div>
+      <div class="section-sub">التطور القادم — Multiplexing + Header Compression</div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">⚡</div>
+      <div>
+        <div class="concept-en">HTTP/2 — Approved Feb 2015, Multiplexing + Binary Frames</div>
+        <div class="concept-title">HTTP/2 — ليه أسرع بكتير؟</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        HTTP 1.1 كان كويس بس مش optimal. المشكلة: الـ Methods والـ Status Codes نفسها، بس الـ Transport مش كفء.
+
+        <br><br>HTTP/2 هدفه: <strong>نفس الـ Semantics (GET, POST, 200, 404) بس Transport أحسن بكتير</strong>.
+
+        <br><br>🔑 <strong>أهم التحسينات:</strong>
+        <br>① <strong>Binary Protocol</strong> بدل Text — أسرع في Processing
+        <br>② <strong>Multiplexing:</strong> أكتر من Stream في نفس TCP Connection — مفيش Head-of-Line Blocking
+        <br>③ <strong>Header Compression (HPACK):</strong> الـ Headers بتتضغط
+        <br>④ <strong>Server Push:</strong> السيرفر يبعت Resources قبل ما تطلبها
+        <br>⑤ <strong>Stream Prioritization:</strong> تحديد أولوية الـ Streams
+
+        <br><br>الـ Frames هي وحدة البيانات في HTTP/2 — كل Message بتتقسم لـ Frames، ممكن تتخلط مع Frames من Messages تانية على نفس الـ Connection.
+      </div>
+
+      <!-- HTTP/2 Frames Diagram -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" width="680" height="200">
+          <!-- Client -->
+          <rect x="10" y="60" width="100" height="80" rx="8" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="60" y="100" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="Cairo">Client</text>
+          <text x="60" y="115" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">msg 1 + 2</text>
+
+          <!-- Channel pipe -->
+          <rect x="120" y="30" width="440" height="140" rx="10" fill="#0a0f1e" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="340" y="50" text-anchor="middle" fill="#7c3aed" font-size="9" font-weight="bold" font-family="Cairo">TCP Connection — Single Channel</text>
+
+          <!-- Message 1 frames (blue) -->
+          <rect x="135" y="60" width="80" height="32" rx="6" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="175" y="78" text-anchor="middle" fill="#00d4ff" font-size="8" font-family="monospace">MSG1 HEADER</text>
+
+          <!-- Message 2 frames (orange) interleaved -->
+          <rect x="225" y="60" width="80" height="32" rx="6" fill="#1a2440" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="265" y="78" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="monospace">MSG2 HEADER</text>
+
+          <rect x="315" y="60" width="80" height="32" rx="6" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="355" y="78" text-anchor="middle" fill="#00d4ff" font-size="8" font-family="monospace">MSG1 DATA</text>
+
+          <rect x="405" y="60" width="80" height="32" rx="6" fill="#1a2440" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="445" y="78" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="monospace">MSG2 DATA</text>
+
+          <!-- Priority indicator -->
+          <rect x="135" y="105" width="350" height="22" rx="6" fill="#111936" stroke="#10b981" stroke-width="1"/>
+          <text x="310" y="120" text-anchor="middle" fill="#10b981" font-size="8" font-family="Cairo">Frames ممكن تتخلط (Interleaved) — وممكن تكون ليها Priority</text>
+
+          <!-- Labels -->
+          <text x="175" y="147" text-anchor="middle" fill="#64748b" font-size="7" font-family="Cairo">Stream 1</text>
+          <text x="265" y="147" text-anchor="middle" fill="#64748b" font-size="7" font-family="Cairo">Stream 2</text>
+          <text x="355" y="147" text-anchor="middle" fill="#64748b" font-size="7" font-family="Cairo">Stream 1</text>
+          <text x="445" y="147" text-anchor="middle" fill="#64748b" font-size="7" font-family="Cairo">Stream 2</text>
+
+          <!-- Server -->
+          <rect x="570" y="60" width="100" height="80" rx="8" fill="#1a2440" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="620" y="100" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Cairo">Server</text>
+          <text x="620" y="115" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">يستقبل</text>
+
+          <!-- Arrows -->
+          <line x1="115" y1="100" x2="125" y2="100" stroke="#f59e0b" stroke-width="2"/>
+          <polygon points="125,95 135,100 125,105" fill="#f59e0b"/>
+          <line x1="520" y1="100" x2="565" y2="100" stroke="#00d4ff" stroke-width="2"/>
+          <polygon points="565,95 570,100 565,105" fill="#00d4ff"/>
+        </svg>
+      </div>
+
+      <div class="alert success">
+        <div class="alert-icon">✅</div>
+        <div class="alert-body"><strong>الـ Methods والـ Status Codes مش اتغيروا:</strong> GET لسه GET، 404 لسه 404. HTTP/2 بس غيّر <em>إزاي</em> البيانات بتتنقل، مش <em>إيه</em> اللي بيتنقل. ده مهم جداً!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== HTML5 ==================== -->
+<div class="section" id="s7" style="animation-delay:0.45s">
+  <div class="section-header">
+    <div class="section-num c3">07</div>
+    <div>
+      <div class="section-title">HTML5 Features</div>
+      <div class="section-sub">كل تفاصيل HTML5 من الـ Slides</div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🧩</div>
+      <div>
+        <div class="concept-en">HTML5 = Enhanced HTML + CSS3 + JavaScript APIs</div>
+        <div class="concept-title">HTML5 — مش مجرد HTML، ده منظومة كاملة</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        HTML5 هو الجيل الجديد من HTML. مش مجرد Tags جديدة — ده ضم حاجات كتير:
+        <br>🔵 <strong>Enhanced HTML:</strong> Elements وAttributes جديدة
+        <br>🟡 <strong>CSS3:</strong> تحسين الـ Styling والـ Animations
+        <br>🟢 <strong>JavaScript APIs:</strong> Web Storage, Web Workers, Geolocation, وغيرها
+
+        <br><br>مهم: Document type في HTML5 بسيطة جداً: <code>&lt;!doctype html&gt;</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🏗</div>
+      <div>
+        <div class="concept-en">HTML5 Structural Elements — Semantic HTML</div>
+        <div class="concept-title">عناصر الهيكل في HTML5 — الـ Semantic Elements</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        HTML5 عملت Elements جديدة لتنظيم الصفحة. دي بتقول لمحركات البحث والـ Screen Readers <strong>معنى</strong> كل جزء في الصفحة. ⚠️ دي للـ <strong>Grouping مش للـ Positioning</strong> — الـ Positioning بيتعمل بالـ CSS.
+      </div>
+
+      <!-- Semantic structure diagram -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg" width="500" height="350">
+          <!-- Page outer -->
+          <rect x="10" y="10" width="480" height="330" rx="10" fill="#0a0f1e" stroke="#7c3aed" stroke-width="2"/>
+          
+          <!-- header -->
+          <rect x="20" y="20" width="460" height="50" rx="6" fill="#1a2440" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="250" y="42" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold" font-family="monospace">&lt;header&gt;</text>
+          <text x="250" y="58" text-anchor="middle" fill="#64748b" font-size="9" font-family="Cairo">مجموعة عناصر تمهيدية أو تنقل</text>
+
+          <!-- nav -->
+          <rect x="20" y="80" width="460" height="30" rx="6" fill="#1a2440" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="250" y="98" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold" font-family="monospace">&lt;nav&gt; — قسم التنقل (Navigation)</text>
+
+          <!-- section -->
+          <rect x="20" y="120" width="460" height="160" rx="6" fill="#111936" stroke="#10b981" stroke-width="1.5"/>
+          <text x="100" y="138" fill="#10b981" font-size="9" font-weight="bold" font-family="monospace">&lt;section&gt; — قسم تجميع</text>
+
+          <!-- article -->
+          <rect x="30" y="148" width="240" height="120" rx="6" fill="#1a2440" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="150" y="168" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="bold" font-family="monospace">&lt;article&gt;</text>
+          <text x="150" y="184" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">محتوى مستقل</text>
+          <text x="150" y="198" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">زي مقال أو blog post</text>
+          <rect x="40" y="210" width="220" height="30" rx="4" fill="#111936" stroke="#00d4ff" stroke-width="1"/>
+          <text x="150" y="229" text-anchor="middle" fill="#00d4ff" font-size="8" font-family="monospace">&lt;header&gt; (داخل article)</text>
+
+          <!-- aside -->
+          <rect x="280" y="148" width="190" height="120" rx="6" fill="#1a2440" stroke="#f43f5e" stroke-width="1.5"/>
+          <text x="375" y="168" text-anchor="middle" fill="#f43f5e" font-size="9" font-weight="bold" font-family="monospace">&lt;aside&gt;</text>
+          <text x="375" y="184" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">محتوى مرتبط جانبياً</text>
+          <text x="375" y="198" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">روابط خارجية مثلاً</text>
+
+          <!-- footer -->
+          <rect x="20" y="292" width="460" height="38" rx="6" fill="#1a2440" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="250" y="312" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold" font-family="monospace">&lt;footer&gt;</text>
+          <text x="250" y="325" text-anchor="middle" fill="#64748b" font-size="8" font-family="Cairo">معلومات المؤلف، حقوق الملكية</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">🎬</div>
+      <div>
+        <div class="concept-en">HTML5 Audio & Video — Built-in media support</div>
+        <div class="concept-title">الـ Audio والـ Video في HTML5 — من غير Plugins!</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        قبل HTML5 كنت محتاج Flash Plugin لتشغيل الفيديو. دلوقتي المتصفح بيشغّله مباشرة.
+
+        <br><br>مميزات:
+        <br>• ممكن تحط أكتر من Format بديل (<code>&lt;source&gt;</code>) — لو المتصفح مش بيدعم mp4 بيجرب ogg
+        <br>• ممكن تحط Subtitles بـ <code>&lt;track&gt;</code> بصيغة WebVTT
+        <br>• JavaScript API للتحكم: <code>play()</code>, <code>pause()</code>, <code>myVideo.paused</code>
+      </div>
+
+      <div class="code-block ltr">
+<span class="cmt">&lt;!-- HTML5 Video Example --&gt;</span>
+&lt;<span class="kw">button</span> onclick="<span class="fn">playPause</span>()"&gt;Play/Pause&lt;/button&gt;
+
+&lt;<span class="kw">video</span> id="video1" width="320" height="240"&gt;
+    &lt;<span class="kw">source</span> src=<span class="str">"lecture.mp4"</span> type=<span class="str">"video/mp4"</span>/&gt;    <span class="cmt">&lt;-- format 1</span>
+    &lt;<span class="kw">source</span> src=<span class="str">"lecture.ogg"</span> type=<span class="str">"video/ogg"</span>/&gt;    <span class="cmt">&lt;-- format 2 (fallback)</span>
+    &lt;<span class="kw">track</span> src=<span class="str">"subtitles_en.vtt"</span> kind=<span class="str">"subtitles"</span> srclang=<span class="str">"en"</span>/&gt;
+    &lt;<span class="kw">track</span> src=<span class="str">"subtitles_de.vtt"</span> kind=<span class="str">"subtitles"</span> srclang=<span class="str">"de"</span>/&gt;
+&lt;/video&gt;
+
+&lt;<span class="kw">script</span>&gt;
+    <span class="kw">var</span> myVideo = document.<span class="fn">getElementById</span>(<span class="str">"video1"</span>);
+    <span class="kw">function</span> <span class="fn">playPause</span>() {
+        <span class="kw">if</span> (myVideo.paused) myVideo.<span class="fn">play</span>();
+        <span class="kw">else</span> myVideo.<span class="fn">pause</span>();
+    }
+&lt;/<span class="kw">script</span>&gt;
+
+<span class="cmt">/* WebVTT Format للـ Subtitles: */</span>
+WEBVTT
+00:11.000 --> 00:13.000
+Overview of HTML5
+
+00:13.000 --> 00:16.000
+HTML5 document structure
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">⚙️</div>
+      <div>
+        <div class="concept-en">Web Workers — Background JavaScript Threads</div>
+        <div class="concept-title">الـ Web Workers — JavaScript في الخلفية</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        المشكلة: JavaScript بتشتغل في Thread واحدة. لو عندك حسابات كبيرة، الـ UI بيتجمد!
+
+        <br><br>الحل: <strong>Web Workers</strong> — JavaScript بيشتغل في Background Thread مستقلة، ومش بيأثر على الـ UI.
+
+        <br><br>🔑 <strong>التواصل Event-based:</strong>
+        <br>• الـ Main Thread بيبعت: <code>worker.postMessage(value)</code>
+        <br>• الـ Worker بيبعت: <code>postMessage(i)</code>
+        <br>• الـ Main Thread بيستقبل: <code>worker.onmessage = function(event){...}</code>
+
+        <br><br>⚠️ الـ Web Worker <strong>مش قادر يلمس الـ DOM</strong> — مش يعدّل الصفحة مباشرة. بيبعت النتيجة للـ Main Thread وهي اللي بتعدّل.
+      </div>
+
+      <div class="code-block ltr">
+<span class="cmt">/* ===== Main Page (website) ===== */</span>
+<span class="cmt">// 1. Create & start Web Worker</span>
+<span class="kw">var</span> worker = <span class="kw">new</span> <span class="fn">Worker</span>(<span class="str">"counter_code.js"</span>);
+
+<span class="cmt">// 3. Receive message from Worker</span>
+worker.onmessage = <span class="kw">function</span>(event) {
+    document.<span class="fn">getElementById</span>(<span class="str">"result"</span>).innerHTML = event.data;
+};
+
+<span class="cmt">/* ===== counter_code.js (Web Worker) ===== */</span>
+<span class="kw">var</span> i = <span class="val">0</span>;
+<span class="kw">function</span> <span class="fn">timedCount</span>() {
+    i = i + <span class="val">1</span>;
+    <span class="fn">postMessage</span>(i);                    <span class="cmt">// 2. Send to main page</span>
+    <span class="fn">setTimeout</span>(<span class="str">"timedCount()"</span>, <span class="val">500</span>);  <span class="cmt">// every 500ms</span>
+}
+<span class="fn">timedCount</span>();
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-header">
+      <div class="concept-icon">💾</div>
+      <div>
+        <div class="concept-en">HTML5 Storage — 3 Options for Client-side Storage</div>
+        <div class="concept-title">التخزين في HTML5 — 3 طرق مختلفة</div>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="arabic-explain">
+        HTML5 بيوفر 3 طرق لتخزين البيانات على الكلاينت — كلهم بيطبقوا <strong>Same-Origin Policy</strong> (بس الموقع نفسه يقدر يوصل لبياناته).
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>الطريقة</th><th>النوع</th><th>المزايا</th><th>العيوب</th></tr>
+          <tr>
+            <td><span class="tag green">Web Storage</span></td>
+            <td>Key-Value</td>
+            <td>API بسيطة جداً، أغلب المتصفحات بتدعمها</td>
+            <td>مفيش Query language, Schema, Transaction safety</td>
+          </tr>
+          <tr>
+            <td><span class="tag blue">IndexedDB</span></td>
+            <td>Object Stores + Indexes</td>
+            <td>قوي، بيدعم Indexes وكميات بيانات كبيرة</td>
+            <td>مش متاح في كل المتصفحات</td>
+          </tr>
+          <tr>
+            <td><span class="tag red">Web SQL Database</span></td>
+            <td>SQL embedded</td>
+            <td>SQL كامل (joins, inner selects)</td>
+            <td>❌ W3C وقف تطويره — مش موصى بيه</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="concept" style="margin-top:16px; border:none; background: var(--bg3);">
+        <div class="concept-body" style="padding-top:12px">
+          <p style="color:var(--accent1); font-weight:700; margin-bottom:10px;">🔵 Web Storage بالتفصيل — نوعين:</p>
+          <div class="compare-grid">
+            <div class="compare-card v1">
+              <h4>sessionStorage</h4>
+              <ul>
+                <li>صالح طول ما الـ Tab مفتوحة</li>
+                <li>مش بيتشارك بين الـ Tabs</li>
+                <li><code class="code-cell">sessionStorage.setItem('k','v')</code></li>
+                <li><code class="code-cell">sessionStorage.getItem('k')</code></li>
+              </ul>
+            </div>
+            <div class="compare-card v2">
+              <h4>localStorage</h4>
+              <ul>
+                <li>دايم — مش بيمسح لحد ما تمسحه</li>
+                <li>بيتشارك بين كل Tabs وWindows</li>
+                <li>لما بيتغير → Storage Event</li>
+                <li><code class="code-cell">localStorage.setItem('k','v')</code></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="code-block ltr" style="margin-top:12px">
+<span class="cmt">// Storage Event — عارف لما localStorage بيتغير من Tab تانية</span>
+window.<span class="fn">addEventListener</span>(<span class="str">'storage'</span>, <span class="kw">function</span>(event) {
+    console.<span class="fn">log</span>(<span class="str">'Value for '</span> + event.key + <span class="str">' changed from '</span>
+        + event.oldValue + <span class="str">' to '</span> + event.newValue);
+});
+          </div>
+
+          <p style="color:var(--accent3); font-weight:700; margin:14px 0 10px;">🟡 IndexedDB بالتفصيل:</p>
+          <div class="code-block ltr">
+<span class="cmt">// 1. Open Database</span>
+<span class="kw">var</span> request = window.indexedDB.<span class="fn">open</span>(<span class="str">"BookDB"</span>);
+request.onsuccess = <span class="kw">function</span>(event) {
+    <span class="kw">var</span> database = event.result;              <span class="cmt">// Database opened</span>
+};
+
+<span class="cmt">// 2. Create Object Store</span>
+objectStore = database.<span class="fn">createObjectStore</span>(<span class="str">"BookList"</span>, <span class="str">"id"</span>);
+
+<span class="cmt">// 3. Add data</span>
+<span class="kw">var</span> book = { bookName: <span class="str">"Web Applications"</span>, price: <span class="val">20</span>, rating: <span class="str">"excellent"</span> };
+<span class="kw">var</span> req = objectStore.<span class="fn">add</span>(book);
+req.onsuccess = <span class="kw">function</span>(event) {
+    <span class="kw">var</span> key = event.result;                   <span class="cmt">// Auto-generated key</span>
+};
+<span class="cmt">// Access via key, index, or cursor</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TRICKY STUFF ==================== -->
+<div class="tricky" id="tricky">
+  <div class="tricky-header">
+    <span style="font-size:1.5rem">⚠️</span>
+    <h2>الحاجات الصعبة والفنيات اللي بتلغبط — ركّز هنا!</h2>
+  </div>
+
+  <div class="tricky-item">
+    <h4>① REST Stateless — الفخ الأكبر</h4>
+    <p><strong>الخطأ الشائع:</strong> الناس بتقول "REST مش بيخزّن Session" وبعدين تتساءل "طيب إزاي موقع زي أمازون بيفتكرك؟". الإجابة: REST Stateless على مستوى البروتوكول — بس التطبيق ممكن يعمل State عبر Tokens أو Cookies في كل Request. الفرق إن السيرفر مش محتاج يخزن Session — الـ State بتتبعت في كل Request.</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>② HEAD Method — مش معروف كفاية</h4>
+    <p>HEAD = GET بالظبط بس الرد بييجي من غير Body. <strong>فايدته:</strong> تعرف حجم الملف (Content-Length) ونوعه (Content-Type) قبل ما تنزله. مفيد جداً في Download Managers. لاحظ في المثال: <code>Content-Length: 0</code> — حتى لو في Body، مش بيتبعتش في HEAD.</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>③ Pipelining ≠ Multiplexing</h4>
+    <p>Pipelining في HTTP 1.1: بتبعت Requests من غير ما تستنى، بس الـ Responses لازم ترجع <strong>بنفس الترتيب</strong> (Head-of-Line Blocking). Multiplexing في HTTP/2: كل Request ليها Stream مستقلة — مفيش ترتيب ملزم، ومفيش Blocking. ده أهم فرق بينهم!</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>④ HTTP/2 مش غيّر الـ Semantics</h4>
+    <p>HTTP/2 غيّر فقط Transport Layer — الـ Framing والـ Binary Encoding. الـ Methods (GET, POST...) والـ Status Codes (200, 404...) والـ Headers نفسها. بعض الناس بتفتكر إن HTTP/2 طريقة تانية للـ REST — أبداً، ده فقط Network Transport Optimization.</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>⑤ CRLF في HTTP — محتاج ينبه</h4>
+    <p>كل سطر في الـ HTTP Message بينتهي بـ <code>\r\n</code> (CRLF). الـ Header بينتهي بـ <code>\r\n\r\n</code> (سطر فاضي). لو نسيت ده في امتحان شفهي أو عملي، بيبان إنك مش فاهم البروتوكول.</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>⑥ Web Storage Same-Origin Policy</h4>
+    <p>sessionStorage وlocalStorage بيطبقوا Same-Origin Policy: Protocol + Hostname + Port لازم يكونوا نفس بعض. يعني <code>https://example.com</code> مش ممكن يوصل لـ Storage بتاع <code>http://example.com</code> — الـ Protocol مختلف!</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>⑦ Web Worker مش قادر يلمس DOM</h4>
+    <p>Web Worker يشتغل في Thread منفصلة ومعزولة. مش قادر يعمل <code>document.getElementById</code> أو أي حاجة تخص الـ UI. بيتواصل مع الـ Main Thread فقط عبر Messages. لو حاول يلمس DOM → Error.</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>⑧ Connector Entity vs Delegation Process vs Processing Entity</h4>
+    <p>3 كيانات مختلفة في معمار الـ Web Server:<br>
+    • <strong>Connector:</strong> بيفتح الـ TCP Port ويستقبل الاتصالات، بيعمل Client Descriptor<br>
+    • <strong>Delegation:</strong> بياخد الـ Client Descriptor ويوزعه على Processing Entity<br>
+    • <strong>Processing Entity:</strong> بتعمل الشغل الفعلي — HTTP Communication<br>
+    الـ Pool بيتعمل مسبقاً قبل أي Request.</p>
+  </div>
+
+  <div class="tricky-item">
+    <h4>⑨ Web SQL Database — مهمة جداً في الامتحانات</h4>
+    <p>Web SQL Database هو standard اتوقف تطويره من W3C — <strong>مش لأنه مش كويس، لكن لأن مفيش implementations كافية</strong>. ده مختلف عن الـ IndexedDB اللي لسه active. السؤال المكتوب في الـ Slide: "Specification effort has been stopped by W3C due to lack of implementation" — احفظ الصيغة دي.</p>
+  </div>
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="summary" id="summary">
+  <h2>📋 EXAM SUMMARY — Everything You Need to Pass</h2>
+  <div class="summary-grid">
+
+    <div class="summary-card">
+      <h3>🔄 REST Model</h3>
+      <ul>
+        <li>Representational State Transfer</li>
+        <li>Client/Server + <span>Stateless</span> protocol</li>
+        <li>Each message = all context info</li>
+        <li>Requests target <span>resources</span>, not procedures</li>
+        <li>Every resource = unique URI</li>
+        <li>Unlike RPC (which calls procedures)</li>
+        <li>Uses generic interface with standard semantics</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🖥 Web Server</h3>
+      <ul>
+        <li>Software making resources available via HTTP</li>
+        <li>Hierarchical structure for parallel processing</li>
+        <li><span>①</span> Pool created at startup</li>
+        <li><span>②</span> Browser initiates TCP (Connector)</li>
+        <li><span>③</span> Connector → Client Descriptor</li>
+        <li><span>④</span> Delegation → Processing Entity</li>
+        <li><span>⑤</span> Processing Entity does HTTP comms</li>
+        <li>Server-side: CGI / Servlet / App Server</li>
+        <li>(X)HTML Engine combines logic + templates</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🌍 Browser Architecture</h3>
+      <ul>
+        <li><span>User Interface</span>: front-end display</li>
+        <li><span>Browser Engine</span>: high-level interface to renderer</li>
+        <li><span>Rendering Engine</span>: parses HTML+CSS, does layout</li>
+        <li><span>Networking</span>: HTTP communication</li>
+        <li><span>Script Engine</span>: executes JavaScript</li>
+        <li><span>XML Parser</span>: parses XML content</li>
+        <li><span>Display Backend</span>: drawing primitives (GTK+)</li>
+        <li><span>Data Persistence</span>: cache, cookies</li>
+        <li><span>Plug-in Engine</span>: dynamic extensions</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>📡 HTTP Basics</h3>
+      <ul>
+        <li>Runs on top of <span>TCP</span></li>
+        <li>Request-Response pattern</li>
+        <li>Every message = Header + Body (separated by CRLF)</li>
+        <li>Resources addressed by <span>URI</span></li>
+        <li>URI forms: *, absolute URI, absolute path</li>
+        <li>Request Line: <span>Method URI HTTP/version</span></li>
+        <li>Status Line: <span>HTTP/version code text</span></li>
+        <li>Key-value pairs in headers</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🔗 HTTP 1.0 vs 1.1</h3>
+      <ul>
+        <li>1.0: new TCP per request → expensive</li>
+        <li>1.1: <span>Persistent Connection</span> by default</li>
+        <li>1.1: <span>Connection: keep-alive</span></li>
+        <li>1.1: <span>Pipelining</span> — send without waiting</li>
+        <li>Pipelining: responses in same order as requests</li>
+        <li>Pipelining: not supported by all browsers</li>
+        <li>Packet counts: 497 (1.0) → 223 (1.1) → 83 (pipeline)</li>
+        <li>Multiple HTTP messages in 1 TCP segment possible</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🛠 HTTP Methods</h3>
+      <ul>
+        <li><span>GET</span>: request resource delivery</li>
+        <li><span>HEAD</span>: like GET but no body (meta only)</li>
+        <li><span>POST</span>: submit data in body</li>
+        <li><span>PUT*</span>: store content at URL</li>
+        <li><span>DELETE*</span>: delete resource</li>
+        <li><span>OPTIONS*</span>: get server's supported methods</li>
+        <li><span>TRACE*</span>: echo request (diagnostic)</li>
+        <li><span>CONNECT*</span>: reserved for proxies</li>
+        <li>* = not in HTTP 1.0, added in 1.1</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🔢 Status Codes</h3>
+      <ul>
+        <li><span>1xx</span>: Informational — 100 Continue</li>
+        <li><span>2xx</span>: Success — 200 OK</li>
+        <li><span>3xx</span>: Redirection — 301 Moved Permanently</li>
+        <li><span>4xx</span>: Client Error — 404 Not Found</li>
+        <li><span>5xx</span>: Server Error — 501 Not Implemented</li>
+        <li>First digit = category</li>
+        <li>Numeric + textual representation</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🔐 Sessions & Cookies</h3>
+      <ul>
+        <li>HTTP is stateless → need sessions for state</li>
+        <li>Server creates Session Data Structure on login</li>
+        <li>Server sends <span>Session ID</span> to browser via Cookie</li>
+        <li>Browser sends Cookie in every subsequent request</li>
+        <li>Cookie: small client-side data piece</li>
+        <li>Cookies scoped by source domain</li>
+        <li>Server maps sid → session data structure</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>⚡ HTTP/2</h3>
+      <ul>
+        <li>Goal: optimized transport, same semantics</li>
+        <li>Methods & status codes <span>unchanged</span></li>
+        <li>Approved by IETF: <span>February 2015</span></li>
+        <li>Binary protocol (not text)</li>
+        <li><span>Multiplexing</span>: multiple streams per TCP connection</li>
+        <li><span>Header Compression</span> (HPACK)</li>
+        <li>Messages split into interleaved <span>Frames</span></li>
+        <li>Frames can be prioritized</li>
+        <li>Several parallel channels per TCP connection</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🧩 HTML5 Overview</h3>
+      <ul>
+        <li>= Enhanced HTML + CSS3 + JavaScript APIs</li>
+        <li>Doctype: <span>&lt;!doctype html&gt;</span></li>
+        <li>Addresses mobile & desktop needs</li>
+        <li>New structural elements for semantics</li>
+        <li>Built-in audio/video (no Flash needed)</li>
+        <li>Web Workers, Web Storage, Geolocation API</li>
+        <li>Aggregates previously separated standards</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🏗 HTML5 Semantic Elements</h3>
+      <ul>
+        <li><span>&lt;header&gt;</span>: introductory/navigational group</li>
+        <li><span>&lt;nav&gt;</span>: navigation section</li>
+        <li><span>&lt;section&gt;</span>: generic grouping section</li>
+        <li><span>&lt;article&gt;</span>: independent content (blog, news)</li>
+        <li><span>&lt;aside&gt;</span>: slightly related content (sidebar)</li>
+        <li><span>&lt;footer&gt;</span>: author/copyright info</li>
+        <li>For grouping, NOT positioning (CSS does that)</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>⚙️ Web Workers</h3>
+      <ul>
+        <li>JS running in background, independent of UI</li>
+        <li>For expensive tasks without blocking UI</li>
+        <li>Interaction: <span>event-based messaging</span></li>
+        <li>Main → Worker: <span>worker.postMessage(val)</span></li>
+        <li>Worker → Main: <span>postMessage(val)</span></li>
+        <li>Main receives: <span>worker.onmessage</span></li>
+        <li>Worker CANNOT access DOM directly</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>💾 HTML5 Storage</h3>
+      <ul>
+        <li>All 3 apply <span>Same-Origin Policy</span></li>
+        <li><span>Web Storage</span>: simple key-value, most supported</li>
+        <li><span>sessionStorage</span>: lives while tab is open</li>
+        <li><span>localStorage</span>: persistent, shared across tabs</li>
+        <li>localStorage change → <span>Storage Event</span> fires</li>
+        <li><span>IndexedDB</span>: powerful, indexes, cursors</li>
+        <li><span>Web SQL</span>: stopped by W3C (lack of implementation)</li>
+        <li>removeItem(key) / clear() for cleanup</li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <h3>🔍 User Agent & Resources</h3>
+      <ul>
+        <li><span>User-Agent</span> header identifies browser/device</li>
+        <li>Server adapts content based on User-Agent</li>
+        <li>Also adapts via <span>Accept-Language</span></li>
+        <li>HTML only → browser parses for linked resources</li>
+        <li>Sends separate requests for CSS, images, JS</li>
+        <li>IndexedDB operations return <span>DOM Events</span></li>
+        <li>onsuccess handler for async DB operations</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<footer>
+  <p>Internet Applications · Lecture 2 · شرح كامل بالمصري 🇪🇬</p>
+  <p style="margin-top:6px; color: #334155;">REST · Web Server · Browser · HTTP 1.1 · Sessions · HTTP/2 · HTML5</p>
+</footer>
+
+<script>
+  // Smooth reveal on scroll
+  const sections = document.querySelectorAll('.section, .concept, .tricky-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.05 });
+
+  sections.forEach(s => {
+    s.style.opacity = '0';
+    s.style.transform = 'translateY(15px)';
+    s.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    observer.observe(s);
+  });
+</script>
+
+</body>
+</html>
