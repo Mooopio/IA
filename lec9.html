@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Semantic Web — Exam Prep System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161921;
+    --surface2: #1e2330;
+    --border: #2a3045;
+    --accent: #4f8ef7;
+    --accent2: #f7c34f;
+    --accent3: #4ff7c3;
+    --text: #e8eaf0;
+    --text-muted: #8892a4;
+    --correct: #4ff7a0;
+    --wrong: #f74f6f;
+    --tag-bg: rgba(79,142,247,0.12);
+    --radius: 12px;
+    --transition: 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  .light {
+    --bg: #f4f5f8;
+    --surface: #ffffff;
+    --surface2: #edf0f7;
+    --border: #d4d9e8;
+    --text: #1a1e2e;
+    --text-muted: #5a6278;
+    --tag-bg: rgba(79,142,247,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background var(--transition), color var(--transition);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,0.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+    transition: background var(--transition);
+  }
+  .light header { background: rgba(244,245,248,0.88); }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  .logo span { color: var(--accent2); }
+  nav { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+  nav button {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500;
+    padding: 0.38rem 0.85rem; border-radius: 6px;
+    transition: all var(--transition);
+    letter-spacing: 0.01em;
+  }
+  nav button:hover, nav button.active {
+    background: var(--tag-bg); color: var(--accent);
+  }
+  .theme-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; cursor: pointer;
+    width: 40px; height: 22px;
+    position: relative; flex-shrink: 0;
+    transition: background var(--transition);
+  }
+  .theme-btn::after {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent2);
+    transition: left var(--transition);
+  }
+  .light .theme-btn::after { left: 21px; }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 2.5rem 1.5rem; max-width: 860px; margin: 0 auto; }
+  .section.active { display: block; animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem; font-weight: 900; line-height: 1.15;
+    margin-bottom: 0.4rem; letter-spacing: -0.03em;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--accent); margin: 2rem 0 1rem;
+    border-left: 3px solid var(--accent);
+    padding-left: 0.75rem;
+  }
+  h3 {
+    font-size: 1.05rem; font-weight: 600; color: var(--accent2);
+    margin: 1.5rem 0 0.5rem;
+  }
+  p { margin-bottom: 0.85rem; color: var(--text); }
+  .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.2rem;
+    transition: border-color var(--transition);
+  }
+  .card:hover { border-color: var(--accent); }
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg); color: var(--accent);
+    font-size: 0.72rem; font-weight: 600;
+    padding: 0.2rem 0.65rem; border-radius: 99px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .tag.gold { background: rgba(247,195,79,0.12); color: var(--accent2); }
+  .tag.green { background: rgba(79,247,195,0.12); color: var(--accent3); }
+
+  kbd {
+    font-family: 'DM Mono', monospace;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 0.1rem 0.45rem; font-size: 0.82rem;
+    color: var(--accent3);
+  }
+
+  /* ── HIGHLIGHT BOXES ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+  .callout.blue  { background: rgba(79,142,247,0.10); border-left: 3px solid var(--accent); }
+  .callout.yellow{ background: rgba(247,195,79,0.10); border-left: 3px solid var(--accent2); }
+  .callout.green { background: rgba(79,247,195,0.10); border-left: 3px solid var(--accent3); }
+  .callout.red   { background: rgba(247,79,111,0.10); border-left: 3px solid var(--wrong); }
+  .callout strong { display: block; margin-bottom: 0.3rem; }
+
+  /* ── COMPARISON TABLE ── */
+  .tbl-wrap { overflow-x: auto; margin: 1rem 0; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th { background: var(--surface2); padding: 0.7rem 1rem; text-align: left;
+       color: var(--accent); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 0.7rem 1rem; border-top: 1px solid var(--border); }
+  tr:hover td { background: var(--surface2); }
+
+  /* ── BULLET LIST ── */
+  ul.styled { list-style: none; padding: 0; }
+  ul.styled li {
+    padding: 0.45rem 0 0.45rem 1.5rem;
+    position: relative; border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+  }
+  ul.styled li:last-child { border-bottom: none; }
+  ul.styled li::before {
+    content: '▸'; position: absolute; left: 0;
+    color: var(--accent); font-size: 0.75rem; top: 0.58rem;
+  }
+
+  /* ── MCQ ── */
+  .mcq { margin-bottom: 1.5rem; }
+  .mcq-q {
+    font-weight: 600; font-size: 0.97rem;
+    margin-bottom: 0.75rem; line-height: 1.5;
+  }
+  .mcq-num {
+    display: inline-block; background: var(--accent); color: #fff;
+    font-size: 0.72rem; font-weight: 700;
+    width: 22px; height: 22px; border-radius: 50%;
+    text-align: center; line-height: 22px;
+    margin-right: 0.5rem; flex-shrink: 0;
+  }
+  .diff { font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.5rem;
+           border-radius: 99px; margin-left: 0.5rem; }
+  .diff.easy   { background: rgba(79,247,160,0.15); color: var(--correct); }
+  .diff.medium { background: rgba(247,195,79,0.15); color: var(--accent2); }
+  .diff.hard   { background: rgba(247,79,111,0.15); color: var(--wrong); }
+
+  .options { display: grid; gap: 0.5rem; margin-bottom: 0.6rem; }
+  .opt {
+    display: flex; align-items: center; gap: 0.65rem;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.65rem 1rem;
+    cursor: pointer; font-size: 0.92rem;
+    transition: all var(--transition); user-select: none;
+  }
+  .opt:hover { border-color: var(--accent); background: var(--tag-bg); }
+  .opt.correct { border-color: var(--correct); background: rgba(79,247,160,0.08); color: var(--correct); }
+  .opt.wrong   { border-color: var(--wrong);   background: rgba(247,79,111,0.08); color: var(--wrong); }
+  .opt-letter {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--border); font-size: 0.78rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background var(--transition);
+  }
+  .opt.correct .opt-letter { background: var(--correct); color: #0d0f14; }
+  .opt.wrong   .opt-letter { background: var(--wrong);   color: #0d0f14; }
+
+  .explanation {
+    display: none; background: var(--surface2);
+    border-radius: 8px; padding: 0.85rem 1rem;
+    font-size: 0.88rem; color: var(--text-muted);
+    border-left: 3px solid var(--accent); margin-top: 0.5rem;
+    line-height: 1.6;
+  }
+  .explanation.show { display: block; animation: fadeUp 0.3s ease; }
+  .explanation strong { color: var(--correct); }
+
+  /* ── WRITTEN ── */
+  .written-q {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.35rem 1.5rem;
+    margin-bottom: 1.2rem; cursor: pointer;
+    transition: border-color var(--transition);
+  }
+  .written-q:hover { border-color: var(--accent2); }
+  .written-q .q-text { font-weight: 600; font-size: 0.97rem; }
+  .written-q .model { display: none; margin-top: 1rem;
+    padding-top: 1rem; border-top: 1px dashed var(--border);
+    font-size: 0.92rem; color: var(--text-muted); line-height: 1.75; }
+  .written-q .model.show { display: block; animation: fadeUp 0.3s ease; }
+  .model-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em;
+                  color: var(--accent3); font-weight: 700; margin-bottom: 0.5rem; }
+
+  /* ── REVISION SHEET ── */
+  .cheat {
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 2rem;
+    position: relative; overflow: hidden;
+  }
+  .cheat::before {
+    content: 'CHEAT SHEET';
+    position: absolute; top: 1rem; right: 1rem;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--accent); opacity: 0.35;
+  }
+  .cheat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media(max-width:600px){ .cheat-grid { grid-template-columns: 1fr; } }
+  .cheat-block h4 {
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent2); margin-bottom: 0.65rem;
+    border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;
+  }
+  .cheat-block ul { list-style: none; padding: 0; }
+  .cheat-block ul li { font-size: 0.85rem; padding: 0.2rem 0 0.2rem 1.1rem;
+    position: relative; }
+  .cheat-block ul li::before { content: '·'; position: absolute; left: 0;
+    color: var(--accent); font-size: 1.2rem; top: -0.05rem; }
+
+  /* ── MNEMONIC CARD ── */
+  .mnemonic {
+    display: inline-block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 900;
+    letter-spacing: 0.08em;
+    color: var(--accent2);
+    background: rgba(247,195,79,0.08);
+    border: 1px solid rgba(247,195,79,0.25);
+    border-radius: 8px; padding: 0.5rem 1.2rem;
+    margin: 0.5rem 0;
+  }
+
+  /* ── COLLAPSIBLE ── */
+  .collap-header {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; padding: 0.75rem 1rem;
+    background: var(--surface2); border-radius: 8px;
+    margin-bottom: 0.4rem; font-weight: 600; font-size: 0.93rem;
+    transition: background var(--transition);
+    user-select: none;
+  }
+  .collap-header:hover { background: var(--tag-bg); }
+  .collap-header .arrow { transition: transform var(--transition); color: var(--accent); }
+  .collap-header.open .arrow { transform: rotate(90deg); }
+  .collap-body { display: none; padding: 0 0.5rem 0.5rem; }
+  .collap-body.open { display: block; animation: fadeUp 0.3s ease; }
+
+  /* ── SCORE BAR ── */
+  #score-bar {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0.75rem 1.1rem;
+    font-size: 0.85rem; font-weight: 600;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    display: none; z-index: 99;
+    transition: all var(--transition);
+  }
+  #score-bar .s-num { font-size: 1.4rem; font-weight: 900;
+    font-family: 'Playfair Display', serif; color: var(--accent); }
+  #score-bar .s-label { color: var(--text-muted); font-size: 0.78rem; display: block; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-label { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.35rem; }
+  .progress-bar { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 99px; width: 0; transition: width 0.5s ease; }
+
+  /* ── RESET ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.55rem 1.2rem; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    font-size: 0.88rem; cursor: pointer; border: none;
+    transition: all var(--transition);
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #3a7ae0; }
+  .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* HERO */
+  .hero { text-align: center; padding: 1rem 0 2rem; }
+  .hero h1 { font-size: 2.6rem; }
+  .hero .glow {
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .badges { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
+  .badge {
+    background: var(--tag-bg); color: var(--accent);
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
+    padding: 0.3rem 0.8rem; border-radius: 99px; border: 1px solid var(--border);
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  b, strong { color: var(--accent2); font-weight: 600; }
+  code { font-family: 'DM Mono', monospace; font-size: 0.88em;
+         background: var(--surface2); padding: 0.15em 0.45em; border-radius: 4px; color: var(--accent3); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Semantic<span>Web</span></div>
+  <nav>
+    <button class="active" onclick="show('explain')">📖 Explanation</button>
+    <button onclick="show('summary')">📋 Summary</button>
+    <button onclick="show('mcq')">❓ MCQs</button>
+    <button onclick="show('written')">✍️ Written</button>
+    <button onclick="show('revision')">⚡ Revision</button>
+  </nav>
+  <button class="theme-btn" onclick="toggleTheme()" title="Toggle dark/light"></button>
+</header>
+
+<div id="score-bar">
+  <span class="s-num" id="score-num">0/0</span>
+  <span class="s-label">MCQ Score</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1 — EXPLANATION
+════════════════════════════════════════════════ -->
+<div class="section active" id="explain">
+  <div class="hero">
+    <h1><span class="glow">Semantic Web</span></h1>
+    <p class="subtitle">Web 3.0 · Linked Data · Web of Data — Deep Understanding Guide</p>
+    <div class="badges">
+      <span class="badge">📚 Full Coverage</span>
+      <span class="badge">🧠 Deep Explanations</span>
+      <span class="badge">🎯 Exam-Optimized</span>
+    </div>
+  </div>
+
+  <h2>1 · What Is the Semantic Web?</h2>
+  <div class="card">
+    <div class="tag">Core Concept</div>
+    <p>The <strong>Semantic Web</strong> (also called <strong>Web 3.0</strong>, the <strong>Linked Data Web</strong>, and the <strong>Web of Data</strong>) is the next major evolution in connecting information on the internet.</p>
+    <p>Think of today's web as a library where books are written for humans — machines can't truly "read" them, only fetch them. The Semantic Web adds machine-readable <em>meaning</em> to data so computers can understand and act on it automatically.</p>
+    <div class="callout blue">
+      <strong>🔑 Key Idea</strong>
+      The Semantic Web is concerned with the <strong>meaning</strong> of data, not its structure — unlike relational databases or the regular web, which focus on structure.
+    </div>
+  </div>
+
+  <h3>Real-World Analogy</h3>
+  <div class="card">
+    <p>Imagine searching "design blogs" repeatedly. A traditional search engine just indexes words. But a <strong>Semantic Web</strong> system <em>understands</em> your pattern: it knows you care about design, so next time you search "computers," it surfaces results combining design + computers. The web <em>learns your intent</em>.</p>
+  </div>
+
+  <h2>2 · Alternative Names (All Mean the Same Thing)</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Name</th><th>What It Emphasizes</th></tr>
+      <tr><td><strong>Semantic Web</strong></td><td>Machine-understandable <em>meaning</em> of data</td></tr>
+      <tr><td><strong>Web 3.0</strong></td><td>3rd generation web; data-driven and user-adaptive</td></tr>
+      <tr><td><strong>Linked Data Web</strong></td><td>Data points linked from any source to any source</td></tr>
+      <tr><td><strong>Web of Data</strong></td><td>The shift from a web of documents to a web of data</td></tr>
+    </table>
+  </div>
+
+  <h2>3 · Semantic Web vs Traditional Web</h2>
+  <div class="callout yellow">
+    <strong>⚠️ Exam Trap!</strong>
+    The key difference: Semantic Web cares about <strong>meaning</strong>; relational databases and the traditional web care about <strong>structure</strong>. Do not confuse these.
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Feature</th><th>Traditional Web / Relational DB</th><th>Semantic Web</th></tr>
+      <tr><td>Focus</td><td>Structure of data</td><td>Meaning of data</td></tr>
+      <tr><td>Data linking</td><td>Within one system</td><td>Across any system/source</td></tr>
+      <tr><td>Machine understanding</td><td>No</td><td>Yes (via ontologies &amp; metadata)</td></tr>
+      <tr><td>Query language</td><td>SQL</td><td>SPARQL</td></tr>
+      <tr><td>Interaction approach</td><td>Fixed schema</td><td>Flexible, composable concepts</td></tr>
+    </table>
+  </div>
+
+  <h2>4 · Three Technical Standards (The Core Stack)</h2>
+  <div class="card">
+    <div class="tag gold">Must Know</div>
+    <h3>RDF — Resource Description Framework</h3>
+    <p>The <strong>data modeling language</strong> of the Semantic Web. All Semantic Web information is stored and represented in RDF. Think of RDF as the "grammar" — it defines <em>how</em> to describe things as subject–predicate–object triples (e.g., "The Eiffel Tower — is located in — Paris").</p>
+  </div>
+  <div class="card">
+    <div class="tag gold">Must Know</div>
+    <h3>SPARQL — SPARQL Protocol and RDF Query Language</h3>
+    <p>The <strong>query language</strong> of the Semantic Web — the "SQL for RDF." It is specifically designed to query data across various heterogeneous systems. SPARQL lets you ask complex questions spanning multiple data sources.</p>
+  </div>
+  <div class="card">
+    <div class="tag gold">Must Know</div>
+    <h3>OWL — Web Ontology Language</h3>
+    <p>The <strong>schema / knowledge representation (KR) language</strong>. OWL lets you define concepts <em>composably</em> — meaning each concept is carefully defined so it can be assembled in various combinations for many different applications. It is the "dictionary + grammar" of knowledge in the Semantic Web.</p>
+    <div class="callout green">
+      <strong>Composability:</strong> Carefully defined concepts that can be selected and assembled in various combinations with other concepts for many different purposes.
+    </div>
+  </div>
+
+  <h2>5 · The Full Technology Layer Stack</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Acronym</th><th>Full Name</th><th>Role</th></tr>
+      <tr><td><code>URI/IRI</code></td><td>Universal/Internationalized Resource Identifier</td><td>Unique naming of resources</td></tr>
+      <tr><td><code>XML</code></td><td>eXtended Markup Language</td><td>Data formatting/transport</td></tr>
+      <tr><td><code>RDF</code></td><td>Resource Description Framework</td><td>Data modeling language</td></tr>
+      <tr><td><code>RDFS</code></td><td>RDF Schema</td><td>Vocabulary for RDF</td></tr>
+      <tr><td><code>RIF</code></td><td>Rule Interchange Format</td><td>Rule sharing across systems</td></tr>
+      <tr><td><code>SPARQL</code></td><td>Simple Protocol and RDF Query Language</td><td>Query language</td></tr>
+      <tr><td><code>OWL</code></td><td>Web Ontology Language</td><td>Knowledge representation</td></tr>
+    </table>
+  </div>
+
+  <h2>6 · Key Components: Metadata & Ontologies</h2>
+  <div class="card">
+    <div class="tag green">Definition</div>
+    <h3>Metadata</h3>
+    <p><strong>Metadata = data about data.</strong> For machines to understand existing human-readable data, we annotate it with metadata. Example: a photo file itself is data; the date taken, location, and photographer name are metadata.</p>
+    <h3>Ontologies</h3>
+    <p><strong>Ontologies</strong> are documents that define relations among terms. They are the formal "dictionaries" of concepts and how they relate — enabling machines to reason about the domain.</p>
+    <h3>Software Agents</h3>
+    <p><strong>Software agents</strong> process data on behalf of humans. <strong>Automated web services</strong> provide data. Together, they act as the "workforce" of the Semantic Web.</p>
+  </div>
+
+  <h2>7 · User Interface Principles</h2>
+  <div class="card">
+    <ul class="styled">
+      <li>UIs must make the <strong>richness of the underlying data model</strong> available at the interaction level.</li>
+      <li><strong>Constraints at the interaction level should be minimized</strong> as much as possible.</li>
+      <li>Interfaces must be <strong>flexible</strong> enough to offer users as many ways as possible to interact with data.</li>
+    </ul>
+  </div>
+
+  <h2>8 · Mobile & Cloud Connection</h2>
+  <div class="callout blue">
+    The heavy usage of <strong>smartphones and cloud applications</strong> is driving the move toward accessing data from anywhere. The Semantic Web is expanding into smart TVs picking up user data, and smartphones accessing data on personal computers.
+  </div>
+
+  <h2>9 · Real-World Examples of Semantic Web</h2>
+  <div class="card">
+    <div class="tag">Applications</div>
+    <h3>1. Google + Freebase (Metaweb)</h3>
+    <p>Google acquired Metaweb, which runs <strong>Freebase</strong> — an open, semantically marked-up database. Similar in appearance to Wikipedia but focused on <strong>structured data</strong>.</p>
+    <h3>2. GetGlue</h3>
+    <p>A service where users <strong>"check in"</strong> to watching TV shows, reading books, listening to music — semantic context attached to media consumption.</p>
+    <h3>3. Flipboard</h3>
+    <p>Launched after the iPad (2010) — a magazine-reading application using the touch screen UI to deliver personalized, semantic content.</p>
+    <h3>4. Facebook Open Graph</h3>
+    <p>Announced in April 2010. Goal: enable publishers to <em>"integrate their Web pages into the social graph."</em> Each web page becomes an <strong>'object' in Facebook's social graph</strong> — referenced and connected across profiles, posts, search results, and the News Feed.</p>
+    <h3>5. Google Squared</h3>
+    <p>The <strong>"holy grail"</strong> of search: ask a simple question in natural language, get a simple answer. Google Squared (launched 2009) adds additional structured information to search results — a semantic search engine for RDF documents that provides services to software agents.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2 — SUMMARY
+════════════════════════════════════════════════ -->
+<div class="section" id="summary">
+  <h1>Smart <span style="color:var(--accent2)">Summary</span></h1>
+  <p class="subtitle">High-yield bullet-point reference — study this before every session</p>
+
+  <div class="collap-header open" onclick="toggleCollap(this)">
+    <span>🌐 Identity & Names</span><span class="arrow">▶</span>
+  </div>
+  <div class="collap-body open">
+    <div class="card">
+      <ul class="styled">
+        <li>Semantic Web = <strong>Web 3.0</strong> = <strong>Linked Data Web</strong> = <strong>Web of Data</strong></li>
+        <li>Web 3.0 is <strong>data-driven</strong> — the web adjusts to meet the needs of the user</li>
+        <li>Represents the <strong>next major evolution</strong> in connecting information</li>
+        <li>Enables data to be linked from any source to any source, understandable by computers</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collap-header" onclick="toggleCollap(this)">
+    <span>⚖️ Key Distinction</span><span class="arrow">▶</span>
+  </div>
+  <div class="collap-body">
+    <div class="card">
+      <ul class="styled">
+        <li>Semantic Web → concerned with <strong>MEANING</strong> (not structure)</li>
+        <li>Relational DBs / traditional web → concerned with <strong>STRUCTURE</strong></li>
+        <li>This difference leads to completely different approaches to storing, querying, and displaying information</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collap-header" onclick="toggleCollap(this)">
+    <span>🔧 Three Core Standards (RDF · SPARQL · OWL)</span><span class="arrow">▶</span>
+  </div>
+  <div class="collap-body">
+    <div class="card">
+      <ul class="styled">
+        <li><strong>RDF</strong> — Data modeling language; all SW info stored in RDF; subject–predicate–object triples</li>
+        <li><strong>SPARQL</strong> — Query language; designed to query data across various systems</li>
+        <li><strong>OWL</strong> — Schema/knowledge representation language; defines concepts <em>composably</em> for reuse</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collap-header" onclick="toggleCollap(this)">
+    <span>🧩 Components: Metadata, Ontologies, Agents</span><span class="arrow">▶</span>
+  </div>
+  <div class="collap-body">
+    <div class="card">
+      <ul class="styled">
+        <li><strong>Metadata</strong> = data about data (annotate existing data for machine understanding)</li>
+        <li><strong>Ontologies</strong> = documents defining relations among terms</li>
+        <li><strong>Software agents</strong> = process data on behalf of humans</li>
+        <li><strong>Automated web services</strong> = provide data to agents</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collap-header" onclick="toggleCollap(this)">
+    <span>🏗️ Technology Stack (URI → OWL)</span><span class="arrow">▶</span>
+  </div>
+  <div class="collap-body">
+    <div class="card">
+      <ul class="styled">
+        <li><code>URI/IRI</code> → unique resource naming</li>
+        <li><code>XML</code> → data formatting</li>
+        <li><code>RDF</code> → data modeling</li>
+        <li><code>RDFS</code> → RDF vocabulary/schema</li>
+        <li><code>RIF</code> → rule interchange</li>
+        <li><code>SPARQL</code> → querying</li>
+        <li><code>OWL</code> → knowledge representation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collap-header" onclick="toggleCollap(this)">
+    <span>💼 Top 5 Semantic Web Applications</span><span class="arrow">▶</span>
+  </div>
+  <div class="collap-body">
+    <div class="card">
+      <ul class="styled">
+        <li><strong>Google + Freebase</strong> — open structured semantic database</li>
+        <li><strong>GetGlue</strong> — semantic check-ins for media</li>
+        <li><strong>Flipboard</strong> — semantic content for iPad (2010)</li>
+        <li><strong>Facebook Open Graph</strong> — web pages as social graph objects</li>
+        <li><strong>Google Squared</strong> — natural-language semantic search (launched 2009)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collap-header" onclick="toggleCollap(this)">
+    <span>🖥️ UI Principles</span><span class="arrow">▶</span>
+  </div>
+  <div class="collap-body">
+    <div class="card">
+      <ul class="styled">
+        <li>UI must expose the full richness of the data model</li>
+        <li>Minimize constraints at the interaction level</li>
+        <li>Be flexible enough to support maximum user interaction modes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 3 — MCQs
+════════════════════════════════════════════════ -->
+<div class="section" id="mcq">
+  <h1>MCQ <span style="color:var(--accent)">Bank</span></h1>
+  <p class="subtitle">Click an option to check your answer instantly · <span id="mcq-count">0</span> questions answered</p>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="prog-label">0% complete</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+    <button class="btn btn-ghost" onclick="resetMCQ()">↺ Reset All</button>
+    <button class="btn btn-primary" onclick="showAllAnswers()">Show All Answers</button>
+  </div>
+
+  <div id="mcq-container"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 4 — WRITTEN
+════════════════════════════════════════════════ -->
+<div class="section" id="written">
+  <h1>Written <span style="color:var(--accent3)">Questions</span></h1>
+  <p class="subtitle">Click any question to reveal the model answer</p>
+
+  <h2>Short Answer Questions</h2>
+  <div id="short-container"></div>
+
+  <h2>Long-Form Questions</h2>
+  <div id="long-container"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 5 — REVISION SHEET
+════════════════════════════════════════════════ -->
+<div class="section" id="revision">
+  <h1>⚡ Rapid <span style="color:var(--accent2)">Revision</span></h1>
+  <p class="subtitle">Night-before-exam cheat sheet — the only page you need</p>
+
+  <div class="cheat">
+    <div class="cheat-grid">
+      <div class="cheat-block">
+        <h4>🌐 Names & Identity</h4>
+        <ul>
+          <li>= Web 3.0 = Linked Data Web = Web of Data</li>
+          <li>Data-driven; web adapts to user</li>
+          <li>Links data from ANY source to ANY source</li>
+          <li>Next major evolution in info-connecting</li>
+        </ul>
+      </div>
+      <div class="cheat-block">
+        <h4>⚖️ Core Distinction</h4>
+        <ul>
+          <li>SW → <b>MEANING</b> of data</li>
+          <li>Rel. DB / WWW → <b>STRUCTURE</b></li>
+          <li>Leads to different storage, querying, display</li>
+        </ul>
+      </div>
+      <div class="cheat-block">
+        <h4>🔧 3 Core Standards</h4>
+        <ul>
+          <li>RDF → data modeling language</li>
+          <li>SPARQL → query language (cross-system)</li>
+          <li>OWL → schema / KR language (composable)</li>
+        </ul>
+      </div>
+      <div class="cheat-block">
+        <h4>🧩 Key Concepts</h4>
+        <ul>
+          <li>Metadata = data ABOUT data</li>
+          <li>Ontology = defines relations among terms</li>
+          <li>Software agents = act for humans</li>
+          <li>Composability = reusable concept assembly</li>
+        </ul>
+      </div>
+      <div class="cheat-block">
+        <h4>🏗️ Tech Stack (bottom→top)</h4>
+        <ul>
+          <li>URI/IRI → XML → RDF → RDFS</li>
+          <li>RIF → SPARQL → OWL</li>
+        </ul>
+      </div>
+      <div class="cheat-block">
+        <h4>💼 Top 5 Examples</h4>
+        <ul>
+          <li>Google + Freebase (structured DB)</li>
+          <li>GetGlue (media check-ins)</li>
+          <li>Flipboard (iPad, 2010)</li>
+          <li>Facebook Open Graph (web→social obj.)</li>
+          <li>Google Squared (NL search, 2009)</li>
+        </ul>
+      </div>
+    </div>
+    <hr/>
+    <div style="text-align:center;">
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.5rem;">🧠 Mnemonic for 3 Core Standards:</p>
+      <div class="mnemonic">R.S.O. → Really Smart Ontologies</div>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.5rem;"><b>R</b>DF (model) · <b>S</b>PARQL (query) · <b>O</b>WL (schema)</p>
+    </div>
+    <hr/>
+    <div class="callout red" style="margin-top:1rem;">
+      <strong>🚨 Common Traps</strong>
+      <ul style="font-size:0.88rem;margin-left:1rem;">
+        <li>Meaning vs Structure → Semantic Web = MEANING, NOT structure</li>
+        <li>SPARQL is NOT SQL — it's for RDF across multiple systems</li>
+        <li>OWL is NOT just a schema — it enables COMPOSABILITY and REASONING</li>
+        <li>Freebase is structured data (NOT a wiki/Wikipedia)</li>
+        <li>Facebook Open Graph → web pages become OBJECTS in social graph</li>
+      </ul>
+    </div>
+    <hr/>
+    <div class="callout green">
+      <strong>🎯 UI Principles (3 rules)</strong>
+      1. Expose full data model richness · 2. Minimize interaction constraints · 3. Maximize interaction flexibility
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════ -->
+<script>
+// ── Navigation ──────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach((b,i) => {
+    b.classList.toggle('active', ['explain','summary','mcq','written','revision'][i] === id);
+  });
+  if(id === 'mcq') document.getElementById('score-bar').style.display = 'block';
+  else document.getElementById('score-bar').style.display = 'none';
+}
+
+// ── Theme ────────────────────────────────────────
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+
+// ── Collapsible ──────────────────────────────────
+function toggleCollap(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════
+// MCQ DATA
+// ═══════════════════════════════════════════════
+const mcqs = [
+  {q:"What is another name for the Semantic Web?", opts:["Web 2.0","Web 3.0","World Wide Web","Deep Web"], ans:1, diff:"easy",
+   exp:"The Semantic Web is also called Web 3.0 (as well as Linked Data Web and Web of Data). Web 2.0 refers to social media platforms."},
+  {q:"The Semantic Web is primarily concerned with the ___ of data, not its structure.", opts:["Size","Syntax","Meaning","Speed"], ans:2, diff:"easy",
+   exp:"The key distinguishing feature of the Semantic Web is its focus on MEANING (semantics) rather than structure, unlike relational databases."},
+  {q:"Which of the following is the data modeling language of the Semantic Web?", opts:["SQL","OWL","RDF","SPARQL"], ans:2, diff:"easy",
+   exp:"RDF (Resource Description Framework) is the data modeling language. All Semantic Web information is stored and represented in RDF."},
+  {q:"SPARQL is best described as:", opts:["A programming language for building web apps","The query language of the Semantic Web","The data modeling format for OWL","A markup language for HTML pages"], ans:1, diff:"easy",
+   exp:"SPARQL (SPARQL Protocol and RDF Query Language) is the query language specifically designed to query RDF data across various systems."},
+  {q:"OWL stands for:", opts:["Open Web Language","Ontology Web Layer","Web Ontology Language","Web Object Layer"], ans:2, diff:"easy",
+   exp:"OWL = Web Ontology Language — the schema/knowledge representation (KR) language of the Semantic Web."},
+  {q:"Which term means 'data about data'?", opts:["Ontology","Metadata","SPARQL","RDF"], ans:1, diff:"easy",
+   exp:"Metadata = data about data. Annotating existing data with metadata makes it understandable for machines."},
+  {q:"An ontology in the context of the Semantic Web is:", opts:["A type of database","A document defining relations among terms","A search engine","A programming paradigm"], ans:1, diff:"medium",
+   exp:"Ontologies are documents that define relations among terms, enabling machines to reason about domain knowledge."},
+  {q:"Which company did Google acquire that runs Freebase?", opts:["GetGlue","Metaweb","Flipboard","Facebook"], ans:1, diff:"medium",
+   exp:"Google acquired Metaweb, which runs Freebase — an open, semantically marked-up database of information."},
+  {q:"Facebook's Open Graph protocol aims to:", opts:["Replace HTML with semantic markup","Enable publishers to integrate web pages into the social graph","Create a new database format","Improve video streaming"], ans:1, diff:"medium",
+   exp:"The stated goal of Facebook's Open Graph was to enable publishers to 'integrate their Web pages into the social graph.'"},
+  {q:"What does 'composability' mean in the context of OWL?", opts:["The ability to compress data","Carefully defining concepts so they can be reused in various combinations","Building web pages with modular CSS","Combining SQL queries"], ans:1, diff:"medium",
+   exp:"Composability means each concept in OWL is carefully defined so it can be selected and assembled in various combinations with other concepts for many different applications."},
+  {q:"Which technology in the Semantic Web stack is responsible for vocabulary/schema definitions for RDF?", opts:["OWL","RDFS","SPARQL","RIF"], ans:1, diff:"medium",
+   exp:"RDFS (RDF Schema) provides vocabulary for RDF. OWL provides the full knowledge representation layer above RDFS."},
+  {q:"Software agents in the Semantic Web are designed to:", opts:["Replace human programmers","Process data on behalf of humans","Store data in relational databases","Generate HTML pages"], ans:1, diff:"medium",
+   exp:"Software agents process data on behalf of humans. Automated web services provide data to these agents."},
+  {q:"Freebase is best described as:", opts:["A social network like Wikipedia","An open semantically marked-up structured data database","A search engine for images","A cloud storage service"], ans:1, diff:"medium",
+   exp:"Freebase is all about STRUCTURED DATA and what you can do with it — it differs from Wikipedia which is human-readable text."},
+  {q:"Google Squared was designed to achieve what goal?", opts:["Replace Google Search entirely","Ask a simple question in natural language and get a simple answer","Provide image search results","Index social media content"], ans:1, diff:"medium",
+   exp:"The 'holy grail' in web search technology is to ask a simple question in natural language and get a simple answer — Google Squared launched in 2009 to add structured information to search results."},
+  {q:"Which of the following is NOT one of the three primary technical standards of the Semantic Web?", opts:["RDF","SPARQL","OWL","XML"], ans:3, diff:"medium",
+   exp:"The three primary technical standards are RDF, SPARQL, and OWL. XML is part of the broader technology stack but is not one of the three primary Semantic Web standards."},
+  {q:"GetGlue is an example of a Semantic Web application because:", opts:["It streams video content","It allows users to check in to media consumption creating semantic context","It stores RDF triples for search","It is a structured database like Freebase"], ans:1, diff:"medium",
+   exp:"GetGlue creates semantic context by attaching user check-ins (watching TV, reading books, music) to media objects — creating linked semantic data."},
+  {q:"According to the Semantic Web UI principles, constraints at the interaction level should be:", opts:["Maximized for security","Minimized as much as possible","Kept at industry standard levels","Determined by the database schema"], ans:1, diff:"hard",
+   exp:"A critical principle: constraints at the interaction level should be MINIMIZED as much as possible to allow the interface to expose full data richness."},
+  {q:"RIF in the Semantic Web technology stack stands for:", opts:["Resource Information Framework","Rule Interchange Format","Remote Interface Format","Relational Index Framework"], ans:1, diff:"hard",
+   exp:"RIF = Rule Interchange Format, used for sharing rules across different systems in the Semantic Web stack."},
+  {q:"IRI is an extension of URI that adds support for:", opts:["More complex queries","International characters (internationalized)","Image resources","Inline relational joins"], ans:1, diff:"hard",
+   exp:"IRI = Internationalized Resource Identifier — an extension of URI that adds support for international (non-ASCII) characters."},
+  {q:"How does the Semantic Web differ fundamentally from relational databases?", opts:["The Semantic Web uses tables; databases use graphs","Relational databases care about meaning; Semantic Web cares about structure","The Semantic Web cares about meaning; relational databases care about structure","They are identical in concept"], ans:2, diff:"hard",
+   exp:"The fundamental difference: the Semantic Web is concerned with MEANING, while relational databases focus on STRUCTURE. This leads to entirely different approaches to storing, querying, and displaying information."},
+  {q:"Which of the following best describes the 'social graph' in Facebook's Open Graph?", opts:["A visual chart of user demographics","How people connect to each other in Facebook's network","A mathematical graph of website links","A diagram of server architecture"], ans:1, diff:"hard",
+   exp:"Facebook's 'social graph' is their term for how people connect to each other in its network. Open Graph turns web pages into 'objects' in this social graph."},
+  {q:"The launch of which device in 2010 triggered Flipboard's creation?", opts:["iPhone","Android phone","iPad","MacBook Air"], ans:2, diff:"hard",
+   exp:"The launch of the iPad in 2010 triggered a new round of startup innovation, with Flipboard being built specifically for the iPad's touch screen UI."},
+  {q:"In the Semantic Web, existing data meaningful only to people must be:", opts:["Deleted and rebuilt from scratch","Annotated with metadata to make it understandable for machines","Converted to SQL tables","Stored in XML files without changes"], ans:1, diff:"hard",
+   exp:"The approach is to take existing human-meaningful data and annotate it with metadata — not to replace it — so machines can also understand and process it."},
+  {q:"Which statement about SPARQL is most accurate?", opts:["SPARQL can only query a single RDF database at a time","SPARQL is designed to query data across various systems","SPARQL is only used with OWL ontologies","SPARQL is a markup language like HTML"], ans:1, diff:"hard",
+   exp:"SPARQL is specifically designed to query data across VARIOUS systems — its cross-system capability is a defining feature that distinguishes it from SQL."},
+  {q:"A Semantic Web search engine for RDF documents that provides services to software agents is best described by which example?", opts:["Facebook Open Graph","Google Squared","GetGlue","Flipboard"], ans:1, diff:"hard",
+   exp:"Google Squared is described as 'a search engine for semantic web documents represented in RDF that provides services to software agents.' This is the specific definition from the material."},
+];
+
+// ── Render MCQs ─────────────────────────────────
+let answered = 0, correct = 0;
+const total = mcqs.length;
+
+function renderMCQ() {
+  const c = document.getElementById('mcq-container');
+  c.innerHTML = '';
+  mcqs.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'card mcq';
+    div.id = 'mcq-' + qi;
+    const diffClass = q.diff;
+    const letters = ['A','B','C','D'];
+    div.innerHTML = `
+      <div class="mcq-q">
+        <span class="mcq-num">${qi+1}</span>
+        ${q.q}
+        <span class="diff ${diffClass}">${q.diff.toUpperCase()}</span>
+      </div>
+      <div class="options" id="opts-${qi}">
+        ${q.opts.map((o,oi) => `
+          <div class="opt" onclick="pickOpt(${qi},${oi})" id="opt-${qi}-${oi}">
+            <span class="opt-letter">${letters[oi]}</span>
+            <span>${o}</span>
+          </div>`).join('')}
+      </div>
+      <div class="explanation" id="exp-${qi}">
+        <strong>✓ Correct: ${letters[q.ans]}. ${q.opts[q.ans]}</strong><br/>${q.exp}
+      </div>
+    `;
+    c.appendChild(div);
+  });
+  updateScoreBar();
+}
+
+function pickOpt(qi, oi) {
+  const q = mcqs[qi];
+  const optsDiv = document.getElementById('opts-' + qi);
+  if (optsDiv.dataset.answered) return;
+  optsDiv.dataset.answered = '1';
+  for (let i=0; i<q.opts.length; i++) {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    if (i === q.ans) el.classList.add('correct');
+    else if (i === oi && oi !== q.ans) el.classList.add('wrong');
+    el.style.pointerEvents = 'none';
+  }
+  document.getElementById('exp-' + qi).classList.add('show');
+  answered++;
+  if (oi === q.ans) correct++;
+  updateScoreBar();
+  updateProgress();
+}
+
+function updateScoreBar() {
+  document.getElementById('score-num').textContent = correct + '/' + answered;
+  document.getElementById('mcq-count').textContent = answered;
+}
+
+function updateProgress() {
+  const pct = Math.round((answered / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = pct + '% complete (' + answered + '/' + total + ')';
+}
+
+function resetMCQ() {
+  answered = 0; correct = 0;
+  renderMCQ();
+  updateProgress();
+}
+
+function showAllAnswers() {
+  mcqs.forEach((q, qi) => {
+    const optsDiv = document.getElementById('opts-' + qi);
+    if (optsDiv.dataset.answered) return;
+    optsDiv.dataset.answered = '1';
+    document.getElementById(`opt-${qi}-${q.ans}`).classList.add('correct');
+    document.querySelectorAll(`#opts-${qi} .opt`).forEach(o => o.style.pointerEvents = 'none');
+    document.getElementById('exp-' + qi).classList.add('show');
+  });
+  answered = total; correct = total;
+  updateScoreBar();
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════════
+// WRITTEN QUESTIONS
+// ═══════════════════════════════════════════════
+const shortQs = [
+  {q:"Define the Semantic Web in your own words.", ans:"The Semantic Web (Web 3.0) is an evolution of the internet that enables data to be linked across sources and understood by machines — not just humans — so that computers can perform increasingly sophisticated tasks on our behalf. Its key focus is on the meaning of data, not merely its structure."},
+  {q:"What is the difference between the Semantic Web and the traditional web?", ans:"The traditional web focuses on the structure of data (documents, pages, formatting), while the Semantic Web focuses on the meaning of data. This fundamental difference leads to completely different approaches to storing, querying, and displaying information. The Semantic Web allows data to be linked from any source to any other source and to be processed by machines."},
+  {q:"Explain what metadata is and why it is important for the Semantic Web.", ans:"Metadata means 'data about data.' In the Semantic Web context, existing data is meaningful only to humans; to make it understandable for machines, we annotate it with metadata. This annotation allows software agents and automated web services to process and reason over the data on behalf of humans."},
+  {q:"What is an ontology in the context of the Semantic Web?", ans:"An ontology is a formal document that defines relations among terms in a domain. It acts as a shared vocabulary and conceptual model that enables machines to understand the relationships between concepts and reason about domain knowledge automatically."},
+  {q:"Name and briefly describe the three primary technical standards of the Semantic Web.", ans:"1. RDF (Resource Description Framework) — the data modeling language; all Semantic Web information is stored in RDF. 2. SPARQL — the query language, designed to query data across various systems. 3. OWL (Web Ontology Language) — the schema/knowledge representation language, enabling composable concept definitions for maximum reuse."},
+  {q:"What does 'composability' mean in the context of OWL?", ans:"Composability means that each concept in OWL is carefully defined so that it can be selected and assembled in various combinations with other concepts as needed for many different applications and purposes. This maximizes reusability of knowledge components."},
+  {q:"How did the launch of the iPad in 2010 relate to the Semantic Web?", ans:"The iPad launch in 2010 triggered a new round of innovation. Flipboard, one of the top Semantic Web applications, was built specifically for the iPad, utilizing the touch screen UI to create a personalized magazine-reading experience — one of the most notable examples of semantic content delivery via a new form factor."},
+];
+
+const longQs = [
+  {q:"Compare and contrast the Semantic Web with relational databases and the traditional World Wide Web. What does the Semantic Web offer that they do not?",
+   ans:`The Semantic Web differs from both relational databases and the traditional World Wide Web in a fundamental way: it is concerned with the MEANING of data, whereas both relational databases and the WWW are primarily concerned with the STRUCTURE of data.
+
+Relational databases store data in structured tables with fixed schemas, designed for efficient querying within a single system using SQL. The traditional WWW presents data as hyperlinked documents formatted for human readers. Neither system enables machines to truly understand the meaning or relationships between data across different sources.
+
+The Semantic Web addresses this by: (1) enabling data to be linked from ANY source to ANY other source; (2) making data understandable by machines through metadata and ontologies; (3) using RDF for machine-readable data modeling, SPARQL for cross-system querying, and OWL for composable knowledge representation. This engenders a completely different outlook on how storing, querying, and displaying information might be approached — enabling software agents to perform increasingly sophisticated tasks on behalf of humans.`},
+  {q:"Describe the Semantic Web technology stack from bottom to top, explaining the role of each layer.",
+   ans:`The Semantic Web technology stack consists of multiple layers, each building upon the previous:
+
+1. URI/IRI (Universal/Internationalized Resource Identifier): The foundation — provides unique identification for all resources on the Semantic Web. IRI extends URI to support international characters.
+
+2. XML (eXtended Markup Language): Provides the syntax for data formatting and transport, enabling structured document exchange.
+
+3. RDF (Resource Description Framework): The data modeling language. All Semantic Web information is stored and represented in RDF using subject–predicate–object triples, providing a universal way to describe resources.
+
+4. RDFS (RDF Schema): Provides vocabulary and basic schema capabilities for RDF, allowing the definition of classes and properties.
+
+5. RIF (Rule Interchange Format): Enables sharing and interchange of rules across different systems and rule languages.
+
+6. SPARQL: The query language of the Semantic Web. Specifically designed to query RDF data across various heterogeneous systems — unlike SQL which is confined to a single database.
+
+7. OWL (Web Ontology Language): The knowledge representation language at the top of the stack. Enables composable, reusable concept definitions with reasoning capabilities.`},
+  {q:"Discuss the real-world applications of the Semantic Web, focusing on the top five examples mentioned in the material.",
+   ans:`The Semantic Web has been implemented in several significant real-world applications:
+
+1. Google + Freebase (Metaweb): Google's acquisition of Metaweb brought Freebase into its ecosystem. Freebase is an open, semantically marked-up structured database — similar in appearance to Wikipedia but focused entirely on structured, machine-readable data and what can be computed with it.
+
+2. GetGlue: A semantic media check-in service where users attach semantic context to their media consumption (TV shows, books, music). This creates linked semantic data connecting users to media objects.
+
+3. Flipboard: Created in response to the iPad launch in 2010, Flipboard is a magazine-reading application that leverages the touch screen UI to deliver semantically personalized content — one of the most notable startups using semantic principles for content delivery.
+
+4. Facebook Open Graph: Announced in April 2010, Open Graph enables publishers to integrate web pages into Facebook's social graph. Each web page becomes an 'object' in the social graph, referenced and connected across user profiles, blog posts, search results, and the News Feed — creating a massive web of linked semantic data.
+
+5. Google Squared: Representing the 'holy grail' of semantic search — asking a simple question in natural language and getting a structured, simple answer. Launched in 2009, Google Squared adds structured information to search results and functions as a semantic search engine for RDF documents, providing services to software agents.`},
+];
+
+function renderWritten() {
+  const sc = document.getElementById('short-container');
+  const lc = document.getElementById('long-container');
+  sc.innerHTML = '';
+  lc.innerHTML = '';
+  shortQs.forEach((q,i) => sc.appendChild(buildWrittenCard(q,i,'SA')));
+  longQs.forEach((q,i)  => lc.appendChild(buildWrittenCard(q,i,'LQ')));
+}
+
+function buildWrittenCard(q, i, type) {
+  const div = document.createElement('div');
+  div.className = 'written-q';
+  div.innerHTML = `
+    <div class="tag">${type}-${i+1}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="model" id="wmodel-${type}-${i}">
+      <div class="model-label">📝 Model Answer</div>
+      ${q.ans.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br/>')}
+    </div>
+  `;
+  div.addEventListener('click', () => {
+    const m = document.getElementById(`wmodel-${type}-${i}`);
+    m.classList.toggle('show');
+  });
+  return div;
+}
+
+// ── Init ─────────────────────────────────────────
+renderMCQ();
+renderWritten();
+updateProgress();
+</script>
+</body>
+</html>
