@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Layers — Exam Prep System</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a26;
+    --card: #16161f;
+    --border: #2a2a3d;
+    --accent: #7c6aff;
+    --accent2: #ff6b9d;
+    --accent3: #00e5c0;
+    --text: #e8e8f0;
+    --text2: #9090b0;
+    --text3: #606080;
+    --surface: #0f0f1a;
+    --level0: #4fc3f7;
+    --level1: #81c784;
+    --level2: #ffb74d;
+    --level3: #f06292;
+    --level4: #ce93d8;
+    --level5: #ff5252;
+    --correct: #00e5c0;
+    --wrong: #ff5252;
+    --radius: 12px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  [data-theme="light"] {
+    --bg: #f0f0f8;
+    --bg2: #e8e8f2;
+    --bg3: #dcdcec;
+    --card: #ffffff;
+    --border: #ccccdd;
+    --accent: #5b4fe0;
+    --accent2: #d63384;
+    --accent3: #00a88c;
+    --text: #1a1a2e;
+    --text2: #44445a;
+    --text3: #888899;
+    --surface: #f5f5ff;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+    transition: background 0.3s, color 0.3s;
+  }
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  [data-theme="light"] header { background: rgba(240,240,248,0.85); }
+  .logo {
+    font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  .nav-btn {
+    background: none; border: 1px solid transparent; color: var(--text2);
+    font-family: 'Space Mono', monospace; font-size: 0.7rem;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--accent); border-color: var(--accent);
+    color: #fff;
+  }
+  .theme-btn {
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text); width: 38px; height: 38px; border-radius: 8px;
+    cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .theme-btn:hover { background: var(--accent); border-color: var(--accent); }
+  /* MAIN */
+  main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+  .section { display: none; animation: fadeIn 0.4s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+  /* HERO */
+  .hero {
+    text-align: center; padding: 60px 0 40px;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { color: var(--text2); max-width: 560px; margin: 0 auto 32px; font-size: 1.05rem; }
+  .hero-pills { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .pill {
+    padding: 6px 16px; border-radius: 100px; font-size: 0.78rem;
+    font-family: 'Space Mono', monospace; font-weight: 700;
+    border: 1px solid; letter-spacing: 0.5px;
+  }
+  .pill-1 { color: var(--accent); border-color: var(--accent); background: rgba(124,106,255,0.1); }
+  .pill-2 { color: var(--accent2); border-color: var(--accent2); background: rgba(255,107,157,0.1); }
+  .pill-3 { color: var(--accent3); border-color: var(--accent3); background: rgba(0,229,192,0.1); }
+  /* CARDS */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    margin-bottom: 24px; box-shadow: var(--shadow);
+    transition: transform 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .card-title {
+    font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-title .icon { font-size: 1.3rem; }
+  h2 {
+    font-size: 1.6rem; font-weight: 800; margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  h3 { font-size: 1.1rem; font-weight: 700; margin: 20px 0 10px; color: var(--accent); }
+  p { color: var(--text2); margin-bottom: 12px; }
+  strong { color: var(--text); }
+  ul, ol { padding-left: 20px; color: var(--text2); }
+  li { margin-bottom: 8px; }
+  /* LEVEL BADGES */
+  .level-badge {
+    display: inline-block; padding: 3px 12px; border-radius: 100px;
+    font-size: 0.72rem; font-family: 'Space Mono', monospace;
+    font-weight: 700; margin-bottom: 12px;
+  }
+  .l0 { background: rgba(79,195,247,0.15); color: var(--level0); border: 1px solid var(--level0); }
+  .l1 { background: rgba(129,199,132,0.15); color: var(--level1); border: 1px solid var(--level1); }
+  .l2 { background: rgba(255,183,77,0.15); color: var(--level2); border: 1px solid var(--level2); }
+  .l3 { background: rgba(240,98,146,0.15); color: var(--level3); border: 1px solid var(--level3); }
+  .l4 { background: rgba(206,147,216,0.15); color: var(--level4); border: 1px solid var(--level4); }
+  .l5 { background: rgba(255,82,82,0.15); color: var(--level5); border: 1px solid var(--level5); }
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    border-left: 3px solid var(--accent);
+    background: rgba(124,106,255,0.08);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+  }
+  .highlight-box.green { border-color: var(--accent3); background: rgba(0,229,192,0.08); }
+  .highlight-box.pink { border-color: var(--accent2); background: rgba(255,107,157,0.08); }
+  .highlight-box.red { border-color: var(--level5); background: rgba(255,82,82,0.08); }
+  /* ANALOGY BOX */
+  .analogy {
+    background: var(--bg3); border: 1px dashed var(--border);
+    border-radius: 10px; padding: 16px 20px; margin: 14px 0;
+    font-style: italic; color: var(--text2);
+  }
+  .analogy strong { color: var(--accent3); font-style: normal; }
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th {
+    background: var(--bg3); color: var(--text);
+    padding: 10px 14px; text-align: left;
+    font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.5px;
+    border: 1px solid var(--border);
+  }
+  td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  tr:hover td { background: var(--bg3); }
+  /* COLLAPSIBLE */
+  .collapse-btn {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text); padding: 14px 18px; border-radius: 10px;
+    font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px; transition: all 0.2s;
+  }
+  .collapse-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .collapse-btn .arrow { transition: transform 0.3s; font-size: 0.9rem; }
+  .collapse-btn.open .arrow { transform: rotate(180deg); }
+  .collapse-content { display: none; padding: 16px; border: 1px solid var(--border); border-radius: 0 0 10px 10px; margin-top: -10px; margin-bottom: 8px; background: var(--card); }
+  .collapse-content.open { display: block; animation: fadeIn 0.3s; }
+  /* MCQ */
+  .mcq-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+  }
+  .mcq-q { font-weight: 700; margin-bottom: 16px; color: var(--text); font-size: 0.97rem; }
+  .mcq-meta { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--text3); margin-bottom: 10px; }
+  .mcq-options { display: grid; gap: 8px; }
+  .mcq-opt {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 16px;
+    cursor: pointer; transition: all 0.2s;
+    font-size: 0.9rem; color: var(--text2);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .mcq-opt:hover { border-color: var(--accent); color: var(--text); }
+  .mcq-opt.correct { border-color: var(--correct); background: rgba(0,229,192,0.12); color: var(--correct); }
+  .mcq-opt.wrong { border-color: var(--wrong); background: rgba(255,82,82,0.12); color: var(--wrong); }
+  .mcq-opt.disabled { pointer-events: none; }
+  .mcq-opt .opt-letter { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.8rem; min-width: 20px; color: var(--accent); }
+  .mcq-explanation {
+    display: none; margin-top: 14px;
+    background: rgba(124,106,255,0.08); border: 1px solid rgba(124,106,255,0.3);
+    border-radius: 8px; padding: 14px; font-size: 0.88rem; color: var(--text2);
+  }
+  .mcq-explanation.show { display: block; animation: fadeIn 0.3s; }
+  .mcq-score { font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--accent3); }
+  .diff-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700;
+  }
+  .easy { background: rgba(0,229,192,0.15); color: var(--accent3); }
+  .medium { background: rgba(255,183,77,0.15); color: var(--level2); }
+  .hard { background: rgba(255,82,82,0.15); color: var(--level5); }
+  /* WRITTEN Q */
+  .wq-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+  }
+  .wq-q { font-weight: 700; color: var(--text); margin-bottom: 14px; }
+  .model-answer {
+    display: none; margin-top: 14px;
+    background: var(--bg3); border-radius: 10px; padding: 18px;
+    border: 1px solid var(--border);
+  }
+  .model-answer.show { display: block; animation: fadeIn 0.3s; }
+  .show-ans-btn {
+    background: none; border: 1px solid var(--accent);
+    color: var(--accent); padding: 8px 18px; border-radius: 8px;
+    cursor: pointer; font-size: 0.85rem; font-family: 'Syne', sans-serif;
+    font-weight: 600; transition: all 0.2s;
+  }
+  .show-ans-btn:hover { background: var(--accent); color: #fff; }
+  /* REVISION SHEET */
+  .rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:600px) { .rev-grid { grid-template-columns: 1fr; } nav { gap: 2px; } .nav-btn { padding: 5px 8px; font-size: 0.65rem; } }
+  .rev-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px;
+  }
+  .rev-card h4 {
+    font-size: 0.78rem; font-family: 'Space Mono', monospace;
+    color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .rev-item { font-size: 0.85rem; color: var(--text2); padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .rev-item:last-child { border: none; }
+  .rev-item strong { color: var(--text); }
+  /* PROGRESS BAR */
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin: 8px 0 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.4s; }
+  /* LAYER VISUAL */
+  .layer-pyramid { margin: 20px 0; }
+  .layer-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 16px; border-radius: 10px; margin-bottom: 8px;
+    border: 1px solid;
+    transition: all 0.2s;
+  }
+  .layer-row:hover { transform: translateX(4px); }
+  .layer-num { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.78rem; min-width: 28px; }
+  .layer-name { font-weight: 700; flex: 1; }
+  .layer-size { font-family: 'Space Mono', monospace; font-size: 0.72rem; opacity: 0.7; }
+  /* MNEMONIC */
+  .mnemonic {
+    background: linear-gradient(135deg, rgba(124,106,255,0.1), rgba(255,107,157,0.1));
+    border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+    text-align: center; margin: 16px 0;
+  }
+  .mnemonic .word { font-size: 2rem; font-weight: 800; letter-spacing: 4px; color: var(--accent); margin-bottom: 12px; }
+  .mnemonic-items { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .mnemonic-item { text-align: center; }
+  .mnemonic-item .letter { font-size: 1.4rem; font-weight: 800; color: var(--accent2); }
+  .mnemonic-item .meaning { font-size: 0.75rem; color: var(--text2); }
+  /* STATS */
+  .stats-bar {
+    display: flex; gap: 16px; padding: 16px; background: var(--bg3);
+    border-radius: 12px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .stat { text-align: center; flex: 1; }
+  .stat .val { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+  .stat .lbl { font-size: 0.72rem; font-family: 'Space Mono', monospace; color: var(--text3); }
+  /* SECTION HEADER */
+  .sec-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-header .tag {
+    font-family: 'Space Mono', monospace; font-size: 0.72rem;
+    color: var(--accent); letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  code {
+    font-family: 'Space Mono', monospace; background: var(--bg3);
+    padding: 2px 6px; border-radius: 4px; font-size: 0.85em;
+    color: var(--accent3);
+  }
+  .tip-box {
+    background: rgba(0,229,192,0.08); border: 1px solid rgba(0,229,192,0.3);
+    border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-size: 0.88rem;
+  }
+  .tip-box::before { content: '💡 '; }
+  .warn-box {
+    background: rgba(255,82,82,0.08); border: 1px solid rgba(255,82,82,0.3);
+    border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-size: 0.88rem; color: var(--text2);
+  }
+  .warn-box::before { content: '⚠️ '; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⬡ Web Layers</div>
+  <nav>
+    <button class="nav-btn active" onclick="show('home')">Home</button>
+    <button class="nav-btn" onclick="show('explain')">📖 Explain</button>
+    <button class="nav-btn" onclick="show('summary')">🧾 Summary</button>
+    <button class="nav-btn" onclick="show('mcq')">❓ MCQs</button>
+    <button class="nav-btn" onclick="show('written')">✍️ Written</button>
+    <button class="nav-btn" onclick="show('revision')">⚡ Revision</button>
+  </nav>
+  <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+</header>
+
+<main>
+
+<!-- HOME -->
+<div id="home" class="section active">
+  <div class="hero">
+    <h1>Master the<br><span>Layers of the Web</span></h1>
+    <p>A complete exam preparation system covering Surface Web, Deep Web, and Dark Web — with MCQs, written questions, and a rapid revision sheet.</p>
+    <div class="hero-pills">
+      <span class="pill pill-1">Dr. Hanan Fahmy</span>
+      <span class="pill pill-2">Information Security</span>
+      <span class="pill pill-3">Exam Ready</span>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="val">6</div><div class="lbl">Web Levels</div></div>
+    <div class="stat"><div class="val">30</div><div class="lbl">MCQ Questions</div></div>
+    <div class="stat"><div class="val">12</div><div class="lbl">Written Q&As</div></div>
+    <div class="stat"><div class="val">5</div><div class="lbl">Study Phases</div></div>
+  </div>
+
+  <!-- Quick Layer Visual -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🏔️</span> The Web Hierarchy at a Glance</div>
+    <div class="layer-pyramid">
+      <div class="layer-row" style="background:rgba(79,195,247,0.08);border-color:var(--level0)">
+        <span class="layer-num" style="color:var(--level0)">S</span>
+        <span class="layer-name">ClearNet (Level S)</span>
+        <span class="layer-size" style="color:var(--level0)">Search engines, Social media, Email</span>
+      </div>
+      <div class="layer-row" style="background:rgba(129,199,132,0.08);border-color:var(--level1)">
+        <span class="layer-num" style="color:var(--level1)">1</span>
+        <span class="layer-name">Surface Web (Level 1)</span>
+        <span class="layer-size" style="color:var(--level1)">Amazon, Blogs, University DB</span>
+      </div>
+      <div class="layer-row" style="background:rgba(255,183,77,0.08);border-color:var(--level2)">
+        <span class="layer-num" style="color:var(--level2)">2</span>
+        <span class="layer-name">Bergie Web (Level 2)</span>
+        <span class="layer-size" style="color:var(--level2)">Archives, Torrents, Restricted</span>
+      </div>
+      <div class="layer-row" style="background:rgba(240,98,146,0.08);border-color:var(--level3)">
+        <span class="layer-num" style="color:var(--level3)">3</span>
+        <span class="layer-name">Deep Web (Level 3)</span>
+        <span class="layer-size" style="color:var(--level3)">400–500× more data, Not indexed</span>
+      </div>
+      <div class="layer-row" style="background:rgba(206,147,216,0.08);border-color:var(--level4)">
+        <span class="layer-num" style="color:var(--level4)">4</span>
+        <span class="layer-name">Dark Web (Level 4)</span>
+        <span class="layer-size" style="color:var(--level4)">TOR/.onion, Hidden Wiki, SilkRoad</span>
+      </div>
+      <div class="layer-row" style="background:rgba(255,82,82,0.08);border-color:var(--level5)">
+        <span class="layer-num" style="color:var(--level5)">5</span>
+        <span class="layer-name">Marianas Web (Level 5)</span>
+        <span class="layer-size" style="color:var(--level5)">"Final boss" — Stay away</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+    <div class="card" onclick="show('explain')" style="cursor:pointer;text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">📖</div>
+      <div style="font-weight:700">Deep Explanation</div>
+      <p style="font-size:0.82rem">Full concepts with analogies</p>
+    </div>
+    <div class="card" onclick="show('mcq')" style="cursor:pointer;text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">❓</div>
+      <div style="font-weight:700">30 MCQs</div>
+      <p style="font-size:0.82rem">Easy → Hard with explanations</p>
+    </div>
+    <div class="card" onclick="show('revision')" style="cursor:pointer;text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">⚡</div>
+      <div style="font-weight:700">Revision Sheet</div>
+      <p style="font-size:0.82rem">Night-before cheat sheet</p>
+    </div>
+  </div>
+</div>
+
+<!-- EXPLANATION -->
+<div id="explain" class="section">
+  <div class="sec-header">
+    <div class="tag">Phase 1 — Deep Understanding</div>
+    <h2>Complete Concept Breakdown</h2>
+    <p>Every concept explained simply, with analogies and exam-critical notes.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🌐</span> The Big Picture: How the Web is Structured</div>
+    <p>Think of the internet like an <strong>iceberg</strong>. What you see above water (Google, YouTube, news sites) is only a tiny fraction of what exists. The real bulk is hidden below the surface — some of it harmless, some dangerous.</p>
+    <div class="analogy">
+      <strong>Iceberg Analogy:</strong> The surface web is the tip visible above water. The deep web is the massive submerged body. The dark web is the deepest, darkest trench — intentionally hidden, requiring special tools to reach.
+    </div>
+    <p>The internet is <strong>not just one place</strong> — it has layers, each with different accessibility, content, and risk levels. Dr. Fahmy organizes these into <strong>6 levels</strong>: S, 1, 2, 3, 4, 4B, and 5.</p>
+  </div>
+
+  <!-- LEVEL S -->
+  <button class="collapse-btn open" onclick="toggleCollapse(this)">
+    <span>🔵 Level S — ClearNet</span><span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content open">
+    <span class="level-badge l0">Level S — ClearNet</span>
+    <p>ClearNet is the <strong>fully public, fully indexed</strong> layer of the internet. These are websites anyone can reach by typing a URL or searching Google.</p>
+    <ul>
+      <li><strong>Social Networks</strong>: Facebook, Twitter, Instagram</li>
+      <li><strong>Search Engines</strong>: Google, Bing, Yahoo</li>
+      <li><strong>Wikis</strong>: Wikipedia</li>
+      <li><strong>Email services</strong>: Gmail, Outlook</li>
+      <li><strong>Common internet content</strong>: news, blogs, shopping</li>
+    </ul>
+    <div class="highlight-box green">No special tools needed. Just a normal browser.</div>
+  </div>
+
+  <!-- LEVEL 1 -->
+  <button class="collapse-btn" onclick="toggleCollapse(this)">
+    <span>🟢 Level 1 — Surface Web</span><span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <span class="level-badge l1">Level 1 — Surface Web</span>
+    <p>The Surface Web is the <strong>primary entry point</strong> for most users. It contains all websites whose data is <strong>indexed by search engines</strong> like Google.</p>
+    <ul>
+      <li>Amazon, eBay (e-commerce)</li>
+      <li>Blogs and news sites</li>
+      <li>University public databases</li>
+      <li>Hosting services and forums</li>
+      <li>Closed social networks (requiring login but still indexed)</li>
+    </ul>
+    <div class="highlight-box">
+      <strong>Key Fact:</strong> Despite being the most visible layer, the Surface Web contains <em>very little</em> of the internet's total data. Most data sits deeper.
+    </div>
+    <p><strong>Access method:</strong> Standard browsers (Chrome, Firefox, Safari). No special tools required.</p>
+  </div>
+
+  <!-- LEVEL 2 -->
+  <button class="collapse-btn" onclick="toggleCollapse(this)">
+    <span>🟡 Level 2 — Bergie Web</span><span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <span class="level-badge l2">Level 2 — Bergie Web</span>
+    <p>A transitional layer between the publicly accessible web and the hidden web. Still reachable via normal browsers, but with restricted or semi-hidden content.</p>
+    <ul>
+      <li><strong>Web Archive</strong> (archive.org — old snapshots of sites)</li>
+      <li><strong>Torrents & P2P</strong> file sharing</li>
+      <li><strong>Streaming services</strong> (some require subscriptions)</li>
+      <li><strong>Restricted Access Content</strong></li>
+      <li><strong>Robots.txt</strong> — files that tell crawlers what NOT to index</li>
+      <li><strong>Anti-Virus Databases</strong></li>
+    </ul>
+    <div class="analogy">
+      <strong>Robots.txt analogy:</strong> Imagine a "No Photography" sign at a museum. The museum is open to the public, but you're asked not to photograph certain exhibits. Robots.txt tells search engines: "don't index this page," but the page itself isn't secret.
+    </div>
+  </div>
+
+  <!-- LEVEL 3 DEEP WEB -->
+  <button class="collapse-btn" onclick="toggleCollapse(this)">
+    <span>🔴 Level 3 — Deep Web (The Big One)</span><span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <span class="level-badge l3">Level 3 — Deep Web</span>
+    <p>The Deep Web is the <strong>largest part of the internet</strong> by far. It is NOT inherently dangerous or illegal — it's simply <strong>not indexed</strong> by standard search engines.</p>
+
+    <h3>📊 Key Statistics (Exam Favorite!)</h3>
+    <div class="highlight-box pink">
+      <strong>400–500 times</strong> more information than the Surface Web.<br>
+      <strong>15% larger</strong> visit capacity than the Surface Web.
+    </div>
+
+    <h3>Why Is It Not Indexed?</h3>
+    <ul>
+      <li>Pages are <strong>dynamically generated from databases</strong> — they don't have fixed URLs that crawlers can follow</li>
+      <li><strong>Access control required</strong>: login, authentication, subscription</li>
+      <li>Data is behind forms (search queries generate results that aren't indexable)</li>
+      <li>Content is blocked by <strong>robots.txt</strong></li>
+    </ul>
+
+    <h3>Common Deep Web Content</h3>
+    <ul>
+      <li>Medical records (your doctor's patient portal)</li>
+      <li>Financial records (your bank account)</li>
+      <li>Government databases</li>
+      <li>Academic journals (behind paywalls)</li>
+      <li>Corporate intranets</li>
+    </ul>
+
+    <div class="analogy">
+      <strong>Library Analogy:</strong> The Surface Web is like the open shelves. The Deep Web is like the archives — not secret, but you need to ask the librarian (authenticate) or know the exact location (URL) to access it.
+    </div>
+
+    <h3>Information Extraction (IE) Categories — EXAM CRITICAL!</h3>
+    <p>Since deep web data is in database records, extracting it is called <strong>Information Extraction (IE)</strong>. There are 3 types:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>IE Type</th><th>Scope</th><th>What it does</th></tr>
+        <tr><td><strong>Record-level IE</strong></td><td>Individual records</td><td>Discovers record boundaries and divides data into separate attributes (e.g., name, address, phone)</td></tr>
+        <tr><td><strong>Page-level IE</strong></td><td>One web page</td><td>Extracts ALL data embedded in a single web page</td></tr>
+        <tr><td><strong>Site-level IE</strong></td><td>Entire website</td><td>Populates a database from all pages of a web site</td></tr>
+      </table>
+    </div>
+
+    <h3>Deep Web & Meta Search Engines</h3>
+    <p>Deep web pages represent data as <strong>data records</strong>. These records are useful in <strong>meta search engines</strong>, but must first be extracted. This extraction = <strong>Information Extraction</strong>.</p>
+    <p>Even <strong>Google</strong> only accesses a very small part of the Deep Web. Most users cannot find deep web information just by typing keywords.</p>
+
+    <h3>Access Method</h3>
+    <p>Use <strong>TOR (The Onion Router)</strong> — a special browser. TOR can also access Deep Web content not available through surface browsers, including <strong>Hidden WIKI</strong> and <strong>Bitcoin</strong> services.</p>
+    <p>Deep web URLs often end in <code>.onion</code> — e.g., <code>http://SiteName.onion/</code></p>
+
+    <div class="tip-box">Deep Web ≠ Dark Web. Deep Web = large, mostly benign. Dark Web = small, largely illegal subset of Deep Web.</div>
+  </div>
+
+  <!-- LEVEL 4 DARK WEB -->
+  <button class="collapse-btn" onclick="toggleCollapse(this)">
+    <span>🟣 Level 4 — Dark Web</span><span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <span class="level-badge l4">Level 4 — Dark Web</span>
+    <p>The Dark Web is a <strong>small subset of the Deep Web</strong> that is intentionally hidden and requires special software to access.</p>
+
+    <h3>Key Characteristics</h3>
+    <ul>
+      <li>Part of the web <strong>NOT indexed by search engines</strong></li>
+      <li>Requires <strong>TOR</strong> or <strong>I2P</strong> software</li>
+      <li>This software connects you to an <strong>overlay network</strong></li>
+      <li>Your <strong>IP address is masked</strong> behind layers of other IPs — untraceable</li>
+    </ul>
+
+    <h3>How TOR Works (Conceptually)</h3>
+    <div class="analogy">
+      <strong>Onion Analogy:</strong> TOR wraps your data in multiple layers of encryption (like an onion). Each relay server peels off one layer and forwards it, without knowing the full path. Nobody sees the whole picture.
+    </div>
+
+    <h3>Dark Web Content (Exam Loves This List!)</h3>
+    <ul>
+      <li>⚔️ <strong>Violence & Weapons</strong></li>
+      <li>💊 <strong>Illicit Drugs</strong> (e.g., SilkRoad marketplace)</li>
+      <li>💻 <strong>Hacking groups</strong> and guides</li>
+      <li>📁 <strong>Banned Media</strong></li>
+      <li>🔗 <strong>Illicit Links</strong></li>
+      <li>🔞 <strong>Illicit Pornography</strong></li>
+      <li>☠️ <strong>Extremism</strong></li>
+      <li>💰 <strong>Illicit Finance</strong> & Crypto Services</li>
+      <li>🧅 <strong>Hidden Wiki</strong> & most <code>.onion</code> sites</li>
+      <li>🛒 <strong>Drug Dealers</strong> (SilkRoad)</li>
+    </ul>
+
+    <div class="warn-box">Accessing the Dark Web is illegal or heavily regulated in many countries. Content here is extremely dangerous and illegal.</div>
+  </div>
+
+  <!-- LEVEL 4B -->
+  <button class="collapse-btn" onclick="toggleCollapse(this)">
+    <span>🔷 Level 4B — Private Web</span><span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <span class="level-badge l4">Level 4B — Private Web</span>
+    <p>A classified, restricted-access layer beyond the regular Dark Web. Contains government and research systems.</p>
+    <ul>
+      <li><strong>FPI Mid-Classified</strong> data</li>
+      <li><strong>Supercomputing</strong> networks</li>
+      <li><strong>Closed Systems</strong></li>
+      <li><strong>Geometric algorithm research</strong></li>
+    </ul>
+  </div>
+
+  <!-- LEVEL 5 -->
+  <button class="collapse-btn" onclick="toggleCollapse(this)">
+    <span>🔴 Level 5 — Marianas Web</span><span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <span class="level-badge l5">Level 5 — Marianas Web</span>
+    <p>Named after the <strong>Mariana Trench</strong> — the deepest, most inaccessible part of the ocean. Called the <strong>"final boss of the web."</strong></p>
+    <div class="warn-box">Considered the most dangerous and harmful layer. The material strongly advises to stay away.</div>
+    <p>Little is publicly known about its contents, but it is portrayed as the ultimate, unreachable depth of the internet.</p>
+  </div>
+
+  <!-- Deep vs Dark comparison -->
+  <div class="card" style="margin-top:24px">
+    <div class="card-title"><span class="icon">⚖️</span> Deep Web vs Dark Web — Critical Comparison</div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Feature</th><th style="color:var(--level3)">Deep Web</th><th style="color:var(--level4)">Dark Web</th></tr>
+        <tr><td>Part of internet</td><td>Large majority</td><td>Small fraction of Deep Web</td></tr>
+        <tr><td>Search indexed?</td><td>No</td><td>No</td></tr>
+        <tr><td>Access method</td><td>URL + authentication / TOR</td><td>TOR / I2P required</td></tr>
+        <tr><td>Content type</td><td>Mostly legal (medical, financial)</td><td>Mostly illegal/harmful</td></tr>
+        <tr><td>IP masking</td><td>No (usually)</td><td>Yes — layers of IPs</td></tr>
+        <tr><td>Data size</td><td>400-500× surface web</td><td>Small portion of deep web</td></tr>
+        <tr><td>URL format</td><td>Normal URL or .onion</td><td>.onion</td></tr>
+        <tr><td>Legality</td><td>Legal</td><td>Often illegal</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div id="summary" class="section">
+  <div class="sec-header">
+    <div class="tag">Phase 2 — Smart Summary</div>
+    <h2>High-Yield Summary</h2>
+  </div>
+
+  <div class="mnemonic">
+    <div style="font-size:0.8rem;color:var(--text2);margin-bottom:8px">MNEMONIC — Remember the layers with:</div>
+    <div class="word">C S B D D M</div>
+    <div class="mnemonic-items">
+      <div class="mnemonic-item"><div class="letter">C</div><div class="meaning">ClearNet (S)</div></div>
+      <div class="mnemonic-item"><div class="letter">S</div><div class="meaning">Surface (1)</div></div>
+      <div class="mnemonic-item"><div class="letter">B</div><div class="meaning">Bergie (2)</div></div>
+      <div class="mnemonic-item"><div class="letter">D</div><div class="meaning">Deep (3)</div></div>
+      <div class="mnemonic-item"><div class="letter">D</div><div class="meaning">Dark (4)</div></div>
+      <div class="mnemonic-item"><div class="letter">M</div><div class="meaning">Marianas (5)</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:0.82rem;color:var(--text2)">"<em>Can Students Be Decent During Midterms?</em>"</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏔️</span> Layer Summary — High-Yield Points</div>
+
+    <h3>Surface Web</h3>
+    <ul>
+      <li>Normal websites, <strong>indexed by search engines</strong></li>
+      <li>Accessed via standard browsers (Chrome, Firefox)</li>
+      <li>Contains <em>very little</em> total internet data</li>
+    </ul>
+
+    <h3>Deep Web</h3>
+    <ul>
+      <li>Contains <strong>400–500× more data</strong> than surface web</li>
+      <li><strong>15% larger visit capacity</strong> than surface web</li>
+      <li>Also called: <strong>Hidden Web</strong> or <strong>Invisible Web</strong></li>
+      <li>Pages are <strong>dynamically generated from databases</strong></li>
+      <li>Not indexed because crawlers can't follow dynamic links</li>
+      <li>Content: medical records, financial data, govt databases</li>
+      <li>Accessible if you know the URL or use TOR</li>
+      <li>IE has 3 levels: <strong>Record → Page → Site</strong></li>
+    </ul>
+
+    <h3>Dark Web</h3>
+    <ul>
+      <li><strong>Small part of the Deep Web</strong></li>
+      <li>Requires <strong>TOR or I2P</strong></li>
+      <li>Creates an <strong>overlay network</strong></li>
+      <li>Masks IP through <strong>layers of other IPs</strong> (untraceable)</li>
+      <li>Content: drugs, weapons, hacking, illicit media, extremism</li>
+      <li>URLs use <code>.onion</code> extension</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔢</span> Numbers to Memorize</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:var(--bg3);padding:16px;border-radius:10px;text-align:center">
+        <div style="font-size:2rem;font-weight:800;color:var(--accent)">400–500×</div>
+        <div style="font-size:0.8rem;color:var(--text2)">Deep Web is larger than Surface Web in data volume</div>
+      </div>
+      <div style="background:var(--bg3);padding:16px;border-radius:10px;text-align:center">
+        <div style="font-size:2rem;font-weight:800;color:var(--accent2)">15%</div>
+        <div style="font-size:0.8rem;color:var(--text2)">Larger visit capacity of Deep Web vs Surface Web</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🚨</span> Common Exam Traps</div>
+    <ul>
+      <li>❌ "Deep Web = Dark Web" — <strong>WRONG!</strong> Dark Web is a <em>small subset</em> of Deep Web</li>
+      <li>❌ "Deep Web is illegal" — <strong>WRONG!</strong> It contains your bank account and medical records</li>
+      <li>❌ "TOR is only for Dark Web" — TOR can also access parts of the Deep Web</li>
+      <li>❌ "Surface Web = all of the internet" — Surface Web is actually a tiny portion</li>
+      <li>✅ I2P is an <em>alternative</em> to TOR, not the same software</li>
+      <li>✅ Robots.txt appears at Level 2 (Bergie Web), not Deep Web</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🧩</span> Information Extraction (IE) — Chunked</div>
+    <div class="highlight-box">
+      <strong>Why IE exists:</strong> Deep Web data lives in databases. To use it in meta search engines, you must extract it. This process = Information Extraction.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px">
+      <div style="background:var(--bg3);padding:14px;border-radius:10px">
+        <div style="font-weight:700;color:var(--accent3);margin-bottom:6px">Record-level</div>
+        <div style="font-size:0.82rem;color:var(--text2)">Finds record boundaries → splits into attributes</div>
+      </div>
+      <div style="background:var(--bg3);padding:14px;border-radius:10px">
+        <div style="font-weight:700;color:var(--accent2);margin-bottom:6px">Page-level</div>
+        <div style="font-size:0.82rem;color:var(--text2)">Extracts ALL data from one web page</div>
+      </div>
+      <div style="background:var(--bg3);padding:14px;border-radius:10px">
+        <div style="font-weight:700;color:var(--accent);margin-bottom:6px">Site-level</div>
+        <div style="font-size:0.82rem;color:var(--text2)">Populates a database from entire website</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MCQ -->
+<div id="mcq" class="section">
+  <div class="sec-header">
+    <div class="tag">Phase 4 — MCQ Training</div>
+    <h2>30 Multiple Choice Questions</h2>
+    <p>Click any option to see if you're correct. Explanations appear after answering.</p>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="val" id="score-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="stat"><div class="val" id="score-wrong">0</div><div class="lbl">Wrong</div></div>
+    <div class="stat"><div class="val" id="score-total">0</div><div class="lbl">Answered</div></div>
+    <div class="stat"><div class="val" id="score-pct">0%</div><div class="lbl">Score</div></div>
+  </div>
+  <div id="mcq-container"></div>
+</div>
+
+<!-- WRITTEN -->
+<div id="written" class="section">
+  <div class="sec-header">
+    <div class="tag">Phase 4 — Written Questions</div>
+    <h2>Short & Long Answer Questions</h2>
+    <p>Click "Show Model Answer" to see a perfect exam response.</p>
+  </div>
+  <div id="written-container"></div>
+</div>
+
+<!-- REVISION -->
+<div id="revision" class="section">
+  <div class="sec-header">
+    <div class="tag">Phase 5 — Rapid Revision</div>
+    <h2>⚡ Night-Before Cheat Sheet</h2>
+    <p>Everything you need in one glance.</p>
+  </div>
+  <div class="rev-grid">
+    <div class="rev-card">
+      <h4>🔑 Key Definitions</h4>
+      <div class="rev-item"><strong>Surface Web:</strong> Indexed websites, normal browsers</div>
+      <div class="rev-item"><strong>Deep Web:</strong> Not indexed; dynamically generated; legal content</div>
+      <div class="rev-item"><strong>Dark Web:</strong> Subset of deep web; TOR/I2P; illegal content</div>
+      <div class="rev-item"><strong>TOR:</strong> The Onion Router — masks IP via layered encryption</div>
+      <div class="rev-item"><strong>I2P:</strong> Alternative to TOR for anonymous browsing</div>
+      <div class="rev-item"><strong>Overlay Network:</strong> Network built on top of another network</div>
+      <div class="rev-item"><strong>Information Extraction:</strong> Process of pulling structured data from deep web pages</div>
+    </div>
+    <div class="rev-card">
+      <h4>📊 Critical Numbers</h4>
+      <div class="rev-item">Deep Web = <strong>400–500×</strong> more data than Surface Web</div>
+      <div class="rev-item">Deep Web = <strong>15% larger</strong> visit capacity</div>
+      <div class="rev-item">Dark Web = <strong>small part</strong> of Deep Web</div>
+      <div class="rev-item">Surface Web = <strong>tiny fraction</strong> of total internet</div>
+    </div>
+    <div class="rev-card">
+      <h4>🗂️ Layer Quick Reference</h4>
+      <div class="rev-item"><strong>S:</strong> ClearNet — Google, FB, email</div>
+      <div class="rev-item"><strong>1:</strong> Surface — Amazon, blogs, uni DB</div>
+      <div class="rev-item"><strong>2:</strong> Bergie — Archives, torrents, robots.txt</div>
+      <div class="rev-item"><strong>3:</strong> Deep — Medical/financial records, not indexed</div>
+      <div class="rev-item"><strong>4:</strong> Dark — TOR, .onion, SilkRoad, Hidden Wiki</div>
+      <div class="rev-item"><strong>4B:</strong> Private — FPI, supercomputing, closed</div>
+      <div class="rev-item"><strong>5:</strong> Marianas — "Final boss", stay away</div>
+    </div>
+    <div class="rev-card">
+      <h4>🔬 IE Types</h4>
+      <div class="rev-item"><strong>Record-level:</strong> Finds record boundaries → attributes</div>
+      <div class="rev-item"><strong>Page-level:</strong> All data from ONE web page</div>
+      <div class="rev-item"><strong>Site-level:</strong> Populates DB from entire site</div>
+    </div>
+    <div class="rev-card">
+      <h4>⚠️ Key Distinctions</h4>
+      <div class="rev-item">Deep Web ≠ Dark Web</div>
+      <div class="rev-item">Deep Web is NOT illegal</div>
+      <div class="rev-item">Dark Web IS (mostly) illegal</div>
+      <div class="rev-item">Surface ≠ ClearNet (ClearNet is Level S, Surface is Level 1)</div>
+      <div class="rev-item">.onion = Dark/Deep Web URL format</div>
+    </div>
+    <div class="rev-card">
+      <h4>🧅 Dark Web Content</h4>
+      <div class="rev-item">Violence, Weapons</div>
+      <div class="rev-item">Illicit Drugs (SilkRoad)</div>
+      <div class="rev-item">Hacking groups</div>
+      <div class="rev-item">Banned Media</div>
+      <div class="rev-item">Illicit Pornography</div>
+      <div class="rev-item">Extremism</div>
+      <div class="rev-item">Illicit Finance & Crypto</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-title"><span class="icon">🧠</span> Spaced Repetition Schedule</div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Time</th><th>Focus</th></tr>
+        <tr><td>Today</td><td>Read all explanations, understand analogies</td></tr>
+        <tr><td>+1 day</td><td>Do all 30 MCQs without looking at notes</td></tr>
+        <tr><td>+3 days</td><td>Write answers to all written questions from memory</td></tr>
+        <tr><td>Night before exam</td><td>This cheat sheet only — 15 minutes max</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ─── NAV ───
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map = {home:0,explain:1,summary:2,mcq:3,written:4,revision:5};
+  document.querySelectorAll('.nav-btn')[map[id]]?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── THEME ───
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.querySelector('.theme-btn');
+  if(html.dataset.theme === 'dark') {
+    html.dataset.theme = 'light';
+    btn.textContent = '☀️';
+  } else {
+    html.dataset.theme = 'dark';
+    btn.textContent = '🌙';
+  }
+}
+
+// ─── COLLAPSE ───
+function toggleCollapse(btn) {
+  btn.classList.toggle('open');
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+// ─── MCQ DATA ───
+const mcqs = [
+  // EASY
+  {q:"What is the primary characteristic of the Surface Web?", opts:["It contains most of the internet's data","Its websites are indexed by standard search engines","It requires TOR to access","It contains illegal content"], ans:1, diff:"easy", exp:"The Surface Web is defined by the fact that its websites are indexed by standard search engines like Google. It is actually the smallest portion of the internet."},
+  {q:"Which tool is primarily used to access the Dark Web?", opts:["Google Chrome","Internet Explorer","TOR (The Onion Router)","Mozilla Firefox"], ans:2, diff:"easy", exp:"TOR (The Onion Router) is the primary software used to access the Dark Web. It connects users to an overlay network and masks their IP addresses."},
+  {q:"What does TOR stand for?", opts:["Total Online Routing","The Onion Router","Trusted Online Resource","Transparent Overlay Routing"], ans:1, diff:"easy", exp:"TOR stands for 'The Onion Router.' The 'onion' refers to how it wraps data in multiple layers of encryption."},
+  {q:"What URL extension do Dark Web sites typically use?", opts:[".dark",".hidden",".onion",".tor"], ans:2, diff:"easy", exp:".onion is the special-use domain suffix indicating an anonymized hidden service accessible via TOR. Example: http://sitename.onion/"},
+  {q:"Which level of the web is called the 'final boss of the web'?", opts:["Level 4 — Dark Web","Level 4B — Private Web","Level 5 — Marianas Web","Level 3 — Deep Web"], ans:2, diff:"easy", exp:"Level 5, the Marianas Web (named after the Mariana Trench), is referred to as the 'final boss of the web.' The material advises staying away from it."},
+  {q:"The Deep Web is also known as:", opts:["The Dark Web","The Hidden Web or Invisible Web","The Private Web","The Overlay Web"], ans:1, diff:"easy", exp:"The Deep Web is also called the 'Hidden Web' or 'Invisible Web' because its content is not visible to standard search engine crawlers."},
+  {q:"What type of content does the Deep Web primarily contain?", opts:["Illegal drugs and weapons","Medical and financial records","Hacking guides","Extremist content"], ans:1, diff:"easy", exp:"Most Deep Web content is benign and personal — such as medical records, financial records, academic databases, and private communications. It is NOT inherently dangerous."},
+  {q:"Which level includes Robots.txt as a feature?", opts:["Level S — ClearNet","Level 1 — Surface Web","Level 2 — Bergie Web","Level 3 — Deep Web"], ans:2, diff:"easy", exp:"Robots.txt appears at Level 2 (Bergie Web). These files instruct search engine crawlers which pages NOT to index."},
+  // MEDIUM
+  {q:"How much MORE information does the Deep Web contain compared to the Surface Web?", opts:["10-20 times more","50-100 times more","200-300 times more","400-500 times more"], ans:3, diff:"medium", exp:"According to the material, the Deep Web contains 400-500 times more information than the Surface Web. It also has 15% larger visit capacity."},
+  {q:"What is 'Information Extraction' in the context of the Deep Web?", opts:["Hacking into databases","The process of pulling structured data from deep web pages for use in search engines","Encrypting web traffic","Creating .onion websites"], ans:1, diff:"medium", exp:"Information Extraction (IE) is the process of pulling structured data records from Deep Web pages so they can be used by meta search engines. It exists because deep web pages are dynamically generated and cannot be indexed normally."},
+  {q:"What does 'Record-level Information Extraction' do?", opts:["Extracts all data from one web page","Populates a database from an entire website","Discovers record boundaries and divides them into separate attributes","Searches for illegal content"], ans:2, diff:"medium", exp:"Record-level IE discovers record boundaries and then divides them into separate attributes. Think of it as finding where one entry ends and another begins in a list."},
+  {q:"What does 'Site-level Information Extraction' do?", opts:["Extracts all data from one record","Extracts all data from one web page","Populates a database from pages of an entire website","Identifies IP addresses"], ans:2, diff:"medium", exp:"Site-level IE operates at the largest scope — it populates a database using data extracted from pages across an entire website."},
+  {q:"Why are Deep Web pages NOT indexed by standard search engines?", opts:["They are illegal","They are generated dynamically from databases and are difficult for crawlers to index","They require TOR to access","They do not use HTML"], ans:1, diff:"medium", exp:"Deep web pages are dynamically generated from databases, meaning they don't have static, crawlable URLs. Standard crawler-based search engines can't index dynamically generated content."},
+  {q:"Which of the following is a CORRECT statement about the Deep Web?", opts:["Deep Web = Dark Web","Deep Web content is mostly illegal","Deep Web is smaller than the Surface Web","Deep Web data cannot be accessed directly through hyperlinks"], ans:3, diff:"medium", exp:"This is a direct quote from the material: 'Data in the deep web cannot be accessed directly through hyperlinks.' Most useful web data is actually stored in the deep web."},
+  {q:"What is an 'overlay network' in the context of TOR?", opts:["A surface-level internet connection","A network built on top of another network that masks user identities","A type of social media network","A database storage system"], ans:1, diff:"medium", exp:"An overlay network is a network built on top of an existing network. TOR's overlay network routes your traffic through multiple nodes, masking your IP address behind layers of other IP addresses."},
+  {q:"Which alternative software to TOR is mentioned for accessing the Dark Web?", opts:["VPN","Proxy Server","I2P","Freenet"], ans:2, diff:"medium", exp:"I2P (Invisible Internet Project) is mentioned alongside TOR as software that can be used to connect to the Dark Web's overlay network."},
+  {q:"Where does SilkRoad fit in the web hierarchy?", opts:["Surface Web","Bergie Web","Dark Web (Level 4)","Marianas Web"], ans:2, diff:"medium", exp:"SilkRoad, the infamous illegal drug marketplace, is listed under Level 4 — Dark Web in the course material. It operated as a .onion site accessible via TOR."},
+  {q:"What makes data in the deep web different from data in the surface web?", opts:["Deep web data is always encrypted","Deep web data is in the form of data records from databases, not static pages","Deep web data uses a different programming language","Deep web data is always newer"], ans:1, diff:"medium", exp:"Deep web data is stored in and retrieved from databases, presented as data records. This is why crawlers can't index it — there's no static page at a fixed URL to crawl."},
+  {q:"Which level contains the Hidden Wiki?", opts:["Level 1","Level 2","Level 3","Level 4"], ans:3, diff:"medium", exp:"The Hidden Wiki is listed under Level 4 — Dark Web. It is a collection of .onion links accessible via TOR. It also appears in the context of TOR browser access to the Deep Web."},
+  // HARD
+  {q:"A researcher uses software that connects to an overlay network, masks their IP through layers of other IPs, and accesses a .onion site. Which level are they accessing?", opts:["Level 2 — Bergie Web","Level 3 — Deep Web","Level 4 — Dark Web","Level 4B — Private Web"], ans:2, diff:"hard", exp:"All three clues — overlay network, layered IP masking, and .onion URL — point specifically to the Dark Web (Level 4). The Dark Web is the portion of the Deep Web that requires TOR and masks IP addresses."},
+  {q:"Which statement BEST explains why even Google cannot fully index the Deep Web?", opts:["Google doesn't have enough servers","Deep web pages are dynamically generated from databases, making them inaccessible to standard crawler-based indexing","Deep web sites block Google's IP","The government prevents Google from indexing deep web content"], ans:1, diff:"hard", exp:"The core reason is technical: deep web pages don't have fixed URLs — they're generated on-the-fly from database queries. Crawler-based search engines (including Google) index static content; they can't follow database query results."},
+  {q:"At what level would you find 'Geometric algorithm research' and 'FPI Mid-Classified' data?", opts:["Level 4 — Dark Web","Level 4B — Private Web","Level 5 — Marianas Web","Level 3 — Deep Web"], ans:1, diff:"hard", exp:"Level 4B — Private Web specifically contains FPI Mid-Classified data, SuperComputing, Closed Systems, and Geometric algorithm research. This is distinct from the regular Dark Web (Level 4)."},
+  {q:"A meta search engine needs to use data records from deep web pages. What process must occur FIRST?", opts:["IP masking via TOR","Information Extraction to pull records from deep web pages","Installing special browsers","Accessing .onion URLs"], ans:1, diff:"hard", exp:"Before deep web data records can be used in a meta search engine, they must first be extracted from deep web pages through Information Extraction (IE). The data exists in databases and must be pulled out and structured."},
+  {q:"Which of the following best describes the relationship between the Dark Web and the Deep Web?", opts:["They are the same thing","The Dark Web contains the Deep Web","The Dark Web is a small, hidden subset of the Deep Web","The Deep Web is a subset of the Dark Web"], ans:2, diff:"hard", exp:"The Dark Web is a small subset of the Deep Web. The Deep Web is the entire non-indexed internet; the Dark Web is the portion that is intentionally hidden, requiring TOR/I2P and featuring mostly illegal content."},
+  {q:"A company stores employee payroll records in a password-protected internal database accessible via a private URL. Which web category does this fall under?", opts:["Surface Web","Bergie Web","Deep Web","Dark Web"], ans:2, diff:"hard", exp:"This is a classic Deep Web example: the content is not indexed by search engines, it requires authentication (login), and it contains personal/sensitive data. It does NOT require TOR and is NOT illegal."},
+  {q:"If the Page-level IE task 'extracts all data embedded in one web page,' what would Site-level IE do with 10 pages of a web site?", opts:["Extract data from the first page only","Extract data from the most important page","Extract data from ALL 10 pages to populate a database","Ask the user which page to extract"], ans:2, diff:"hard", exp:"Site-level IE operates across ALL pages of a website, not just one. Its purpose is to populate a comprehensive database from the entirety of a website's content."},
+  {q:"What is the CORRECT order of the web layers from most accessible to least accessible?", opts:["ClearNet → Surface → Bergie → Deep → Dark → Marianas","Dark → Deep → Bergie → Surface → ClearNet","Surface → ClearNet → Deep → Dark → Bergie","Marianas → Dark → Deep → Surface → ClearNet → Bergie"], ans:0, diff:"hard", exp:"The correct hierarchy from most accessible to least accessible is: ClearNet (S) → Surface Web (1) → Bergie Web (2) → Deep Web (3) → Dark Web (4/4B) → Marianas Web (5). Each level requires more specialized access."},
+  {q:"Which of these is NOT listed as content on the Dark Web?", opts:["Illicit Finance and Crypto Services","University Databases","Drug Dealers (SilkRoad)","Extremism"], ans:1, diff:"hard", exp:"University Databases are mentioned under Level 1 (Surface Web), not the Dark Web. Dark Web content includes: violence, weapons, hacking, illicit drugs, illicit pornography, extremism, illicit finance, and crypto services."},
+  {q:"The term 'Hidden Wiki' appears in the material under which contexts?", opts:["Only Level 4 (Dark Web)","TOR browser access AND Level 4 (Dark Web)","Only TOR browser access section","Level 4B (Private Web)"], ans:1, diff:"hard", exp:"Hidden Wiki appears in TWO places: first when describing what TOR browsers can access (Deep/Dark Web content), and again explicitly listed under Level 4 — Dark Web content. This is a tricky dual-context question."},
+];
+
+let correct = 0, wrong = 0, total = 0;
+
+function renderMCQs() {
+  const container = document.getElementById('mcq-container');
+  mcqs.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'mcq-card';
+    const diffClass = q.diff;
+    card.innerHTML = `
+      <div class="mcq-meta">Q${i+1} of ${mcqs.length} &nbsp;|&nbsp; <span class="diff-badge ${diffClass}">${q.diff.toUpperCase()}</span></div>
+      <div class="mcq-q">${q.q}</div>
+      <div class="mcq-options">
+        ${q.opts.map((opt,oi) => `
+          <div class="mcq-opt" onclick="answerMCQ(this,${i},${oi})">
+            <span class="opt-letter">${String.fromCharCode(65+oi)}.</span>
+            <span>${opt}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="mcq-explanation" id="exp-${i}">💡 <strong>Explanation:</strong> ${q.exp}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function answerMCQ(el, qi, oi) {
+  const card = el.closest('.mcq-card');
+  if(card.dataset.answered) return;
+  card.dataset.answered = true;
+  const opts = card.querySelectorAll('.mcq-opt');
+  opts.forEach((o,i) => {
+    o.classList.add('disabled');
+    if(i === mcqs[qi].ans) o.classList.add('correct');
+    else if(i === oi && oi !== mcqs[qi].ans) o.classList.add('wrong');
+  });
+  document.getElementById(`exp-${qi}`).classList.add('show');
+  total++;
+  if(oi === mcqs[qi].ans) correct++;
+  else wrong++;
+  document.getElementById('score-correct').textContent = correct;
+  document.getElementById('score-wrong').textContent = wrong;
+  document.getElementById('score-total').textContent = total;
+  document.getElementById('score-pct').textContent = Math.round(correct/total*100)+'%';
+}
+
+// ─── WRITTEN Q DATA ───
+const writtenQs = [
+  {type:"short", q:"Define the Deep Web and explain why it is not indexed by search engines.", ans:"The Deep Web (also called Hidden Web or Invisible Web) is the portion of the internet whose content is not indexed by standard search engines like Google. It is the largest part of the internet, containing 400-500 times more information than the Surface Web. Its pages are generated dynamically from databases and cannot be indexed because: (1) they lack static, crawlable URLs; (2) content requires authentication/login; (3) data exists behind forms or robots.txt restrictions. Despite its size, most Deep Web content is legal — including medical records, financial data, and academic databases."},
+  {type:"short", q:"What is the difference between the Deep Web and the Dark Web?", ans:"The Deep Web is the entire non-indexed portion of the internet, mostly containing legal content like medical records, financial records, and corporate databases. It is 400-500× larger than the Surface Web. The Dark Web is a small subset of the Deep Web that is intentionally hidden and requires special software (TOR or I2P) to access. It features an overlay network that masks IP addresses. Unlike the Deep Web, the Dark Web is largely associated with illegal activities including drug trafficking (SilkRoad), hacking, extremism, illicit pornography, weapons, and illicit finance."},
+  {type:"short", q:"What is Information Extraction (IE) and what are its three categories?", ans:"Information Extraction is the process of pulling structured data records from Deep Web pages so they can be used by meta search engines. It is necessary because deep web data lives in databases and cannot be accessed via standard crawling. The three categories are: (1) Record-level IE — discovers record boundaries and divides data into separate attributes; (2) Page-level IE — extracts all data embedded in a single web page; (3) Site-level IE — populates a database from all pages of an entire website."},
+  {type:"short", q:"How does TOR protect user anonymity?", ans:"TOR (The Onion Router) protects anonymity by connecting users to an overlay network — a network built on top of the regular internet. It masks the user's IP address by routing traffic through multiple relay servers, each of which only knows the previous and next hop, not the full path. This creates layers of encryption (like an onion), so there is no way to trace the traffic back to the original user."},
+  {type:"short", q:"List and briefly describe the 6 levels of the web according to Dr. Fahmy's model.", ans:"Level S (ClearNet): Standard publicly accessible internet — search engines, social networks, email. Level 1 (Surface Web): Indexed websites accessible via normal browsers — Amazon, blogs, university databases. Level 2 (Bergie Web): Transitional layer — web archives, torrents, robots.txt restricted content. Level 3 (Deep Web): Largest layer — dynamically generated, not indexed, contains legal sensitive data (medical, financial). Level 4 (Dark Web): Small hidden subset — requires TOR/I2P, contains illegal content, uses .onion URLs. Level 4B (Private Web): Classified government/research networks — FPI data, supercomputing. Level 5 (Marianas Web): The 'final boss' — most dangerous, stay away."},
+  {type:"long", q:"Write a comprehensive essay explaining the structure of the internet, comparing the Surface Web, Deep Web, and Dark Web, and discussing their implications for data analysis and security.", ans:"The internet is commonly misconceived as a single unified space, but it is actually structured in distinct layers, each with different accessibility, content, and security implications.\n\nThe Surface Web (Level 1 and ClearNet/Level S) represents what most users interact with daily. It includes indexed websites — social networks, e-commerce platforms, news sites, and blogs — all accessible via standard browsers and findable through search engines. Despite its visibility, the Surface Web contains only a tiny fraction of the internet's total data.\n\nThe Deep Web (Level 3) is the internet's largest layer, containing 400-500 times more information than the Surface Web and exhibiting 15% larger visit capacity. Also known as the Hidden Web or Invisible Web, it is NOT indexed by standard search engines because its pages are dynamically generated from databases, making them inaccessible to crawler-based indexing. This layer contains mostly legitimate content: medical records, financial databases, government archives, academic journals behind paywalls, and corporate intranets. Access typically requires knowing the specific URL plus authentication credentials, or using TOR.\n\nFor data science and machine learning applications, the Deep Web is critically important as a source of high-quality structured data. However, extracting this data requires Information Extraction (IE) — a process with three levels: record-level (extracting individual data attributes), page-level (extracting all data from one page), and site-level (populating databases from entire websites).\n\nThe Dark Web (Level 4) is a small but dangerous subset of the Deep Web. Unlike the Deep Web generally, the Dark Web is intentionally hidden and requires specialized software — TOR (The Onion Router) or I2P — to access. These tools create an overlay network that masks the user's IP address behind layers of other IP addresses, making identity tracing nearly impossible. Content on the Dark Web includes illicit drugs, weapons, hacking services, extremist materials, banned media, illicit pornography, and cryptocurrency crime services.\n\nBeyond the Dark Web lies Level 4B (Private Web) — classified government and research networks — and ultimately Level 5 (Marianas Web), the most dangerous and least understood layer, described as the 'final boss of the web.'\n\nThe security implications are significant: the anonymity provided by TOR makes the Dark Web a haven for criminal activity, challenging law enforcement. Meanwhile, the Deep Web's vast stores of personal data represent a major privacy and cybersecurity concern if improperly secured."},
+  {type:"long", q:"You are advising a company that wants to use Deep Web data for machine learning. Explain what challenges they will face and how Information Extraction can help.", ans:"Companies seeking to leverage Deep Web data for machine learning face several interconnected challenges.\n\nFirst, the data is not directly accessible via hyperlinks. Unlike surface web content that can be scraped by following links, Deep Web data lives inside databases and is only exposed when specific queries are submitted to dynamic web forms. This means standard web crawlers cannot discover or retrieve it automatically.\n\nSecond, most Deep Web resources require authentication. Corporate portals, academic databases, and government records all require login credentials, subscriptions, or special permissions. The company must legitimately obtain access rights before any data collection.\n\nThird, the data representation is non-standard. Deep web pages represent retrieved information as data records — structured outputs from database queries. These records may use different schemas, formats, and encoding systems across different sources, creating significant data integration challenges.\n\nInformation Extraction (IE) directly addresses these challenges. The three levels of IE provide a systematic framework: Record-level IE identifies where individual records begin and end within a page's output, then splits them into clean, structured attributes suitable for a database. Page-level IE captures all data embedded in a single query result page. Site-level IE scales this process across an entire website or data source to populate a comprehensive database.\n\nFor ML specifically, IE transforms unstructured or semi-structured deep web outputs into clean, labeled datasets. This is the foundation for any downstream analysis, model training, or knowledge extraction.\n\nThe company should note that even Google — with its enormous resources — only accesses a very small part of the Deep Web. Building an effective deep web data pipeline therefore requires custom crawlers, authenticated access management, and robust IE pipelines tailored to each target data source."},
+  {type:"short", q:"What is the significance of the Bergie Web (Level 2) in the web hierarchy?", ans:"The Bergie Web (Level 2) serves as a transitional layer between the fully public Surface Web and the hidden Deep Web. It is still accessible via normal browsers but contains content that is partially restricted or semi-hidden. Key features include: Web Archive (snapshots of old websites), Torrents and P2P file sharing, Streaming services (some with subscription requirements), Restricted access content, Robots.txt files (instructions to crawlers about what NOT to index), and Anti-Virus Databases. The Bergie Web is notable because it introduces the concept of access restriction without requiring special software like TOR."},
+  {type:"short", q:"Why is Google unable to index most of the Deep Web?", ans:"Google's crawler-based indexing system works by following hyperlinks between static web pages. Deep Web pages fail to meet this requirement for several reasons: (1) They are dynamically generated from databases — there is no static page at a fixed URL to crawl; (2) Content is locked behind authentication forms (login/password); (3) Data is generated only in response to specific user queries (e.g., search form submissions); (4) Robots.txt files explicitly block crawlers from certain pages. As a result, even Google's sophisticated infrastructure can only access a very small fraction of the Deep Web, and most users cannot find deep web information simply by typing keywords into a search engine."},
+];
+
+function renderWritten() {
+  const container = document.getElementById('written-container');
+  writtenQs.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'wq-card';
+    const typeLabel = q.type === 'short' ? '📝 Short Answer' : '📄 Long Answer / Essay';
+    card.innerHTML = `
+      <div style="margin-bottom:10px"><span class="diff-badge ${q.type === 'short' ? 'medium' : 'hard'}">${typeLabel}</span> <span style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--text3)">Q${i+1}</span></div>
+      <div class="wq-q">${q.q}</div>
+      <button class="show-ans-btn" onclick="toggleAnswer(this)">Show Model Answer</button>
+      <div class="model-answer">
+        <div style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--accent3);margin-bottom:10px">✅ MODEL ANSWER</div>
+        <div style="white-space:pre-line;color:var(--text2);font-size:0.88rem;line-height:1.8">${q.ans}</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleAnswer(btn) {
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide Answer' : 'Show Model Answer';
+}
+
+// ─── INIT ───
+renderMCQs();
+renderWritten();
+</script>
+</body>
+</html>
