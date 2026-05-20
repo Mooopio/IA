@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Search & Crawling — Exam Prep System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #0c0e14;
+    --bg2: #131720;
+    --bg3: #1a2030;
+    --card: #161c28;
+    --card2: #1e263a;
+    --border: #2a3550;
+    --text: #e8eaf0;
+    --text2: #9aa3bc;
+    --text3: #6b7592;
+    --accent: #4f8ef7;
+    --accent2: #7c5cf7;
+    --gold: #f0b429;
+    --green: #34d399;
+    --red: #f87171;
+    --orange: #fb923c;
+    --tag-bg: #1e2d4a;
+    --tag-text: #7eb8f7;
+    --highlight: rgba(79,142,247,0.12);
+    --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f6fb;
+    --bg2: #eaedf6;
+    --bg3: #dde2f0;
+    --card: #ffffff;
+    --card2: #f0f3ff;
+    --border: #d0d8ef;
+    --text: #1a1f35;
+    --text2: #4a5270;
+    --text3: #8892b0;
+    --accent: #2563eb;
+    --accent2: #7c3aed;
+    --gold: #d97706;
+    --green: #059669;
+    --red: #dc2626;
+    --orange: #ea580c;
+    --tag-bg: #dbeafe;
+    --tag-text: #1d4ed8;
+    --highlight: rgba(37,99,235,0.08);
+    --shadow: 0 8px 40px rgba(30,40,80,0.1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.75;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 1rem;
+    height: 64px;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+  .logo span { color: var(--gold); }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; justify-content: center; }
+  nav button {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 6px 14px; border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent; color: var(--text2);
+    cursor: pointer; transition: all 0.18s;
+  }
+  nav button:hover { background: var(--highlight); color: var(--text); }
+  nav button.active {
+    background: var(--accent); color: #fff;
+    border-color: var(--accent);
+  }
+  .theme-btn {
+    margin-left: auto;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px;
+    color: var(--text2); cursor: pointer; font-size: 1rem;
+    transition: all 0.18s;
+  }
+  .theme-btn:hover { color: var(--gold); }
+
+  /* ── LAYOUT ── */
+  main { max-width: 1000px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+  .section { display: none; animation: fadeIn 0.35s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center; padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border); margin-bottom: 3rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); background: var(--highlight);
+    border: 1px solid var(--accent); border-radius: 20px;
+    padding: 4px 14px; margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800; line-height: 1.15;
+    color: var(--text); margin-bottom: 0.8rem;
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero p { color: var(--text2); font-size: 1.05rem; max-width: 560px; margin: 0 auto; }
+  .stats { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-n { font-family: 'Syne',sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .stat-l { font-family: 'DM Mono',monospace; font-size: 0.72rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* ── TYPOGRAPHY ── */
+  h2 {
+    font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 700;
+    color: var(--text); margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem; border-bottom: 2px solid var(--border);
+  }
+  h2 .icon { margin-right: 0.5rem; }
+  h3 {
+    font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700;
+    color: var(--accent); margin: 1.8rem 0 0.6rem;
+  }
+  h4 { font-family: 'Syne',sans-serif; font-weight: 600; color: var(--text); margin: 1rem 0 0.4rem; }
+  p { margin-bottom: 0.9rem; color: var(--text); }
+  strong { color: var(--text); font-weight: 600; }
+  em { color: var(--gold); font-style: italic; }
+  code {
+    font-family: 'DM Mono', monospace; font-size: 0.85em;
+    background: var(--bg3); color: var(--orange);
+    padding: 2px 7px; border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    margin-bottom: 1.2rem; box-shadow: var(--shadow);
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin: 1rem 0; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 10px; padding: 1rem 1.2rem;
+    margin: 1rem 0; border-left: 3px solid;
+    font-size: 0.95rem;
+  }
+  .callout.info { background: var(--highlight); border-color: var(--accent); }
+  .callout.warn { background: rgba(240,180,41,0.08); border-color: var(--gold); }
+  .callout.success { background: rgba(52,211,153,0.08); border-color: var(--green); }
+  .callout.danger { background: rgba(248,113,113,0.08); border-color: var(--red); }
+  .callout-title { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:0.3rem; }
+  .callout.info .callout-title { color: var(--accent); }
+  .callout.warn .callout-title { color: var(--gold); }
+  .callout.success .callout-title { color: var(--green); }
+  .callout.danger .callout-title { color: var(--red); }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-block; font-family:'DM Mono',monospace; font-size:0.7rem;
+    letter-spacing:0.05em; text-transform:uppercase;
+    background: var(--tag-bg); color: var(--tag-text);
+    border-radius: 4px; padding: 2px 8px; margin: 2px;
+  }
+  .tag.gold { background:rgba(240,180,41,0.15); color:var(--gold); }
+  .tag.green { background:rgba(52,211,153,0.12); color:var(--green); }
+  .tag.red { background:rgba(248,113,113,0.12); color:var(--red); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x:auto; margin:1rem 0; border-radius:10px; border:1px solid var(--border); }
+  table { width:100%; border-collapse:collapse; }
+  th {
+    font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700;
+    letter-spacing:0.06em; text-transform:uppercase;
+    background:var(--bg3); color:var(--text2);
+    padding:0.75rem 1rem; text-align:left;
+    border-bottom:2px solid var(--border);
+  }
+  td { padding:0.75rem 1rem; border-bottom:1px solid var(--border); font-size:0.92rem; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:var(--highlight); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display:flex; align-items:center; flex-wrap:wrap; gap:0;
+    margin:1.2rem 0; padding:1.2rem;
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+  }
+  .flow-step {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:8px; padding:0.5rem 1rem;
+    font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--text);
+    text-align:center;
+  }
+  .flow-arrow {
+    color:var(--accent); font-size:1.2rem; padding:0 0.4rem;
+    font-weight:bold;
+  }
+
+  /* ── COLLAPSIBLE ── */
+  .collapsible { margin-bottom:0.8rem; }
+  .collapsible-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:1rem 1.2rem; background:var(--card);
+    border:1px solid var(--border); border-radius:10px;
+    cursor:pointer; transition:all 0.2s;
+    font-family:'Syne',sans-serif; font-weight:600;
+  }
+  .collapsible-header:hover { border-color:var(--accent); background:var(--highlight); }
+  .collapsible-header .arrow { transition:transform 0.25s; font-size:0.9rem; }
+  .collapsible-header.open { border-radius:10px 10px 0 0; border-color:var(--accent); }
+  .collapsible-header.open .arrow { transform:rotate(180deg); }
+  .collapsible-body {
+    display:none; padding:1.2rem;
+    background:var(--card2); border:1px solid var(--accent);
+    border-top:none; border-radius:0 0 10px 10px;
+    animation:slideDown 0.25s ease;
+  }
+  .collapsible-body.open { display:block; }
+  @keyframes slideDown { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+
+  /* ── MCQ ── */
+  .mcq { margin-bottom:1.5rem; }
+  .mcq-q {
+    font-family:'Syne',sans-serif; font-weight:600;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px 10px 0 0; padding:1rem 1.2rem;
+    font-size:0.95rem;
+  }
+  .mcq-difficulty { font-family:'DM Mono',monospace; font-size:0.68rem; margin-left:0.5rem; }
+  .diff-easy { color:var(--green); }
+  .diff-med { color:var(--gold); }
+  .diff-hard { color:var(--red); }
+  .mcq-options { display:flex; flex-direction:column; gap:6px; padding:0.8rem 1.2rem; background:var(--card2); border:1px solid var(--border); border-top:none; }
+  .mcq-opt {
+    padding:0.6rem 1rem; border-radius:7px;
+    border:1px solid var(--border); background:var(--bg3);
+    cursor:pointer; font-size:0.9rem; transition:all 0.15s;
+    display:flex; align-items:flex-start; gap:0.7rem;
+  }
+  .mcq-opt:hover { border-color:var(--accent); background:var(--highlight); }
+  .mcq-opt.correct { border-color:var(--green)!important; background:rgba(52,211,153,0.1)!important; }
+  .mcq-opt.wrong { border-color:var(--red)!important; background:rgba(248,113,113,0.08)!important; }
+  .mcq-opt.revealed { pointer-events:none; }
+  .mcq-letter { font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--text3); min-width:1.2rem; }
+  .mcq-explanation {
+    padding:0.9rem 1.2rem; background:var(--highlight);
+    border:1px solid var(--accent); border-top:none;
+    border-radius:0 0 10px 10px; font-size:0.88rem;
+    display:none;
+  }
+  .mcq-explanation.show { display:block; animation:slideDown 0.2s ease; }
+  .mcq-num { color:var(--text3); font-family:'DM Mono',monospace; font-size:0.75rem; margin-bottom:0.3rem; }
+  .mcq-score {
+    font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700;
+    text-align:center; padding:1.5rem; background:var(--card);
+    border:1px solid var(--border); border-radius:12px; margin:1.5rem 0;
+  }
+  .score-n { font-size:2.5rem; color:var(--accent); }
+
+  /* ── WRITTEN Q ── */
+  .wq { margin-bottom:1.2rem; }
+  .wq-q {
+    font-family:'Syne',sans-serif; font-weight:600;
+    padding:1rem 1.2rem; background:var(--card);
+    border:1px solid var(--border); border-radius:10px;
+    font-size:0.95rem; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center;
+    transition:all 0.2s;
+  }
+  .wq-q:hover { border-color:var(--accent2); }
+  .wq-answer {
+    display:none; padding:1.2rem; background:var(--card2);
+    border:1px solid var(--border); border-top:none; border-radius:0 0 10px 10px;
+  }
+  .wq-answer.show { display:block; animation:slideDown 0.25s ease; }
+
+  /* ── REVISION SHEET ── */
+  .rev-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+  .rev-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:1.2rem;
+  }
+  .rev-card h4 {
+    font-family:'DM Mono',monospace; font-size:0.75rem;
+    text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--accent); margin-bottom:0.8rem;
+    border-bottom:1px solid var(--border); padding-bottom:0.5rem;
+  }
+  .rev-item { font-size:0.88rem; padding:0.3rem 0; border-bottom:1px solid var(--border); color:var(--text2); }
+  .rev-item:last-child { border-bottom:none; }
+  .rev-item strong { color:var(--text); }
+  .formula {
+    font-family:'DM Mono',monospace; font-size:0.82rem;
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:8px; padding:0.8rem 1rem; margin:0.5rem 0;
+    color:var(--orange); line-height:1.6;
+  }
+  .progress-bar-wrap { background:var(--bg3); border-radius:8px; height:8px; margin:0.5rem 0; }
+  .progress-bar { height:100%; border-radius:8px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.4s; }
+
+  /* ── LISTS ── */
+  ul, ol { padding-left:1.5rem; margin-bottom:0.9rem; }
+  li { margin-bottom:0.35rem; color:var(--text); }
+  li::marker { color:var(--accent); }
+
+  /* ── MISC ── */
+  .section-intro { color:var(--text2); font-size:1rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--border); }
+  .badge-row { display:flex; flex-wrap:wrap; gap:6px; margin:0.5rem 0 1rem; }
+  .divider { border:none; border-top:1px solid var(--border); margin:2rem 0; }
+  .math { font-family:'DM Mono',monospace; font-size:0.9em; color:var(--orange); }
+  .center { text-align:center; }
+  .mnemonic {
+    background:linear-gradient(135deg,rgba(124,92,247,0.12),rgba(79,142,247,0.08));
+    border:1px solid var(--accent2); border-radius:10px;
+    padding:1rem 1.2rem; margin:1rem 0; font-style:italic;
+  }
+  .mnemonic strong { color:var(--accent2); font-style:normal; }
+  @media(max-width:640px){
+    header { padding:0 1rem; }
+    nav button { font-size:0.65rem; padding:5px 10px; }
+    main { padding:1.5rem 1rem 4rem; }
+    .card-grid, .rev-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Web<span>Crawl</span>.exam</div>
+  <nav>
+    <button class="active" onclick="showSection('explain',this)">📖 Explain</button>
+    <button onclick="showSection('summary',this)">📋 Summary</button>
+    <button onclick="showSection('memory',this)">🧠 Memory</button>
+    <button onclick="showSection('mcq',this)">❓ MCQ</button>
+    <button onclick="showSection('written',this)">✍️ Written</button>
+    <button onclick="showSection('revision',this)">⚡ Revision</button>
+  </nav>
+  <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀</button>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 1: EXPLANATION                            -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="explain" class="section active">
+  <div class="hero">
+    <div class="hero-badge">Complete Exam Prep System</div>
+    <h1>Web Search &amp; <em>Web Crawling</em></h1>
+    <p>A deep-understanding guide covering crawlers, indexing, PageRank, and HITS — everything you need to ace your exam.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-n">30+</div><div class="stat-l">MCQ Questions</div></div>
+      <div class="stat"><div class="stat-n">5</div><div class="stat-l">Core Topics</div></div>
+      <div class="stat"><div class="stat-n">6</div><div class="stat-l">Study Phases</div></div>
+      <div class="stat"><div class="stat-n">10+</div><div class="stat-l">Written Q&amp;A</div></div>
+    </div>
+  </div>
+
+  <!-- TOPIC 1 -->
+  <h2><span class="icon">🌐</span>1. The Web &amp; Search Engine Architecture</h2>
+  <p class="section-intro">Think of the web as an enormous, unorganized library where everyone can add books, change content, and write in any language. A search engine must automatically explore, organize, and rank all of this to answer your question in milliseconds.</p>
+
+  <div class="card">
+    <h3>Why Is the Web Challenging?</h3>
+    <p>Unlike a traditional library with a card catalog, the web has <strong>no central authority</strong>. This creates 5 key challenges:</p>
+    <ul>
+      <li><strong>Billions of interconnected pages</strong> — scale is enormous</li>
+      <li><strong>Anyone can publish</strong> — no quality control</li>
+      <li><strong>Various formats &amp; languages</strong> — HTML, PDF, video, Arabic, English…</li>
+      <li><strong>A lot of low-quality and duplicate content</strong></li>
+      <li><strong>Dynamic content</strong> — pages generated by JavaScript on-the-fly</li>
+    </ul>
+    <div class="callout info">
+      <div class="callout-title">📌 Exam Tip</div>
+      Search engines must bring <em>semantics</em> to a <em>semantic-free</em> structure. This phrase is often directly quoted in exams.
+    </div>
+  </div>
+
+  <h3>The 4-Component Search Engine Architecture</h3>
+  <div class="flow">
+    <div class="flow-step">🌐 World Wide Web</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">🕷 Crawler Module</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">📦 Page Repository</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">🔢 Indexing Module</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">📂 Indexes</div>
+  </div>
+  <div class="flow" style="margin-top:0.5rem">
+    <div class="flow-step">👤 User Query</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">🔍 Query Module</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">📊 Ranking Module</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">✅ Results</div>
+  </div>
+  <div class="callout warn">
+    <div class="callout-title">⚠️ Key Distinction</div>
+    The <strong>Crawler + Page Repository + Indexing</strong> pipeline is <em>query-independent</em> — it runs continuously in the background. The <strong>Query + Ranking</strong> modules are <em>query-dependent</em> — triggered per user search.
+  </div>
+
+  <hr class="divider">
+
+  <!-- TOPIC 2 -->
+  <h2><span class="icon">🕷</span>2. Web Crawling — Deep Dive</h2>
+
+  <div class="card">
+    <h3>What is a Web Crawler?</h3>
+    <p>A web crawler (also called a <strong>web robot</strong> or <strong>web scutter</strong>) is an automated program that starts from a seed set of URIs and systematically discovers and downloads web pages.</p>
+    <p><strong>Analogy:</strong> Imagine an explorer starting in Cairo, then following every road sign to discover new cities, and documenting everything along the way — following new signs from each new city.</p>
+    <div class="badge-row">
+      <span class="tag">Search Engines</span>
+      <span class="tag">Price Comparison</span>
+      <span class="tag">Archive Systems</span>
+      <span class="tag red">Spam Bots (negative use)</span>
+    </div>
+  </div>
+
+  <h3>Universal Crawler Architecture — Step by Step</h3>
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>Step 1: Initialize the Frontier</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>The <strong>Frontier</strong> is a list of URIs waiting to be visited. It is initialized with <strong>Seed URIs</strong> — a starting set provided by the user or system. Think of it as the crawler's "to-do list."</p>
+    </div>
+  </div>
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>Step 2: Dequeue URI from Frontier</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>The crawler picks the next URI from the frontier. The order depends on the <strong>crawling strategy</strong> (breadth-first or depth-first).</p>
+    </div>
+  </div>
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>Step 3: Fetch the Page</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Uses a regular <strong>HTTP client</strong> to download the page. Key efficiency improvements:</p>
+      <ul>
+        <li><strong>Timeout mechanism</strong> — avoid wasting time on slow/unresponsive servers</li>
+        <li><strong>Efficient socket communication</strong> — better than default library classes</li>
+        <li><strong>Parallelizing frontier access</strong> — multiple URIs downloaded simultaneously</li>
+        <li><strong>DNS pre-fetching</strong> — resolve domain names to IPs ahead of time</li>
+        <li><strong>Multithreaded download</strong> — multiple simultaneous downloads</li>
+      </ul>
+    </div>
+  </div>
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>Step 4: Extract URIs &amp; Add to Frontier</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Extract all <code>&lt;a href="..."&gt;</code> links from the page. Then <strong>canonicalize</strong> them:</p>
+      <ol>
+        <li>Convert relative URIs to absolute: <code>/WORLD</code> → <code>http://www.cnn.com/WORLD</code></li>
+        <li>Add/remove port numbers: <code>http://cnn.com/</code> → <code>http://cnn.com:80/</code></li>
+        <li>Remove fragment identifiers: <code>page.html#section3</code> → <code>page.html</code></li>
+      </ol>
+      <p>Only add to frontier if the URI is <strong>not already present</strong> (deduplication).</p>
+    </div>
+  </div>
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>Step 5: Store Page &amp; Check Termination</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Store the fetched page in the <strong>Page Repository</strong>. Stop when:</p>
+      <ul>
+        <li>A specified <strong>number of pages</strong> has been crawled, OR</li>
+        <li>The <strong>frontier is empty</strong> (no more URIs to visit)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Crawling Strategies: BFS vs DFS</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Aspect</th><th>Breadth-First (BFS)</th><th>Depth-First (DFS)</th></tr>
+      <tr><td><strong>Strategy</strong></td><td>Visit all neighbors first, then go deeper</td><td>Follow first link as deep as possible first</td></tr>
+      <tr><td><strong>Data Structure</strong></td><td>Queue (FIFO)</td><td>Stack (LIFO) or recursion</td></tr>
+      <tr><td><strong>Traversal Order</strong></td><td>Level by level: 0→1→2→3…</td><td>Path by path: 0→1→2→5→6→3→4→7</td></tr>
+      <tr><td><strong>Backtracking</strong></td><td>Not needed</td><td>Needed at dead ends</td></tr>
+      <tr><td><strong>Best for</strong></td><td>Finding nearby relevant pages first</td><td>Going deep into a specific topic area</td></tr>
+    </table>
+  </div>
+
+  <h3>Web Page Parsing &amp; DOM</h3>
+  <div class="card">
+    <p>Raw HTML is often <strong>badly written</strong> (unclosed tags, missing attributes). Crawlers must:</p>
+    <ol>
+      <li><strong>Tidy</strong> the HTML — transform malformed markup into well-formed XML</li>
+      <li>Convert to <strong>DOM (Document Object Model)</strong> — a tree structure allowing easy programmatic access</li>
+      <li>Use <strong>web scraping</strong> — techniques to extract data from this structure</li>
+    </ol>
+    <div class="callout info">
+      <div class="callout-title">📌 Definition to Memorize</div>
+      <strong>Web Scraping</strong> = Accessing and extracting unstructured information from (X)HTML pages.
+    </div>
+  </div>
+
+  <h3>Focused Crawlers</h3>
+  <div class="card">
+    <p>General crawlers collect everything. <strong>Focused (topical) crawlers</strong> collect only pages matching specific criteria using a <strong>classification component</strong>:</p>
+    <ul>
+      <li>Avoid certain top-level domains (e.g., no <code>.com</code>)</li>
+      <li>Require specific terms in the page content</li>
+      <li>Require a specific page structure (e.g., blog format)</li>
+    </ul>
+    <p><strong>Scraper sites</strong> are a common application — aggregating content from multiple sources on a specific topic.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TOPIC 3 -->
+  <h2><span class="icon">🤖</span>3. Robots Exclusion Standard &amp; Sitemaps</h2>
+
+  <div class="card">
+    <h3>Robots.txt — The Crawler's Rulebook</h3>
+    <p>The <strong>Robots Exclusion Standard</strong> is a <em>convention</em> (not a real standard — defined by consensus) stored in a file called <code>robots.txt</code> at the website root (<code>www.example.com/robots.txt</code>).</p>
+    <p><strong>Why site admins use it:</strong></p>
+    <ul>
+      <li><strong>Privacy</strong> — prevent certain content from being indexed by search engines</li>
+      <li><strong>Relevance</strong> — exclude irrelevant subpages from crawling</li>
+    </ul>
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Important Nuance</div>
+      robots.txt only works with <em>cooperative</em> crawlers. Malicious bots (spam bots) ignore it entirely.
+    </div>
+
+    <h4>robots.txt Example Breakdown:</h4>
+    <div class="formula">
+User-agent: *          → Applies to ALL crawlers<br>
+Disallow: /cgi-bin/    → Block /cgi-bin/ directory<br>
+Disallow: /tmp/        → Block /tmp/ directory<br>
+Disallow: /private/    → Block /private/ directory<br><br>
+User-agent: Googlebot-Image  → Only Google Image Search<br>
+Disallow: /fotos       → Block photo directory for Google images<br><br>
+User-agent: yahoo-blogs/v3.9 → Only Yahoo blog crawler<br>
+Disallow: /blog        → Block blog directory for Yahoo<br><br>
+Crawl-delay: 60        → Minimum 60 sec between visits<br>
+Sitemap: http://www.example.com/sitemap.xml.gz
+    </div>
+  </div>
+
+  <h3>Sitemaps Protocol</h3>
+  <div class="card">
+    <p>Problem: Some pages are only reachable via <strong>AJAX (XMLHttpRequest)</strong> — JavaScript loads links dynamically, which crawlers can't execute. Solution: <strong>Sitemaps</strong> — an XML file that explicitly lists all available URIs.</p>
+    <div class="formula">
+&lt;urlset&gt;<br>
+&nbsp;&nbsp;&lt;url&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;loc&gt;http://www.example.com/index.html&lt;/loc&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;lastmod&gt;1970-06-07&lt;/lastmod&gt;      ← Last modification date<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;changefreq&gt;monthly&lt;/changefreq&gt;  ← How often it changes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;priority&gt;0.8&lt;/priority&gt;          ← Relative importance (0.0–1.0)<br>
+&nbsp;&nbsp;&lt;/url&gt;<br>
+&lt;/urlset&gt;
+    </div>
+    <div class="badge-row">
+      <span class="tag gold">loc</span>
+      <span class="tag">lastmod</span>
+      <span class="tag">changefreq</span>
+      <span class="tag">priority</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TOPIC 4 -->
+  <h2><span class="icon">📊</span>4. Relevance Ranking &amp; PageRank</h2>
+
+  <div class="card">
+    <h3>Why Classical TF-IDF Falls Short on the Web</h3>
+    <p><strong>TF-IDF</strong> (Term Frequency × Inverse Document Frequency) works well for traditional document collections. On the web, it fails because:</p>
+    <ul>
+      <li>Queries are <strong>very short</strong> (average: <strong>2.35 terms</strong>)</li>
+      <li>Enormous variety of documents and vocabulary</li>
+      <li>Anyone can publish — misinformation is rampant</li>
+      <li>Content can be artificially manipulated (keyword stuffing)</li>
+    </ul>
+    <div class="formula">
+Overall Score = Content Score (TF-IDF) + Structure Score (Popularity)
+    </div>
+  </div>
+
+  <h3>PageRank — Core Intuition</h3>
+  <div class="card">
+    <p><strong>Invented by</strong>: Google founders Brin &amp; Page (hence <em>Page</em>Rank).</p>
+    <p><strong>Core idea</strong>: A hyperlink from page A to page B is a <em>recommendation</em> of B by A's author. Quality is measured recursively:</p>
+    <ul>
+      <li>A page is important if <strong>many pages link to it</strong> (high in-degree)</li>
+      <li>A page is even more important if the pages linking to it are <strong>themselves important</strong></li>
+    </ul>
+    <div class="callout success">
+      <div class="callout-title">💡 Analogy</div>
+      Academic citations work the same way. A research paper cited by Nobel Prize winners is more valuable than one cited by unknown blogs — even if both have 10 citations.
+    </div>
+  </div>
+
+  <h3>The Random Walk Model</h3>
+  <div class="card">
+    <p>PageRank models an <strong>average web user</strong> randomly clicking links:</p>
+    <ul>
+      <li>At each page with <strong>N outgoing links</strong>, move to one successor with probability <strong>1/N</strong></li>
+      <li>This distributes the page's "prestige" equally: each link gets <code>Prestige(current) / N</code></li>
+      <li>Popularity = how often the random user visits a page over time</li>
+    </ul>
+  </div>
+
+  <h3>Iterative PageRank Calculation</h3>
+  <div class="card">
+    <p><strong>Initialization</strong>: Assign all pages a prestige of <code>1</code> or <code>1/N</code>.</p>
+    <p><strong>Each iteration</strong>: <code>Prestige(p) = Σ [ Prestige(q) / outdegree(q) ]</code> for all q that link to p.</p>
+    <div class="callout info">
+      <div class="callout-title">📌 Exam Formula</div>
+      <div class="formula">Prestige(p) = Σ [ Prestige(q) / outdegree(q) ]<br>
+      for all nodes q where (q → p) exists</div>
+      This is applied <strong>iteratively</strong> until values <strong>converge</strong>.
+    </div>
+  </div>
+
+  <h3>Problems with Simple Random Walk</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Problem</th><th>Description</th><th>Effect</th></tr>
+      <tr><td><strong>Cyclic Graphs</strong></td><td>User gets trapped in a loop (A→B→A→B…)</td><td>Prestige concentrates in the cycle, starving other nodes</td></tr>
+      <tr><td><strong>Dangling Nodes</strong></td><td>A page with NO outgoing links</td><td>Prestige is absorbed and never redistributed — "prestige sink"</td></tr>
+    </table>
+  </div>
+
+  <h3>The Extended Random Walk — PageRank Formula</h3>
+  <div class="card">
+    <p>The solution: add a <strong>damping factor d</strong> — the probability that a random user enters an <em>arbitrary</em> new URI instead of clicking a link.</p>
+    <div class="formula">
+PageRank(p) = d/|T|  +  (1-d) × Σ [ PageRank(q) / outdegree(q) ]<br><br>
+Where:<br>
+  d     = probability of entering a new URI (teleportation)<br>
+  |T|   = total number of nodes in the graph<br>
+  (1-d) = probability of clicking an outgoing link<br>
+  q     = any node with a link to p<br>
+  outdegree(q) = number of outgoing links from q
+    </div>
+    <p>This formula can also be expressed as an <strong>eigenvector problem</strong> or a <strong>linear homogeneous system</strong>.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TOPIC 5 -->
+  <h2><span class="icon">🔗</span>5. HITS — Hubs &amp; Authorities</h2>
+
+  <div class="card">
+    <h3>Two Types of Important Pages</h3>
+    <div class="card-grid">
+      <div class="card" style="margin:0">
+        <h4>🏛 Authority</h4>
+        <p>A page with many <strong>in-links</strong>. It has good content on a topic, so many people trust it and point to it.</p>
+        <p><em>Example: Wikipedia article on Machine Learning</em></p>
+        <div class="tag">High in-degree</div>
+      </div>
+      <div class="card" style="margin:0">
+        <h4>🗺 Hub</h4>
+        <p>A page with many <strong>out-links</strong>. It serves as an organizer/directory, pointing to many good authorities.</p>
+        <p><em>Example: A curated "Best ML Resources" page</em></p>
+        <div class="tag">High out-degree</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Mutual Reinforcement (The Circular Thesis)</h3>
+    <div class="callout info">
+      <div class="callout-title">📌 Core HITS Principle — Must Memorize</div>
+      "A page is a <strong>good hub</strong> if it points to good authorities. A page is a <strong>good authority</strong> if it is pointed to by good hubs."
+    </div>
+    <div class="formula">
+Repeat until convergence:<br>
+  HUB[x]  = Σ AUTH[r]  for all r where (x → r) exists<br>
+  AUTH[x] = Σ HUB[q]   for all q where (q → x) exists
+    </div>
+  </div>
+
+  <h3>PageRank vs HITS Comparison</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Aspect</th><th>PageRank</th><th>HITS</th></tr>
+      <tr><td><strong>Query Dependency</strong></td><td>Query-independent (precomputed)</td><td>Query-dependent (computed per query)</td></tr>
+      <tr><td><strong>Output</strong></td><td>Single rank per page</td><td>Two scores: Hub + Authority</td></tr>
+      <tr><td><strong>Model</strong></td><td>Random walk on full web graph</td><td>Mutual reinforcement in result set</td></tr>
+      <tr><td><strong>Basis</strong></td><td>In-degree (weighted by quality)</td><td>Both in-degree (auth) and out-degree (hub)</td></tr>
+      <tr><td><strong>Starting Point</strong></td><td>Entire web graph</td><td>Initial result set from a user query</td></tr>
+      <tr><td><strong>Result Lists</strong></td><td>One ranked list</td><td>Two ranked lists (hubs + authorities)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 2: SUMMARY                                -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="summary" class="section">
+  <h2><span class="icon">📋</span>Smart Summary</h2>
+  <p class="section-intro">High-yield bullet-point summary — every point is exam-relevant.</p>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>🌐 Search Engine Architecture</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <ul>
+        <li>Web = <strong>semantic-free structure</strong>; search engines add semantics</li>
+        <li>4 modules: <strong>Crawler → Page Repository → Indexing → Indexes</strong> (query-independent)</li>
+        <li>+ <strong>Query Module → Ranking Module</strong> (query-dependent)</li>
+        <li>Two index types: <strong>Content Index</strong> + <strong>Structure Index</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>🕷 Web Crawling</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <ul>
+        <li>Crawler = <strong>web robot / web scutter</strong></li>
+        <li>Starts from <strong>Seed URIs</strong> → maintains a <strong>Frontier</strong> (unvisited URIs list)</li>
+        <li>Termination: frontier empty OR page count limit reached</li>
+        <li><strong>Fetching efficiency</strong>: timeouts, socket optimization, parallelism, DNS pre-fetch, multithreading</li>
+        <li><strong>BFS</strong> = queue-based, level-by-level | <strong>DFS</strong> = stack-based, path-by-path with backtracking</li>
+        <li><strong>Link extraction</strong>: find <code>&lt;a href&gt;</code> tags → filter → <strong>canonicalize</strong> → add to frontier if new</li>
+        <li><strong>Canonicalization</strong>: relative→absolute, add/remove ports, remove fragments</li>
+        <li><strong>Web Scraping</strong> = extracting unstructured data from (X)HTML</li>
+        <li><strong>DOM representation</strong> = tree structure for easy page access</li>
+        <li><strong>Tidying</strong> = converting malformed HTML to well-formed XML before parsing</li>
+        <li><strong>Focused/Topical crawlers</strong> use a classification component to target specific content</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>🤖 Robots.txt &amp; Sitemaps</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <ul>
+        <li><strong>robots.txt</strong> = convention (not standard) at site root for cooperative crawlers</li>
+        <li>Directives: <code>User-agent</code>, <code>Disallow</code>, <code>Crawl-delay</code>, <code>Sitemap</code></li>
+        <li>Only <strong>cooperative crawlers</strong> respect it — malicious bots ignore it</li>
+        <li><strong>ACAP</strong> = Automated Content Access Protocol (extension/improvement)</li>
+        <li><strong>Sitemaps</strong> = XML protocol to list URIs not reachable via normal links (e.g., AJAX pages)</li>
+        <li>Sitemap fields: <code>loc</code> (URL), <code>lastmod</code>, <code>changefreq</code>, <code>priority</code> (0.0–1.0)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>📊 Relevance Ranking &amp; PageRank</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <ul>
+        <li>Classical ranking: <strong>TF-IDF</strong> — insufficient for web (short queries, low quality content)</li>
+        <li>Web ranking = <strong>Content Score + Structure/Popularity Score</strong></li>
+        <li><strong>PageRank</strong>: invented by Brin &amp; Page; hyperlink = recommendation</li>
+        <li>Quality = in-degree + quality of linking pages (recursive)</li>
+        <li><strong>Random Walk Model</strong>: user moves to successor with probability 1/N</li>
+        <li>Prestige is distributed as <code>Prestige(p)/N</code> to each outgoing link</li>
+        <li>Calculation: iterative, starts with all pages = 1 or 1/|T|</li>
+        <li><strong>Problems</strong>: cyclic graphs trap prestige; dangling nodes absorb prestige</li>
+        <li><strong>Fix</strong>: damping factor <code>d</code> — probability of teleporting to random page</li>
+        <li>Formula: <code>PR(p) = d/|T| + (1-d) × Σ[PR(q)/outdegree(q)]</code></li>
+        <li>Also solvable as eigenvector problem or linear system</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapse(this)">
+      <span>🔗 HITS — Hubs &amp; Authorities</span><span class="arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <ul>
+        <li><strong>HITS</strong> = Hyperlinked Induced Topic Search</li>
+        <li><strong>Authority</strong> = many in-links (good content) | <strong>Hub</strong> = many out-links (good organizer)</li>
+        <li><strong>Mutual reinforcement</strong>: good hubs point to good authorities and vice versa</li>
+        <li>HITS is <strong>query-dependent</strong>: starts with initial result set for a query</li>
+        <li>Produces <strong>two ranked lists</strong>: one for hubs, one for authorities</li>
+        <li>Iterative convergence: <code>HUB[x] = Σ AUTH[r]</code>; <code>AUTH[x] = Σ HUB[q]</code></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 3: MEMORY                                 -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="memory" class="section">
+  <h2><span class="icon">🧠</span>Memory Optimization</h2>
+  <p class="section-intro">Advanced learning techniques: mnemonics, chunking, comparison tables, and common traps.</p>
+
+  <h3>Mnemonics</h3>
+
+  <div class="mnemonic">
+    <strong>Crawler Steps → "SFDEST"</strong><br>
+    <strong>S</strong>eed URIs → <strong>F</strong>rontier initialized → <strong>D</strong>equeue URI → <strong>E</strong>xtract links → <strong>S</strong>tore page → <strong>T</strong>erminate or repeat
+  </div>
+
+  <div class="mnemonic">
+    <strong>Canonicalization → "RAP"</strong><br>
+    <strong>R</strong>elative to Absolute → <strong>A</strong>dd/remove ports → <strong>P</strong>urge fragments
+  </div>
+
+  <div class="mnemonic">
+    <strong>Sitemap fields → "LLCP"</strong><br>
+    <strong>L</strong>oc, <strong>L</strong>astmod, <strong>C</strong>hangefreq, <strong>P</strong>riority
+  </div>
+
+  <div class="mnemonic">
+    <strong>PageRank formula components → "TRIP"</strong><br>
+    <strong>T</strong>eleport probability (d/|T|) → <strong>R</strong>andom walk ((1-d)) → <strong>I</strong>ncoming links (Σ) → <strong>P</strong>restige distributed (/outdegree)
+  </div>
+
+  <div class="mnemonic">
+    <strong>HITS = "AIO"</strong><br>
+    <strong>A</strong>uthority = In-links | <strong>O</strong>ut-links = Hub | They reinforce each other
+  </div>
+
+  <hr class="divider">
+  <h3>Common Exam Traps &amp; Mistakes</h3>
+
+  <div class="card">
+    <div class="callout danger">
+      <div class="callout-title">❌ Trap 1: "Robots.txt is a standard"</div>
+      robots.txt is a <strong>convention defined by consensus</strong>, NOT an official standard. It also only applies to <strong>cooperative</strong> crawlers.
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">❌ Trap 2: "PageRank is query-dependent"</div>
+      PageRank is <strong>query-independent</strong> (precomputed). HITS is query-dependent.
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">❌ Trap 3: "Hubs have many in-links"</div>
+      Hubs have many <strong>out-links</strong>. Authorities have many <strong>in-links</strong>. Don't mix these up!
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">❌ Trap 4: "Removing fragment identifiers changes the page"</div>
+      Fragment identifiers (<code>#section3</code>) only affect browser scrolling position — removing them during canonicalization does NOT change the actual page downloaded.
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">❌ Trap 5: "BFS uses a stack"</div>
+      BFS uses a <strong>Queue (FIFO)</strong>. DFS uses a <strong>Stack (LIFO)</strong>.
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">❌ Trap 6: "Dangling nodes distribute prestige to all"</div>
+      Dangling nodes (no outgoing links) <strong>absorb</strong> prestige — they never redistribute it. That's the problem the damping factor solves.
+    </div>
+  </div>
+
+  <hr class="divider">
+  <h3>Spaced Repetition Hints</h3>
+  <div class="card-grid">
+    <div class="card" style="margin:0">
+      <h4>🔴 Review Daily</h4>
+      <ul>
+        <li>PageRank formula</li>
+        <li>Hub vs Authority definitions</li>
+        <li>HITS convergence formulas</li>
+      </ul>
+    </div>
+    <div class="card" style="margin:0">
+      <h4>🟡 Review Every 3 Days</h4>
+      <ul>
+        <li>Crawler architecture flow</li>
+        <li>Canonicalization steps</li>
+        <li>robots.txt syntax</li>
+        <li>BFS vs DFS differences</li>
+      </ul>
+    </div>
+    <div class="card" style="margin:0">
+      <h4>🟢 Review Weekly</h4>
+      <ul>
+        <li>Sitemap XML structure</li>
+        <li>Fetching efficiency techniques</li>
+        <li>Focused crawler concepts</li>
+        <li>Why TF-IDF fails on the web</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 4: MCQ                                    -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="mcq" class="section">
+  <h2><span class="icon">❓</span>MCQ Exam Training</h2>
+  <p class="section-intro">Click any option to reveal the answer and explanation. Your score is tracked below.</p>
+
+  <div class="mcq-score">
+    Score: <span class="score-n" id="scoreNum">0</span> / <span id="scoreTotal">0</span> answered
+    <div class="progress-bar-wrap" style="max-width:300px;margin:0.8rem auto 0">
+      <div class="progress-bar" id="scoreBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div id="mcq-container"></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 5: WRITTEN                                -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="written" class="section">
+  <h2><span class="icon">✍️</span>Written Questions &amp; Model Answers</h2>
+  <p class="section-intro">Click any question to reveal the model answer — written as a perfect exam response.</p>
+  <div id="written-container"></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- SECTION 6: REVISION                               -->
+<!-- ══════════════════════════════════════════════════ -->
+<section id="revision" class="section">
+  <h2><span class="icon">⚡</span>Rapid Revision — Night Before Exam</h2>
+  <p class="section-intro">Everything you need in one place. Read this the night before. Each card = one exam topic.</p>
+
+  <div class="rev-grid">
+    <div class="rev-card">
+      <h4>🌐 Architecture</h4>
+      <div class="rev-item"><strong>Query-Independent:</strong> Crawler → Repository → Indexing</div>
+      <div class="rev-item"><strong>Query-Dependent:</strong> Query Module → Ranking → Results</div>
+      <div class="rev-item"><strong>Index Types:</strong> Content + Structure</div>
+      <div class="rev-item"><strong>Web Challenge:</strong> semantic-free, dynamic, low-quality</div>
+    </div>
+    <div class="rev-card">
+      <h4>🕷 Crawler Basics</h4>
+      <div class="rev-item"><strong>Aliases:</strong> web robot, web scutter</div>
+      <div class="rev-item"><strong>Frontier:</strong> list of unvisited URIs</div>
+      <div class="rev-item"><strong>Seed URIs:</strong> initial starting set</div>
+      <div class="rev-item"><strong>Stop when:</strong> frontier empty OR page limit</div>
+    </div>
+    <div class="rev-card">
+      <h4>⚡ Fetching Efficiency</h4>
+      <div class="rev-item">Timeout mechanism</div>
+      <div class="rev-item">Efficient socket communication</div>
+      <div class="rev-item">Parallel frontier access</div>
+      <div class="rev-item">DNS pre-fetching</div>
+      <div class="rev-item">Multithreaded downloading</div>
+    </div>
+    <div class="rev-card">
+      <h4>🔀 BFS vs DFS</h4>
+      <div class="rev-item"><strong>BFS:</strong> Queue, level-by-level, no backtrack</div>
+      <div class="rev-item"><strong>DFS:</strong> Stack, path-first, backtracking</div>
+    </div>
+    <div class="rev-card">
+      <h4>🔗 Canonicalization (RAP)</h4>
+      <div class="rev-item"><strong>R</strong>elative → Absolute URI</div>
+      <div class="rev-item"><strong>A</strong>dd/remove port numbers</div>
+      <div class="rev-item"><strong>P</strong>urge fragment identifiers (#)</div>
+    </div>
+    <div class="rev-card">
+      <h4>🤖 Robots.txt</h4>
+      <div class="rev-item"><strong>Convention</strong>, NOT a standard</div>
+      <div class="rev-item">Located at domain root</div>
+      <div class="rev-item">Only cooperative crawlers obey</div>
+      <div class="rev-item">Directives: User-agent, Disallow, Crawl-delay, Sitemap</div>
+    </div>
+    <div class="rev-card">
+      <h4>🗺 Sitemaps</h4>
+      <div class="rev-item">Solves: AJAX / dynamically loaded links</div>
+      <div class="rev-item">XML format, listed in robots.txt</div>
+      <div class="rev-item">Fields: loc, lastmod, changefreq, priority</div>
+    </div>
+    <div class="rev-card">
+      <h4>📊 PageRank Formula</h4>
+      <div class="formula" style="font-size:0.75rem">PR(p) = d/|T| + (1-d)·Σ[PR(q)/outdegree(q)]</div>
+      <div class="rev-item"><strong>d:</strong> teleport probability</div>
+      <div class="rev-item"><strong>|T|:</strong> total nodes</div>
+      <div class="rev-item"><strong>Iterative</strong> convergence</div>
+    </div>
+    <div class="rev-card">
+      <h4>⚠️ PageRank Problems</h4>
+      <div class="rev-item"><strong>Cyclic graph:</strong> prestige trapped in loop</div>
+      <div class="rev-item"><strong>Dangling node:</strong> prestige absorbed, never returned</div>
+      <div class="rev-item"><strong>Fix:</strong> damping factor d (teleportation)</div>
+    </div>
+    <div class="rev-card">
+      <h4>🔗 HITS Formulas</h4>
+      <div class="formula" style="font-size:0.75rem">HUB[x]  = Σ AUTH[r]  (links out from x)<br>AUTH[x] = Σ HUB[q]   (links into x)</div>
+      <div class="rev-item"><strong>Authority:</strong> many in-links</div>
+      <div class="rev-item"><strong>Hub:</strong> many out-links</div>
+    </div>
+    <div class="rev-card">
+      <h4>⚖️ PageRank vs HITS</h4>
+      <div class="rev-item"><strong>PR:</strong> Query-independent, 1 score</div>
+      <div class="rev-item"><strong>HITS:</strong> Query-dependent, 2 scores (H+A)</div>
+      <div class="rev-item"><strong>PR:</strong> Full web graph</div>
+      <div class="rev-item"><strong>HITS:</strong> Initial result set only</div>
+    </div>
+    <div class="rev-card">
+      <h4>🎯 Avg Web Query</h4>
+      <div class="rev-item"><strong>Average query length: 2.35 terms</strong></div>
+      <div class="rev-item">Why TF-IDF fails: short queries + misinformation</div>
+      <div class="rev-item">Solution: Content Score + Structure Score</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ── THEME TOGGLE ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelector('.theme-btn').textContent = isDark ? '🌙' : '☀';
+}
+
+// ── SECTION NAVIGATION ──
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── COLLAPSIBLE ──
+function toggleCollapse(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+// ── MCQ DATA ──
+const mcqs = [
+  { q: "What term describes a search engine's need to impose meaning on the web's structure?", opts: ["Information structuring","Semantic enrichment","Bringing semantics to a semantic-free structure","Content indexing"], ans: 2, diff: "easy", exp: "The slides explicitly state that search engines must 'bring some sort of semantics to the semantic-free structure of the web.'" },
+  { q: "Which component of the search engine architecture is considered query-independent?", opts: ["Query Module","Ranking Module","Crawler + Indexing pipeline","Results presentation"], ans: 2, diff: "med", exp: "The Crawler, Page Repository, and Indexing module form the query-independent part — they run continuously in the background, not per user query." },
+  { q: "What is another name for a web crawler?", opts: ["Web agent and web parser","Web robot or web scutter","Search spider and content bot","Index harvester"], ans: 1, diff: "easy", exp: "The slides state the crawler is 'sometimes also referred to as web robot or web scutter.'" },
+  { q: "What is the Frontier in a web crawler?", opts: ["The crawler's rule configuration file","The list of already-visited pages","The list of unvisited URIs waiting to be crawled","The page repository for storing downloaded pages"], ans: 2, diff: "easy", exp: "The Frontier is described as the 'list of unvisited URIs' — it's essentially the crawler's to-do list." },
+  { q: "Which of the following is NOT listed as an efficiency technique for page fetching?", opts: ["Timeout mechanism","DNS pre-fetching","Multithreaded downloading","Content compression on the server"], ans: 3, diff: "med", exp: "Content compression is not mentioned. The listed techniques are: timeout mechanisms, efficient socket communication, parallelizing frontier access, DNS pre-fetching, and multithreaded downloading." },
+  { q: "In Breadth-First crawling, what data structure manages the frontier?", opts: ["Stack (LIFO)","Priority Queue","Queue (FIFO)","Linked List"], ans: 2, diff: "med", exp: "BFS uses a Queue (FIFO). DFS uses a Stack (LIFO). This is a classic computer science distinction." },
+  { q: "What does canonicalization of URIs involve? (Select the CORRECT set)", opts: ["Compressing URIs and adding timestamps","Relative→Absolute, add/remove ports, remove fragments","Encrypting URIs and validating SSL","Adding tracking parameters and removing duplicates"], ans: 1, diff: "med", exp: "Canonicalization involves: converting relative to absolute URIs, adding/removing port numbers, and removing fragment identifiers (#)." },
+  { q: "A URI contains '#section3' at the end. During canonicalization, what happens to it?", opts: ["It is kept for navigation purposes","It is encoded as %23section3","It is removed (purged)","It is converted to a query parameter"], ans: 2, diff: "easy", exp: "Fragment identifiers are removed during canonicalization: http://www.cnn.com/1.html#3 → http://www.cnn.com/1.html" },
+  { q: "What is web scraping?", opts: ["Downloading all pages from a website","Accessing and extracting unstructured information from (X)HTML pages","Filtering malicious content from web pages","Converting HTML to PDF format"], ans: 1, diff: "easy", exp: "Web scraping is defined as 'access to unstructured web data' within (X)HTML, typically using DOM representations." },
+  { q: "What is the main purpose of converting HTML to a DOM representation?", opts: ["To compress the page for storage","To enable easy programmatic access to page content","To render pages in the browser faster","To encrypt sensitive page content"], ans: 1, diff: "med", exp: "The DOM provides 'easy access methods' compared to the 'uncomfortable access' of raw (X)HTML representation." },
+  { q: "What does the robots.txt Robots Exclusion Standard actually represent?", opts: ["An official W3C standard","An RFC specification","A convention defined by consensus","A legally binding contract between crawlers and sites"], ans: 2, diff: "hard", exp: "The slides explicitly say it's 'no real standard – defined by consensus.' This is a common exam trap." },
+  { q: "A robots.txt entry reads 'Crawl-delay: 60'. What does this mean?", opts: ["The crawler must wait 60 hours between visits","The maximum crawl depth is 60 pages","A minimum of 60 seconds must pass between two visits","The crawler times out after 60 seconds"], ans: 2, diff: "med", exp: "Crawl-delay specifies the minimum delay in seconds between consecutive crawl visits to avoid overloading the server." },
+  { q: "Why are Sitemaps needed if crawlers can already follow links?", opts: ["Sitemaps improve page loading speed","Some pages are only reachable via AJAX (XMLHttpRequest) which crawlers cannot execute","Sitemaps replace robots.txt entirely","Crawlers cannot read HTML without sitemaps"], ans: 1, diff: "hard", exp: "Pages loaded dynamically via JavaScript/AJAX are invisible to crawlers. Sitemaps explicitly list these pages' URIs." },
+  { q: "Which XML field in a sitemap specifies how important a URL is relative to others?", opts: ["lastmod","changefreq","loc","priority"], ans: 3, diff: "med", exp: "The 'priority' field (0.0–1.0) specifies relative importance. The example shows priority 0.8 for the index page." },
+  { q: "PageRank was invented by:", opts: ["Tim Berners-Lee and Robert Cailliau","Jeff Dean and Sanjay Ghemawat","Sergey Brin and Larry Page","Alan Turing and John McCarthy"], ans: 2, diff: "easy", exp: "PageRank was 'invented by Google founders Brin and Page' — the 'Page' in PageRank literally refers to Larry Page." },
+  { q: "In the PageRank random walk model, if a page has 4 outgoing links, what fraction of its prestige does each link receive?", opts: ["1/2","1/4","1/3","Depends on the link's target quality"], ans: 1, diff: "easy", exp: "With N outgoing links, each receives Prestige(currentPage)/N = 1/4 of the prestige. The distribution is equal." },
+  { q: "What is the core simplifying assumption behind PageRank?", opts: ["Pages with more text are more important","A hyperlink from A to B is a recommendation of B by A's author","Newer pages are more relevant than older ones","Pages with more images rank higher"], ans: 1, diff: "easy", exp: "The 'simplified assumption' stated in the slides: 'A hyperlink from page A to page B is a recommendation of the content of page B by the author of A.'" },
+  { q: "In the simple random walk model, what problem does a 'dangling node' cause?", opts: ["It creates infinite loops in the graph","It absorbs prestige without redistributing it","It blocks the crawler from continuing","It causes the frontier to grow infinitely"], ans: 1, diff: "hard", exp: "A dangling node (no outgoing links) 'continuously reduces prestige... without redistributing the prestige to the graph' — it's a prestige sink." },
+  { q: "In the extended PageRank formula, what does the variable 'd' represent?", opts: ["The depth of the crawl","The damping factor: probability of entering a new URI instead of clicking a link","The degree of the node (number of links)","The document frequency of terms on the page"], ans: 1, diff: "med", exp: "d is the probability that a random user enters a new URI (teleports) rather than following an outgoing link. It prevents prestige trapping." },
+  { q: "What does the term (d/|T|) in the PageRank formula represent?", opts: ["The probability of clicking an outgoing link","The normalized prestige from linking pages","The probability of a random user entering node p by typing its URI","The total number of links on the page"], ans: 2, diff: "hard", exp: "|T| is the total number of nodes. d is the teleportation probability. So d/|T| = the probability of landing on any specific page via URI entry." },
+  { q: "PageRank can alternatively be formulated as:", opts: ["A greedy optimization problem","A dynamic programming recurrence","An eigenvector problem or linear homogeneous system","A Markov Decision Process with rewards"], ans: 2, diff: "hard", exp: "The slides state: 'the PageRank problem can be stated as an eigenvector problem or as a linear homogeneous system.'" },
+  { q: "HITS stands for:", opts: ["Hyperlink Index and Topic System","Hierarchical Information Topic Search","Hyperlinked Induced Topic Search","High-Impact Topic Scoring"], ans: 2, diff: "easy", exp: "HITS = Hyperlinked Induced Topic Search — defined explicitly in the slides." },
+  { q: "Which statement correctly describes a Hub in HITS?", opts: ["A page with many incoming links pointing to it","A page with many outgoing links pointing to authorities","A page that appears at the top of search results","A page that has the highest PageRank score"], ans: 1, diff: "med", exp: "A Hub is 'a page with many out-links' that serves as an organizer. Authorities have many in-links." },
+  { q: "The HITS algorithm is:", opts: ["Query-independent like PageRank","Computed once for the entire web","Query-dependent: computed fresh for each user query","Based only on in-degree counts"], ans: 2, diff: "med", exp: "HITS is query-dependent: 'Initially a set of documents is determined that fits a given user query' — then HITS runs on that set." },
+  { q: "In HITS, how is AUTH[x] calculated?", opts: ["Sum of authority scores of all pages x links to","Sum of hub scores of all pages that link to x","Product of hub and authority scores of x's neighbors","Average PageRank of all linked pages"], ans: 1, diff: "hard", exp: "AUTH[x] = Σ HUB[q] for all q where (q→x) exists — authority comes from being pointed to by good hubs." },
+  { q: "How many ranked lists does HITS produce for a query?", opts: ["One (combined score)","Two (hubs and authorities separately)","Three (hubs, authorities, and PageRank)","One for each query term"], ans: 1, diff: "med", exp: "HITS delivers 'result lists for both categories' — two separate lists: one for hubs, one for authorities." },
+  { q: "What is the average number of terms in a web query according to the slides?", opts: ["1.5","2.35","3.7","5.0"], ans: 1, diff: "med", exp: "The slides state: 'Queries in the web are very short (average: 2.35 terms)' — this is a frequently quoted exam statistic." },
+  { q: "A focused crawler is also commonly called a:", opts: ["Universal crawler","Topical crawler","Breadth crawler","Deep crawler"], ans: 1, diff: "med", exp: "Focused crawlers are 'often called topical crawlers' in the slides — they target specific topics or content types." },
+  { q: "Which of these is a negative (malicious) use case for web crawlers?", opts: ["Building search engine indexes","Comparing product prices","Spam bots searching for email addresses","Archiving web content for libraries"], ans: 2, diff: "easy", exp: "The slides explicitly mention 'negative ones such as spam bots searching for mail addresses' as a negative use case." },
+  { q: "During PageRank iteration, what initial value is typically assigned to each page's prestige?", opts: ["0","Random value between 0 and 1","1 or 1/NUMBER_OF_NODES","Its current in-degree count"], ans: 2, diff: "hard", exp: "Prestige calculation 'can be initiated by assigning all pages a prestige of e.g. 1 or of (1/NUMBER_OF_NODES).'" },
+  { q: "What happens to PageRank values after multiple iterations?", opts: ["They grow infinitely","They fluctuate randomly","They converge to stable final values","They all become equal"], ans: 2, diff: "med", exp: "The iterative calculation 'converges against the final values' — this is a fundamental property of the PageRank algorithm." },
+  { q: "The ACAP mentioned in the slides is:", opts: ["An alternative crawling algorithm","An extension/improvement of the Robots Exclusion Standard","A type of sitemap protocol","A compression format for web pages"], ans: 1, diff: "hard", exp: "ACAP = Automated Content Access Protocol, described as 'various extensions / improvements available' over robots.txt." },
+];
+
+// ── WRITTEN QUESTIONS DATA ──
+const written = [
+  {
+    type: "Short", q: "What is a web crawler and why is it necessary for search engines?",
+    a: "A web crawler (also known as web robot or web scutter) is an automated program that systematically discovers and downloads web pages starting from an initial set of Seed URIs. It is necessary because the World Wide Web has no central collection or categorization organization — unlike a library with a card catalog. Without crawlers, search engines would have no way to discover the billions of existing pages. The crawler explores the web by following hyperlinks, stores pages in a repository, and enables the subsequent indexing and ranking processes that allow users to retrieve relevant results."
+  },
+  {
+    type: "Short", q: "Explain the three canonicalization transformations applied to URIs during link extraction.",
+    a: "Canonicalization transforms extracted URIs into a uniform, crawler-consistent representation. The three key transformations are: (1) Converting relative URIs to absolute ones — for example, '/WORLD' on cnn.com becomes 'http://www.cnn.com/WORLD', ensuring the crawler knows the full address. (2) Adding or removing port numbers — for example, 'http://www.cnn.com/' becomes 'http://www.cnn.com:80/', ensuring consistent representation of the same server. (3) Removing fragment identifiers — for example, 'http://www.cnn.com/1.html#3' becomes 'http://www.cnn.com/1.html', since fragments only indicate browser scroll position and don't affect the downloaded content."
+  },
+  {
+    type: "Short", q: "Explain the difference between BFS and DFS crawling strategies with reference to data structures used.",
+    a: "Breadth-First Search (BFS) crawling visits all adjacent pages of the current page first before going deeper. It uses a Queue (FIFO) — discovered URIs are added to the end of the queue, ensuring pages are visited level by level. This discovers nearby relevant pages early but requires storing many URIs simultaneously. Depth-First Search (DFS) crawling always follows the first unvisited link on the current page, going as deep as possible before backtracking. It uses a Stack (LIFO) and reaches a predefined depth limit before backtracking to explore other branches. DFS can go very deep into a topic but may miss many relevant nearby pages."
+  },
+  {
+    type: "Short", q: "What is the robots.txt Robots Exclusion Standard and what are its limitations?",
+    a: "Robots.txt is a convention (not an official standard — defined by consensus) that allows website administrators to communicate access rules to cooperative web crawlers. It is stored at the root of a website (e.g., www.example.com/robots.txt) and specifies directives like User-agent (targeting specific crawlers), Disallow (blocking certain directories), Crawl-delay (minimum time between visits), and Sitemap location. Its main limitation is that it only works with cooperative crawlers — malicious bots (e.g., spam harvesters) completely ignore it. Additionally, it requires trust between the crawler developer and site administrator, as there is no enforcement mechanism."
+  },
+  {
+    type: "Short", q: "Why are Sitemaps needed and what information do they contain?",
+    a: "Sitemaps are needed because some pages on a website are not reachable through normal hyperlink crawling — specifically, pages loaded dynamically via AJAX (XMLHttpRequest). When a JavaScript function loads links dynamically, a crawler cannot execute JavaScript and therefore cannot discover those links. Sitemaps solve this by explicitly listing all available URIs in a standardized XML format. Each URL entry in a sitemap can contain: loc (the page URL), lastmod (date of last modification), changefreq (how often the page changes, e.g., monthly, weekly), and priority (relative importance from 0.0 to 1.0). The sitemap's location is typically referenced in the robots.txt file."
+  },
+  {
+    type: "Long", q: "Describe the PageRank algorithm in detail, including its motivation, the basic random walk model, its problems, and the extended formula that solves them.",
+    a: "Motivation: Traditional information retrieval using TF-IDF (Term Frequency × Inverse Document Frequency) fails on the web because web queries are very short (average 2.35 terms), anyone can publish misinformation, and content can be artificially manipulated. PageRank was invented by Google's founders Brin and Page to supplement content-based scoring with a structure-based (popularity) score.\n\nCore Idea: A hyperlink from page A to page B is treated as a recommendation of B by A's author. Therefore, a page's quality is related to its in-degree (number of incoming links) AND the quality of pages linking to it — making the calculation recursive.\n\nBasic Random Walk Model: PageRank models a user randomly clicking links. At a page with N outgoing links, the user moves to each successor with probability 1/N. This distributes the page's prestige as Prestige(page)/N to each linked page. Iterative calculation: all pages start with prestige 1 (or 1/|T|), then Prestige(p) = Σ[Prestige(q)/outdegree(q)] is applied repeatedly until convergence.\n\nProblems: (1) Cyclic graphs trap prestige in a loop — nodes not in the cycle gradually lose all prestige. (2) Dangling nodes (no outgoing links) act as prestige sinks — they absorb prestige and never return it to the graph.\n\nExtended Formula: A damping factor d is introduced, representing the probability that a user enters a completely new URI (teleports) instead of clicking a link:\nPageRank(p) = d/|T| + (1-d) × Σ[PageRank(q)/outdegree(q)]\n\nHere d/|T| is the probability of landing on page p via URI entry, and (1-d) is the probability of following an outgoing link. This eliminates both problems: cyclic trapping is broken by teleportation, and dangling node prestige is redistributed to the entire graph. The calculation iterates until convergence and can also be formulated as an eigenvector problem or linear homogeneous system."
+  },
+  {
+    type: "Long", q: "Compare and contrast PageRank and HITS, explaining their core principles, algorithms, and relative advantages.",
+    a: "Both PageRank and HITS are link-based ranking algorithms that leverage the structure of the web rather than purely content-based signals. However, they differ fundamentally in design and application.\n\nPageRank: Developed by Google's Brin and Page. It is query-independent — computed once for all pages and reused for every search query. It models a single random user walking through the web graph and measures how often any page is visited. The result is one prestige score per page, reflecting overall global importance. Formula: PR(p) = d/|T| + (1-d)×Σ[PR(q)/outdegree(q)]. It operates on the full web graph and converges iteratively.\n\nHITS: Hyperlinked Induced Topic Search. It is query-dependent — computed fresh for each user query starting from an initial result set. It distinguishes two types of important pages: Authorities (pages with many in-links — good content) and Hubs (pages with many out-links — good organizers). These reinforce each other: 'a good hub points to good authorities; a good authority is pointed to by good hubs.' This mutual reinforcement is computed iteratively: HUB[x] = Σ AUTH[r] for all r that x links to; AUTH[x] = Σ HUB[q] for all q that link to x. HITS produces two ranked lists: one for hubs, one for authorities.\n\nComparison: PageRank is scalable (precomputed) and works globally, but cannot distinguish hubs from authorities. HITS is richer (two scores), more sensitive to the specific query, but is computationally expensive per query and requires defining an initial result set. Both algorithms use iterative convergence, both consider link quality recursively, and both transformed how search engines evaluate web content beyond simple keyword matching."
+  },
+  {
+    type: "Short", q: "What problems arise in the simple PageRank random walk model with cyclic graphs and dangling nodes?",
+    a: "Two major problems arise: (1) Cyclic graphs — when pages form a closed loop (e.g., A→B→C→A), the random walker becomes trapped. Prestige circulates within the cycle and is never shared with pages outside it. Over many iterations, all prestige concentrates in the cycle while other pages starve. (2) Dangling nodes — a page with no outgoing links cannot distribute its prestige anywhere. Each iteration, the dangling node accumulates prestige from its incoming links but outputs nothing, continuously draining prestige from the system without redistribution. Both problems are solved by the extended PageRank formula using a damping factor d, which models users occasionally entering a completely new random URI rather than following links — effectively teleporting away from any trapped state."
+  },
+  {
+    type: "Short", q: "Describe three efficiency improvements for the page fetching step of a web crawler.",
+    a: "Three key efficiency improvements for web crawler fetching are: (1) Timeout mechanism — avoids wasting time on slow or unresponsive servers by setting a maximum wait time for each HTTP request. Without this, one stuck connection could block the entire crawl pipeline. (2) DNS pre-fetching — domain names embedded in hyperlinks must be resolved to IP addresses before a connection can be made. Pre-fetching resolves DNS addresses of link targets in advance, so when those URIs are dequeued from the frontier, the connection can begin immediately without DNS lookup delays. (3) Multithreaded downloading — instead of fetching one page at a time sequentially, multiple threads download pages simultaneously. A scheduler coordinates the multithreaded downloaders, dramatically increasing throughput and reducing idle time while waiting for server responses."
+  },
+  {
+    type: "Long", q: "Explain the overall architecture of a general-purpose search engine, describing each component's role and classifying components as query-dependent or query-independent.",
+    a: "A general-purpose search engine consists of two major pipelines:\n\nQuery-Independent Pipeline (runs continuously in background):\n1. Crawler Module: An automated program that starts from seed URIs, follows hyperlinks, and downloads web pages. It maintains a frontier of unvisited URIs and stores fetched pages in the page repository. This process runs 24/7 to keep the index up to date.\n2. Page Repository: A large-scale storage system holding the raw downloaded pages. It serves as input for the indexing module.\n3. Indexing Module: Processes raw pages and builds searchable indexes. Two types: Content Index (based on word occurrence, TF-IDF scores, etc.) and Structure Index (based on link structure, supporting algorithms like PageRank).\n4. Indexes: The final data structures enabling fast lookup. These are precomputed and ready before any user query arrives.\n\nQuery-Dependent Pipeline (triggered per user query):\n5. Query Module: Receives the user's query, processes it (tokenization, stopword removal, stemming), and searches the content index for matching documents.\n6. Ranking Module: Combines content scores (from index) with structure scores (PageRank, HITS) to rank matching pages by relevance.\n7. Results: The final ranked list presented to the user.\n\nThe architecture succeeds because the heavy computation (crawling, indexing, PageRank) is done offline, making query response times extremely fast — the query pipeline only needs to look up precomputed values and re-rank."
+  },
+];
+
+// ── BUILD MCQ ──
+let scoreCount = 0, answered = 0;
+function buildMCQ() {
+  const container = document.getElementById('mcq-container');
+  document.getElementById('scoreTotal').textContent = mcqs.length;
+  mcqs.forEach((q, i) => {
+    const diffClass = q.diff === 'easy' ? 'diff-easy' : q.diff === 'med' ? 'diff-med' : 'diff-hard';
+    const letters = ['A','B','C','D'];
+    const opts = q.opts.map((o, j) => `
+      <div class="mcq-opt" onclick="answerMCQ(this,${j},${q.ans},${i})">
+        <span class="mcq-letter">${letters[j]}</span>${o}
+      </div>`).join('');
+    container.innerHTML += `
+      <div class="mcq" id="mcq-${i}">
+        <div class="mcq-q">
+          <div class="mcq-num">Q${i+1} of ${mcqs.length} <span class="mcq-difficulty ${diffClass}">[${q.diff.toUpperCase()}]</span></div>
+          ${q.q}
+        </div>
+        <div class="mcq-options">${opts}</div>
+        <div class="mcq-explanation" id="exp-${i}">💡 <strong>Explanation:</strong> ${q.exp}</div>
+      </div>`;
+  });
+}
+
+function answerMCQ(el, chosen, correct, qIdx) {
+  const opts = el.parentElement.querySelectorAll('.mcq-opt');
+  opts.forEach((o, j) => {
+    o.classList.add('revealed');
+    if (j === correct) o.classList.add('correct');
+    else if (j === chosen && chosen !== correct) o.classList.add('wrong');
+  });
+  const exp = document.getElementById(`exp-${qIdx}`);
+  exp.classList.add('show');
+  if (chosen === correct) scoreCount++;
+  answered++;
+  document.getElementById('scoreNum').textContent = scoreCount;
+  const pct = Math.round((scoreCount / answered) * 100);
+  document.getElementById('scoreBar').style.width = pct + '%';
+}
+
+// ── BUILD WRITTEN ──
+function buildWritten() {
+  const container = document.getElementById('written-container');
+  written.forEach((w, i) => {
+    const tagColor = w.type === 'Long' ? 'gold' : 'green';
+    container.innerHTML += `
+      <div class="wq">
+        <div class="wq-q" onclick="toggleWritten(${i})">
+          <span><span class="tag ${tagColor}">${w.type} Answer</span> Q${i+1}: ${w.q}</span>
+          <span style="color:var(--accent);font-size:1.2rem" id="wq-arrow-${i}">▼</span>
+        </div>
+        <div class="wq-answer" id="wq-ans-${i}">
+          ${w.a.replace(/\n/g,'<br><br>')}
+        </div>
+      </div>`;
+  });
+}
+
+function toggleWritten(i) {
+  const ans = document.getElementById(`wq-ans-${i}`);
+  const arrow = document.getElementById(`wq-arrow-${i}`);
+  const isOpen = ans.classList.contains('show');
+  ans.classList.toggle('show', !isOpen);
+  arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+// ── INIT ──
+buildMCQ();
+buildWritten();
+</script>
+</body>
+</html>
