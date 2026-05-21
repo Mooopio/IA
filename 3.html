@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Interaction Models — Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161e;
+    --bg3: #1a1e2a;
+    --bg4: #222636;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf2;
+    --text2: #9ba3bf;
+    --text3: #636b8a;
+    --accent: #6c8ef5;
+    --accent2: #4a6ee0;
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --teal: #2dd4bf;
+    --purple: #a78bfa;
+    --orange: #fb923c;
+    --font-display: 'DM Serif Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  [data-theme="light"] {
+    --bg: #f5f6fa;
+    --bg2: #ffffff;
+    --bg3: #eef0f7;
+    --bg4: #e2e5f0;
+    --border: rgba(0,0,0,0.07);
+    --border2: rgba(0,0,0,0.12);
+    --text: #1a1e2e;
+    --text2: #4a5175;
+    --text3: #8890b0;
+    --accent: #3b5bdb;
+    --accent2: #2f4ac7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+  /* ── TOP NAV ── */
+  header {
+    position: sticky; top:0; z-index:100;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    height: 58px;
+  }
+  .logo { font-family: var(--font-display); font-size: 1.15rem; color: var(--text); white-space: nowrap; }
+  .logo span { color: var(--accent); }
+  nav { display:flex; gap:4px; flex:1; flex-wrap:wrap; }
+  nav button {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text2); font-family: var(--font-body); font-size: 0.78rem;
+    padding: 6px 12px; border-radius: 6px; transition: all 0.18s; font-weight: 500;
+    white-space: nowrap;
+  }
+  nav button:hover { background: var(--bg3); color: var(--text); }
+  nav button.active { background: var(--accent); color: #fff; }
+  .theme-btn {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text2); cursor: pointer; padding: 6px 12px;
+    border-radius: 6px; font-family: var(--font-body); font-size: 0.78rem;
+    white-space: nowrap; transition: all 0.18s;
+  }
+  .theme-btn:hover { color: var(--text); }
+  /* ── SECTIONS ── */
+  section { display: none; max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  section.active { display: block; }
+  /* ── TYPOGRAPHY ── */
+  h1 { font-family: var(--font-display); font-size: 2.2rem; line-height:1.2; margin-bottom:0.5rem; }
+  h2 { font-family: var(--font-display); font-size: 1.55rem; margin: 2.5rem 0 1rem; color: var(--text); }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.6rem; color: var(--accent); }
+  p { line-height: 1.75; color: var(--text2); margin-bottom: 0.75rem; }
+  strong { color: var(--text); font-weight: 600; }
+  code { font-family: var(--font-mono); font-size: 0.82rem; background: var(--bg3); border: 1px solid var(--border); padding: 2px 7px; border-radius: 4px; color: var(--teal); }
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.4rem 1.6rem; margin-bottom: 1rem;
+  }
+  .card-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1rem; margin-bottom: 1rem; }
+  .tag { display:inline-block; font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:4px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
+  .tag-blue { background: rgba(108,142,245,0.15); color: var(--accent); }
+  .tag-green { background: rgba(74,222,128,0.12); color: var(--green); }
+  .tag-purple { background: rgba(167,139,250,0.12); color: var(--purple); }
+  .tag-orange { background: rgba(251,146,60,0.12); color: var(--orange); }
+  .tag-teal { background: rgba(45,212,191,0.12); color: var(--teal); }
+  /* ── CALLOUTS ── */
+  .callout { border-left: 3px solid; padding: 0.9rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1.1rem 0; }
+  .callout.info { border-color: var(--accent); background: rgba(108,142,245,0.07); }
+  .callout.warn { border-color: var(--yellow); background: rgba(251,191,36,0.07); }
+  .callout.tip { border-color: var(--green); background: rgba(74,222,128,0.07); }
+  .callout.danger { border-color: var(--red); background: rgba(248,113,113,0.07); }
+  .callout p { margin:0; font-size: 0.93rem; }
+  .callout strong { color: inherit; }
+  /* ── TABLE ── */
+  .tbl-wrap { overflow-x:auto; margin: 1rem 0; }
+  table { width:100%; border-collapse:collapse; font-size: 0.88rem; }
+  th { background: var(--bg3); color: var(--text); font-weight:600; padding: 10px 14px; text-align:left; border-bottom: 1px solid var(--border2); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align:top; }
+  tr:last-child td { border-bottom: none; }
+  /* ── BULLET LISTS ── */
+  ul.nice { list-style:none; padding:0; }
+  ul.nice li { position:relative; padding-left: 1.4rem; margin-bottom: 0.5rem; color: var(--text2); line-height:1.65; font-size:0.93rem; }
+  ul.nice li::before { content:''; position:absolute; left:0; top:0.6rem; width:6px; height:6px; border-radius:50%; background: var(--accent); opacity:0.7; }
+  /* ── STEP BLOCKS ── */
+  .steps { counter-reset: step; }
+  .step { display:flex; gap: 1rem; margin-bottom: 1.2rem; }
+  .step-num { min-width:32px; height:32px; border-radius:50%; background: var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; flex-shrink:0; margin-top:2px; }
+  .step-body h4 { font-size:0.95rem; font-weight:600; margin-bottom:4px; color: var(--text); }
+  .step-body p { font-size:0.9rem; margin:0; }
+  /* ── MNEMONIC BOX ── */
+  .mnemonic { background: var(--bg3); border: 1px solid var(--border2); border-radius:10px; padding:1.1rem 1.4rem; margin:1rem 0; }
+  .mnemonic .label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color: var(--yellow); margin-bottom:6px; }
+  .mnemonic .word { font-family: var(--font-display); font-size:1.6rem; color: var(--text); letter-spacing:.05em; }
+  .mnemonic p { margin-top:6px; font-size:0.88rem; }
+  /* ── MCQ ── */
+  .mcq-progress { background: var(--bg3); border-radius:100px; height:6px; margin-bottom:1.5rem; overflow:hidden; }
+  .mcq-progress-bar { height:100%; background: var(--accent); border-radius:100px; transition: width 0.4s; }
+  .mcq-stats { display:flex; gap:1.5rem; margin-bottom:1.5rem; font-size:0.85rem; color: var(--text2); }
+  .mcq-stats span strong { font-size:1.1rem; }
+  .question-card { background: var(--bg2); border: 1px solid var(--border); border-radius:12px; padding:1.4rem 1.6rem; margin-bottom:1rem; transition: border-color 0.2s; }
+  .question-card .q-num { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color: var(--text3); margin-bottom:8px; }
+  .question-card .q-diff { float:right; font-size:0.7rem; font-weight:600; padding:2px 7px; border-radius:4px; }
+  .diff-easy { background:rgba(74,222,128,0.12); color:var(--green); }
+  .diff-medium { background:rgba(251,191,36,0.12); color:var(--yellow); }
+  .diff-hard { background:rgba(248,113,113,0.12); color:var(--red); }
+  .q-text { font-size:0.97rem; color:var(--text); font-weight:500; margin-bottom:1rem; line-height:1.55; }
+  .options { display:grid; gap:8px; }
+  .opt-btn {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius:8px; padding:10px 14px; text-align:left;
+    cursor:pointer; color:var(--text2); font-family:var(--font-body);
+    font-size:0.88rem; transition:all 0.15s; display:flex; gap:10px; align-items:flex-start;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
+  .opt-btn .opt-letter { font-weight:700; color: var(--accent); min-width:18px; font-size:0.82rem; margin-top:1px; }
+  .opt-btn.correct { border-color: var(--green); background: rgba(74,222,128,0.09); color: var(--text); }
+  .opt-btn.wrong { border-color: var(--red); background: rgba(248,113,113,0.09); }
+  .opt-btn:disabled { cursor:default; }
+  .explanation { margin-top:12px; padding:12px 14px; background: var(--bg3); border-radius:8px; font-size:0.87rem; color: var(--text2); line-height:1.6; border-left:3px solid var(--accent); display:none; }
+  .explanation.visible { display:block; }
+  /* ── WRITTEN QS ── */
+  .written-q { background: var(--bg2); border: 1px solid var(--border); border-radius:12px; margin-bottom:1rem; overflow:hidden; }
+  .written-q-header { padding:1.1rem 1.4rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.15s; }
+  .written-q-header:hover { background: var(--bg3); }
+  .written-q-header h4 { font-size:0.95rem; font-weight:500; color: var(--text); flex:1; line-height:1.45; }
+  .written-q-header .toggle-icon { color: var(--text3); font-size:1.1rem; transition: transform 0.25s; }
+  .written-q-header.open .toggle-icon { transform: rotate(180deg); }
+  .written-q-body { padding:0 1.4rem; max-height:0; overflow:hidden; transition: max-height 0.35s ease, padding 0.25s; }
+  .written-q-body.open { padding: 0.2rem 1.4rem 1.2rem; max-height:2000px; }
+  .model-answer { background: var(--bg3); border-radius:8px; padding:1rem 1.2rem; margin-top:0.8rem; font-size:0.88rem; color: var(--text2); line-height:1.7; }
+  .model-answer strong { color: var(--teal); display:block; margin-bottom:6px; font-size:0.78rem; text-transform:uppercase; letter-spacing:.07em; }
+  /* ── REVISION ── */
+  .rev-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
+  .rev-card { background: var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.4rem; }
+  .rev-card h3 { color: var(--text); font-size:0.9rem; margin:0 0 10px; font-weight:600; border-bottom:1px solid var(--border); padding-bottom:8px; }
+  .rev-item { display:flex; justify-content:space-between; gap:8px; padding:5px 0; border-bottom:1px solid var(--border); font-size:0.83rem; }
+  .rev-item:last-child { border:none; }
+  .rev-item .rk { color: var(--text2); flex:1; }
+  .rev-item .rv { color: var(--accent); font-weight:500; text-align:right; }
+  .cheat-sheet { background: linear-gradient(135deg, rgba(108,142,245,0.1), rgba(45,212,191,0.06)); border:1px solid rgba(108,142,245,0.25); border-radius:14px; padding:1.5rem; margin-top:1.5rem; }
+  .cheat-sheet h3 { color: var(--accent); font-family: var(--font-display); font-size:1.2rem; margin-bottom:1rem; }
+  /* ── HERO ── */
+  .hero-tag { display:inline-block; background: rgba(108,142,245,0.15); color: var(--accent); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; padding:4px 12px; border-radius:4px; margin-bottom:1rem; }
+  .hero-sub { color: var(--text2); font-size:1rem; margin-top:0.5rem; line-height:1.6; }
+  .section-divider { height:1px; background: var(--border); margin: 2rem 0; }
+  .badge-row { display:flex; flex-wrap:wrap; gap:8px; margin:1rem 0; }
+  .badge { background:var(--bg3); border:1px solid var(--border2); border-radius:6px; padding:4px 12px; font-size:0.8rem; color:var(--text2); }
+  /* ── TIMELINE ── */
+  .timeline { position:relative; padding-left:2rem; }
+  .timeline::before { content:''; position:absolute; left:7px; top:0; bottom:0; width:2px; background:var(--border2); border-radius:2px; }
+  .tl-item { position:relative; padding-bottom:1.2rem; }
+  .tl-dot { position:absolute; left:-1.95rem; top:3px; width:14px; height:14px; border-radius:50%; background:var(--accent); border:2px solid var(--bg); }
+  .tl-year { font-size:0.75rem; font-weight:700; color:var(--accent); margin-bottom:2px; }
+  .tl-text { font-size:0.88rem; color:var(--text2); line-height:1.55; }
+  /* ── score display ── */
+  .score-box { text-align:center; padding:1.5rem; background: var(--bg3); border-radius:12px; margin-bottom:1.5rem; }
+  .score-box .score-num { font-family: var(--font-display); font-size: 3rem; color: var(--accent); }
+  .score-box p { margin:0; color:var(--text2); font-size:0.88rem; }
+  .reset-btn { background: var(--bg3); border:1px solid var(--border2); color:var(--text2); cursor:pointer; padding:8px 18px; border-radius:7px; font-family:var(--font-body); font-size:0.85rem; margin-bottom:1.5rem; transition:all 0.15s; }
+  .reset-btn:hover { color:var(--text); border-color:var(--accent); }
+  @media(max-width:600px){
+    h1{font-size:1.6rem;} h2{font-size:1.25rem;}
+    section{padding:1.5rem 1rem 3rem;}
+    nav button{font-size:0.72rem;padding:5px 8px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Web<span>Interaction</span> Models</div>
+  <nav id="nav">
+    <button class="active" onclick="showSection('explain',this)">📖 Explanation</button>
+    <button onclick="showSection('summary',this)">📋 Summary</button>
+    <button onclick="showSection('memory',this)">🧠 Memory</button>
+    <button onclick="showSection('mcq',this)">❓ MCQs</button>
+    <button onclick="showSection('written',this)">✍️ Written</button>
+    <button onclick="showSection('revision',this)">⚡ Revision</button>
+  </nav>
+  <button class="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+</header>
+
+<!-- ══════════════════ SECTION 1: EXPLANATION ══════════════════ -->
+<section id="explain" class="active">
+  <div class="hero-tag">Phase 1 — Deep Understanding</div>
+  <h1>Interaction Models in the WWW</h1>
+  <p class="hero-sub">A complete, deeply explained guide to how web applications communicate — from classic synchronous clicks to real-time bidirectional WebSockets.</p>
+  
+  <h2>What is Interaction?</h2>
+  <p>Interaction on the web involves <strong>two layers of communication</strong>: the user interacting with an application (e.g., clicking a button), and the client (browser) communicating with the server (exchanging data). Both layers can work in very different ways depending on the model used.</p>
+
+  <div class="card-row">
+    <div class="card">
+      <div class="tag tag-blue">Layer 1</div>
+      <h3 style="margin-top:4px">User ↔ Application</h3>
+      <p>The user performs actions (clicks, typing) that trigger the application to respond. The key question: <strong>is the user blocked</strong> while waiting for a response?</p>
+    </div>
+    <div class="card">
+      <div class="tag tag-purple">Layer 2</div>
+      <h3 style="margin-top:4px">Client ↔ Server</h3>
+      <p>Data is exchanged between the browser and web server. The key question: <strong>does every update require a new HTTP request?</strong></p>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h2>Model 1 — Synchronous (Classic Web)</h2>
+  <div class="tag tag-orange">Click, Wait, and Refresh</div>
+  <p style="margin-top:0.7rem">This is the oldest model. Think of it like a <strong>vending machine</strong>: you insert a coin (click), the machine processes it (server works), and a product drops out (full page reloads). You can't do anything while you wait.</p>
+
+  <div class="callout info">
+    <p><strong>Definition:</strong> In the synchronous model, every user action that needs data triggers a full HTTP Request. The user is <em>blocked</em> (cannot interact with the page) until a complete new HTML page is returned and rendered.</p>
+  </div>
+
+  <h3>How it works step-by-step</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-body"><h4>User clicks</h4><p>The browser generates a full HTTP Request to the web server.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Server processes</h4><p>The server handles the request (queries a database, runs logic) and generates a complete HTML page response.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Browser refreshes</h4><p>The entire page is replaced with the new (X)HTML page. All context (scroll position, input state) is lost.</p></div></div>
+  </div>
+
+  <h3>Shortcomings</h3>
+  <ul class="nice">
+    <li><strong>Slow performance</strong> — the "click, wait, refresh" cycle adds noticeable latency</li>
+    <li><strong>Loss of context</strong> — full page refresh destroys scroll position, form state, etc.</li>
+    <li><strong>Excessive server load</strong> — entire pages are sent even if only one field changed</li>
+    <li><strong>Low interactivity</strong> — user is blocked during every server round-trip</li>
+  </ul>
+
+  <div class="section-divider"></div>
+  <h2>Model 2 — Non-Blocking (AJAX)</h2>
+  <div class="tag tag-blue">Asynchronous JavaScript + XML</div>
+  <p style="margin-top:0.7rem">AJAX is like a <strong>waiter at a restaurant</strong>. You place an order (user action), the waiter takes it to the kitchen (AJAX engine sends HTTP request), and you can keep talking to your friends (user continues interacting) while the food is being prepared. The waiter brings results back without you needing to go to the kitchen yourself.</p>
+
+  <h3>History of AJAX</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1999</div><div class="tl-text">Microsoft's "Outlook Web Access" was the first AJAX-like app using the XMLHttpRequest approach. Only IE supported it.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2002</div><div class="tl-text">Mozilla and Netscape implemented native XMLHttpRequest in their browsers (Mozilla 1.0, Netscape 7), but it didn't gain traction.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2005</div><div class="tl-text">Jesse James Garrett coined "AJAX" in an article. Google Suggest and Google Maps demonstrated its power → mass popularity.</div></div>
+  </div>
+
+  <h3>AJAX Definition (J.J. Garrett)</h3>
+  <div class="callout info">
+    <p>"AJAX isn't a technology. It's really several technologies, each flourishing in its own right, coming together in powerful new ways."</p>
+  </div>
+  <div class="badge-row">
+    <div class="badge">XHTML + CSS (presentation)</div>
+    <div class="badge">DOM (dynamic display)</div>
+    <div class="badge">XML + XSLT (data interchange)</div>
+    <div class="badge">XMLHttpRequest (async retrieval)</div>
+    <div class="badge">JavaScript (glue)</div>
+  </div>
+
+  <h3>The AJAX Engine — Key Concept</h3>
+  <p>AJAX introduces an <strong>intermediary engine</strong> in the browser between the user interface and the server. The engine:</p>
+  <ul class="nice">
+    <li>Intercepts user actions as JavaScript calls (not direct HTTP requests)</li>
+    <li>Can handle simple tasks locally (data validation, memory edits) without contacting the server</li>
+    <li>When server data is needed, it sends an HTTP Request <em>asynchronously</em> — the user is not blocked</li>
+    <li>Receives XML or text data (not full HTML pages) and updates only the relevant part of the DOM</li>
+  </ul>
+
+  <h3>XMLHttpRequest Object — The Heart of AJAX</h3>
+  <p>The <code>XMLHttpRequest</code> object provides a client-side API for transferring data behind the scenes without a full page refresh.</p>
+  
+  <div class="card">
+    <div class="tag tag-teal">Key Methods</div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Method</th><th>Description</th></tr>
+        <tr><td><code>open(method, URL, async)</code></td><td>Pre-sets up a connection. Method = GET or POST. async=true for non-blocking.</td></tr>
+        <tr><td><code>send(data)</code></td><td>Activates the request. For GET pass null; for POST pass key=value pairs.</td></tr>
+        <tr><td><code>abort()</code></td><td>Cancels the current ongoing request.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tag tag-purple">Key Properties</div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Property</th><th>Description</th><th>Values</th></tr>
+        <tr><td><code>readyState</code></td><td>Current status of the HTTP request processing</td><td>0=Uninitialized, 1=Loading, 2=Loaded, 3=Interactive, 4=Complete</td></tr>
+        <tr><td><code>onreadystatechange</code></td><td>Event handler pointing to callback function fired when readyState changes</td><td>Function reference</td></tr>
+        <tr><td><code>responseText</code></td><td>Server response as a string</td><td>String</td></tr>
+        <tr><td><code>responseXML</code></td><td>Server response in XML format</td><td>XML Document</td></tr>
+        <tr><td><code>status</code></td><td>Numeric HTTP status code</td><td>200, 404, 500, etc.</td></tr>
+        <tr><td><code>statusText</code></td><td>Text version of HTTP status</td><td>"OK", "Not Found", etc.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <p><strong>⚠️ Exam Trap:</strong> The default value of the <code>async</code> parameter in <code>open()</code> is <code>false</code> (synchronous). To make it truly non-blocking, you must explicitly pass <code>true</code>.</p>
+  </div>
+
+  <h3>IE Compatibility — Important Detail</h3>
+  <ul class="nice">
+    <li>IE5/IE6: used <code>ActiveXObject("Msxml2.XMLHTTP")</code></li>
+    <li>Older IE: used <code>ActiveXObject("Microsoft.XMLHTTP")</code></li>
+    <li>IE7+: supports native <code>XMLHttpRequest</code></li>
+  </ul>
+
+  <h3>JSON — Alternative to XML</h3>
+  <p>The X in AJAX stands for XML, but XML creates unnecessary overhead. <strong>JSON (JavaScript Object Notation)</strong> is the preferred modern alternative.</p>
+  <div class="callout tip">
+    <p><strong>JSON advantages:</strong> Lighter/more compact than XML · Faster parsing (native JS data structures) · Language-independent but uses C-family conventions</p>
+  </div>
+  <p>JSON supports: <strong>Objects</strong> <code>{}</code>, <strong>Arrays</strong> <code>[]</code>, <strong>Strings</strong> <code>""</code>, Numbers, Booleans (<code>true</code>/<code>false</code>), and nested structures.</p>
+
+  <div class="callout warn">
+    <p><strong>AJAX Limitation:</strong> Although user actions are async, there is still a <em>high degree of dependence</em> between HTTP Request and Response — every server update still requires a full request/response round-trip from the AJAX engine.</p>
+  </div>
+
+  <div class="section-divider"></div>
+  <h2>Model 3 — Asynchronous (Comet & WebSockets)</h2>
+  <div class="tag tag-green">True Push & Bidirectional</div>
+  
+  <h3>Comet — Server Push</h3>
+  <p>Named by Alex Russell (Dojo Toolkit) in a 2006 blog post. Like a <strong>news ticker on TV</strong>: the TV station (server) pushes breaking news to your screen without you switching channels or pressing anything.</p>
+  
+  <div class="callout info">
+    <p><strong>Definition:</strong> Comet enables web servers to send data to the client after only an initial HTTP Request, without the client needing to repeatedly request updates. Minimum dependence between request and response.</p>
+  </div>
+
+  <ul class="nice">
+    <li>Uses <strong>long-lived HTTP connections</strong> — a connection stays open, and the server pushes data when events occur ("server push" / "HTTP streaming")</li>
+    <li>A <strong>second connection</strong> is needed for the client to upload data to the server</li>
+    <li>Use cases: real-time chat, stock exchange apps, live bidding (eBay), live sports scores</li>
+    <li>Shortcomings: overhead from HTTP headers, inefficiency of long-polling</li>
+  </ul>
+
+  <h3>WebSockets — The Modern Solution</h3>
+  <p>WebSockets are like a <strong>phone call</strong> instead of sending letters (HTTP). Once connected, both sides can talk freely in real time, simultaneously, without hanging up and calling back for each message.</p>
+
+  <div class="callout tip">
+    <p><strong>WebSocket advantages over Comet:</strong> No HTTP header overhead per message · True bidirectional (full-duplex) communication · Single connection for both sending and receiving · Part of HTML5</p>
+  </div>
+
+  <h3>WebSocket Protocol Specifications</h3>
+  <div class="card-row">
+    <div class="card">
+      <div class="tag tag-blue">IETF RFC 6455</div>
+      <p>Defines the <strong>protocol</strong>: how to establish the connection (handshake) and how data is exchanged as frames.</p>
+    </div>
+    <div class="card">
+      <div class="tag tag-purple">W3C</div>
+      <p>Defines the <strong>JavaScript API</strong>: the programming interface developers use in browsers.</p>
+    </div>
+  </div>
+
+  <h3>WebSocket Handshake — Step by Step</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Client sends HTTP Upgrade Request</h4><p>Browser sends a special HTTP GET with headers: <code>Upgrade: websocket</code>, <code>Connection: Upgrade</code>, and a randomly generated Base64-encoded key in <code>Sec-WebSocket-Key</code>.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Server responds: 101 Switching Protocols</h4><p>Server confirms the switch. It concatenates the client's key with the fixed string <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code>, applies SHA-1 hashing, and Base64-encodes the result as <code>Sec-WebSocket-Accept</code>.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><h4>WebSocket connection established</h4><p>The TCP connection is now upgraded to a WebSocket connection. Binary or UTF-8 messages can be exchanged in full-duplex mode on this single connection.</p></div></div>
+  </div>
+
+  <h3>WebSocket JavaScript API</h3>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>API Element</th><th>Type</th><th>Description</th></tr>
+      <tr><td><code>new WebSocket(url)</code></td><td>Constructor</td><td>Creates a WebSocket and starts connection to the specified server URL (<code>ws://</code> or <code>wss://</code>)</td></tr>
+      <tr><td><code>onopen</code></td><td>Event handler</td><td>Called when connection is established</td></tr>
+      <tr><td><code>onclose</code></td><td>Event handler</td><td>Called when connection is closed</td></tr>
+      <tr><td><code>onerror</code></td><td>Event handler</td><td>Called when a connection or communication error occurs</td></tr>
+      <tr><td><code>onmessage</code></td><td>Event handler</td><td>Called when a message arrives from the server</td></tr>
+      <tr><td><code>send(string)</code></td><td>Method</td><td>Sends a message to the server</td></tr>
+      <tr><td><code>close()</code></td><td>Method</td><td>Closes the WebSocket connection</td></tr>
+    </table>
+  </div>
+
+  <div class="section-divider"></div>
+  <h2>The Big Picture — Comparison</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Criterion</th><th>Synchronous</th><th>AJAX (Non-blocking)</th><th>Comet / WebSockets</th></tr>
+      <tr><td>User blocked?</td><td>✅ Yes (blocked)</td><td>❌ No (free)</td><td>❌ No (free)</td></tr>
+      <tr><td>HTTP Request required per update?</td><td>Every update</td><td>Every server update</td><td>Minimum / None after init</td></tr>
+      <tr><td>Request/Response dependence</td><td>High</td><td>High</td><td>Minimum</td></tr>
+      <tr><td>Data transferred</td><td>Full HTML page</td><td>XML / JSON fragments</td><td>Small frames/events</td></tr>
+      <tr><td>Connection type</td><td>Short-lived</td><td>Short-lived</td><td>Long-lived / Persistent</td></tr>
+      <tr><td>Bidirectional?</td><td>No</td><td>No</td><td>WebSockets: Yes</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 2: SUMMARY ══════════════════ -->
+<section id="summary">
+  <div class="hero-tag">Phase 2 — Smart Summary</div>
+  <h1>High-Yield Summary</h1>
+
+  <h2>🌐 Interaction Layers</h2>
+  <ul class="nice">
+    <li><strong>User ↔ Application:</strong> Is the user blocked during updates?</li>
+    <li><strong>Client ↔ Server:</strong> Is a new HTTP request needed for every server update?</li>
+  </ul>
+
+  <h2>📌 Model 1: Synchronous (Classic)</h2>
+  <div class="card">
+    <ul class="nice">
+      <li><strong>Paradigm:</strong> "Click, Wait, and Refresh"</li>
+      <li><strong>User blocked:</strong> Yes</li>
+      <li><strong>HTTP dependence:</strong> High — every update = new request + full page response</li>
+      <li><strong>Problems:</strong> Slow, loses context, excessive server load, low interactivity</li>
+    </ul>
+  </div>
+
+  <h2>📌 Model 2: Non-Blocking (AJAX)</h2>
+  <div class="card">
+    <ul class="nice">
+      <li><strong>Full name:</strong> Asynchronous JavaScript + XML</li>
+      <li><strong>Coined by:</strong> Jesse James Garrett, 2005</li>
+      <li><strong>First use:</strong> Microsoft Outlook Web Access, 1999</li>
+      <li><strong>Key innovation:</strong> AJAX engine as intermediary — decouples user actions from server communication</li>
+      <li><strong>User blocked:</strong> No</li>
+      <li><strong>HTTP dependence:</strong> Still high — every server update needs a request/response round-trip</li>
+      <li><strong>Heart of AJAX:</strong> <code>XMLHttpRequest</code> object</li>
+      <li><strong>Critical readyState:</strong> 4 (Complete) + status 200 = success</li>
+      <li><strong>JSON vs XML:</strong> JSON preferred — lighter, faster parsing</li>
+      <li><strong>Technologies:</strong> XHTML/CSS + DOM + XML/XSLT + XMLHttpRequest + JavaScript</li>
+    </ul>
+  </div>
+
+  <h2>📌 Model 3: Asynchronous (Comet + WebSockets)</h2>
+  <div class="card">
+    <ul class="nice">
+      <li><strong>Comet</strong> coined by Alex Russell, March 2006 (Dojo Toolkit)</li>
+      <li><strong>Comet approach:</strong> Long-lived connections; server pushes data without client request</li>
+      <li><strong>Comet shortcomings:</strong> HTTP header overhead, long-polling inefficiency</li>
+      <li><strong>WebSockets:</strong> TCP-based, bidirectional, full-duplex; part of HTML5</li>
+      <li><strong>Protocol spec:</strong> IETF RFC 6455</li>
+      <li><strong>API spec:</strong> W3C</li>
+      <li><strong>Handshake:</strong> HTTP Upgrade → 101 Switching Protocols → WebSocket messages</li>
+      <li><strong>Key response code:</strong> 101 Switching Protocols</li>
+      <li><strong>User blocked:</strong> No</li>
+      <li><strong>HTTP dependence:</strong> Minimum (only initial handshake)</li>
+    </ul>
+  </div>
+
+  <h2>🔑 XMLHttpRequest readyState Values</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Value</th><th>State</th><th>Meaning</th></tr>
+      <tr><td>0</td><td>Uninitialized</td><td>Object created, <code>open()</code> not called</td></tr>
+      <tr><td>1</td><td>Loading</td><td><code>open()</code> called, request not sent</td></tr>
+      <tr><td>2</td><td>Loaded</td><td>Request sent</td></tr>
+      <tr><td>3</td><td>Interactive</td><td>Partial response received</td></tr>
+      <tr><td>4</td><td>Complete</td><td>All data received, connection closed</td></tr>
+    </table>
+  </div>
+
+  <h2>🔑 WebSocket Handshake Details</h2>
+  <ul class="nice">
+    <li>Client sends <code>Upgrade: websocket</code> in HTTP GET request</li>
+    <li>Client generates random Base64-encoded <code>Sec-WebSocket-Key</code></li>
+    <li>Server concatenates key + <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code></li>
+    <li>Server returns SHA-1 hash (Base64-encoded) as <code>Sec-WebSocket-Accept</code></li>
+    <li>Server responds with HTTP 101 Switching Protocols</li>
+    <li>Connection becomes full-duplex WebSocket over TCP</li>
+  </ul>
+</section>
+
+<!-- ══════════════════ SECTION 3: MEMORY ══════════════════ -->
+<section id="memory">
+  <div class="hero-tag">Phase 3 — Memory Optimization</div>
+  <h1>Memory Tricks & Traps</h1>
+
+  <h2>🧩 Mnemonics</h2>
+  
+  <div class="mnemonic">
+    <div class="label">Mnemonic — AJAX Technologies</div>
+    <div class="word">X · D · A · J · C</div>
+    <p><strong>X</strong>HTML/CSS · <strong>D</strong>OM · <strong>A</strong>synchronous XMLHttpRequest · <strong>J</strong>avaScript · <strong>C</strong>ross-data (XML/XSLT)</p>
+  </div>
+
+  <div class="mnemonic">
+    <div class="label">Mnemonic — readyState 0→4</div>
+    <div class="word">Un · Lo · La · In · Com</div>
+    <p>0=<strong>Un</strong>initialized · 1=<strong>Lo</strong>ading · 2=<strong>La</strong>ded · 3=<strong>In</strong>teractive · 4=<strong>Com</strong>plete</p>
+  </div>
+
+  <div class="mnemonic">
+    <div class="label">Mnemonic — WebSocket Handshake Steps</div>
+    <div class="word">U · S · W</div>
+    <p><strong>U</strong>pgrade request → <strong>S</strong>witch protocol (101) → <strong>W</strong>ebSocket connection live</p>
+  </div>
+
+  <h2>🪤 Common Exam Traps</h2>
+  <div class="card">
+    <div class="tag tag-orange">⚠️ Trap 1</div>
+    <h3 style="margin-top:6px">AJAX is NOT fully asynchronous</h3>
+    <p>AJAX decouples user actions from server communication (user is not blocked), BUT there is still a high degree of dependence between each HTTP Request and Response. Every server-side update still needs a request. True async with minimal dependence = Comet/WebSockets.</p>
+  </div>
+  <div class="card">
+    <div class="tag tag-orange">⚠️ Trap 2</div>
+    <h3 style="margin-top:6px">Default async in <code>open()</code> is FALSE</h3>
+    <p>The signature is <code>open("GET", url, async)</code>. The async parameter defaults to <code>false</code> (synchronous). Must explicitly pass <code>true</code> for async behavior.</p>
+  </div>
+  <div class="card">
+    <div class="tag tag-orange">⚠️ Trap 3</div>
+    <h3 style="margin-top:6px">Comet ≠ a specific technology</h3>
+    <p>Comet is a buzzword/umbrella term (like AJAX) for server-push techniques. It doesn't stand for anything and doesn't define a specific technology.</p>
+  </div>
+  <div class="card">
+    <div class="tag tag-orange">⚠️ Trap 4</div>
+    <h3 style="margin-top:6px">WebSocket uses TCP, not HTTP</h3>
+    <p>The <em>handshake</em> uses HTTP, but the subsequent WebSocket connection is a TCP-based protocol — not HTTP anymore. The HTTP connection is "upgraded" to a WebSocket connection.</p>
+  </div>
+  <div class="card">
+    <div class="tag tag-orange">⚠️ Trap 5</div>
+    <h3 style="margin-top:6px">readyState 4 ≠ success alone</h3>
+    <p>You must check BOTH <code>readyState == 4</code> AND <code>status == 200</code>. readyState 4 just means the request is complete — it could be a 404 or 500 error.</p>
+  </div>
+  <div class="card">
+    <div class="tag tag-orange">⚠️ Trap 6</div>
+    <h3 style="margin-top:6px">Comet needs TWO connections</h3>
+    <p>The long-lived connection is only for server→client data push. A <em>second separate HTTP connection</em> is required for client→server data upload.</p>
+  </div>
+
+  <h2>📊 Comparison Table for Quick Recall</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Feature</th><th>Sync</th><th>AJAX</th><th>Comet</th><th>WebSocket</th></tr>
+      <tr><td>User blocked</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Request per update</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Full page reload</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Server push</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Bidirectional</td><td>❌</td><td>❌</td><td>Partial</td><td>✅</td></tr>
+      <tr><td>Connection type</td><td>Short</td><td>Short</td><td>Long</td><td>Persistent TCP</td></tr>
+      <tr><td>Standard</td><td>HTTP</td><td>XMLHttpRequest</td><td>Long-polling</td><td>RFC 6455 + W3C</td></tr>
+    </table>
+  </div>
+
+  <h2>🔄 Spaced Repetition Hints</h2>
+  <div class="card-row">
+    <div class="card">
+      <div class="tag tag-blue">Review Today</div>
+      <ul class="nice">
+        <li>3 communication model names</li>
+        <li>readyState 0–4 meanings</li>
+        <li>WebSocket handshake steps</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="tag tag-purple">Review in 3 Days</div>
+      <ul class="nice">
+        <li>XMLHttpRequest methods & properties</li>
+        <li>AJAX vs Comet dependence comparison</li>
+        <li>JSON structure vs XML</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="tag tag-green">Review in 7 Days</div>
+      <ul class="nice">
+        <li>Full AJAX Hello World code flow</li>
+        <li>WebSocket API event handlers</li>
+        <li>IETF RFC 6455 vs W3C roles</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 4: MCQs ══════════════════ -->
+<section id="mcq">
+  <div class="hero-tag">Phase 4 — Exam Training</div>
+  <h1>Multiple Choice Questions</h1>
+  <p>Click an option to reveal the answer. Track your score below.</p>
+
+  <div class="score-box">
+    <div class="score-num"><span id="score-correct">0</span> / <span id="score-total">0</span></div>
+    <p>Questions answered · <span id="score-pct">—</span> correct</p>
+  </div>
+  <div class="mcq-progress"><div class="mcq-progress-bar" id="mcq-progress-bar" style="width:0%"></div></div>
+  <button class="reset-btn" onclick="resetMCQ()">↺ Reset All Questions</button>
+
+  <div id="mcq-container"></div>
+</section>
+
+<!-- ══════════════════ SECTION 5: WRITTEN ══════════════════ -->
+<section id="written">
+  <div class="hero-tag">Phase 4 — Written Questions</div>
+  <h1>Written Questions & Model Answers</h1>
+  <p>Click a question to expand the model answer.</p>
+  <div id="written-container"></div>
+</section>
+
+<!-- ══════════════════ SECTION 6: REVISION ══════════════════ -->
+<section id="revision">
+  <div class="hero-tag">Phase 5 — Rapid Revision</div>
+  <h1>⚡ Night-Before Cheat Sheet</h1>
+  
+  <div class="rev-grid">
+    <div class="rev-card">
+      <h3>3 Models at a Glance</h3>
+      <div class="rev-item"><span class="rk">Synchronous</span><span class="rv">Click → Wait → Full Reload</span></div>
+      <div class="rev-item"><span class="rk">AJAX</span><span class="rv">Async XHR, partial update</span></div>
+      <div class="rev-item"><span class="rk">Comet</span><span class="rv">Server push, long connection</span></div>
+      <div class="rev-item"><span class="rk">WebSockets</span><span class="rv">TCP, bidirectional, HTML5</span></div>
+    </div>
+    <div class="rev-card">
+      <h3>readyState Values</h3>
+      <div class="rev-item"><span class="rk">0</span><span class="rv">Uninitialized</span></div>
+      <div class="rev-item"><span class="rk">1</span><span class="rv">Loading (open called)</span></div>
+      <div class="rev-item"><span class="rk">2</span><span class="rv">Loaded (sent)</span></div>
+      <div class="rev-item"><span class="rk">3</span><span class="rv">Interactive (partial)</span></div>
+      <div class="rev-item"><span class="rk">4</span><span class="rv">Complete ✓</span></div>
+    </div>
+    <div class="rev-card">
+      <h3>XHR Methods</h3>
+      <div class="rev-item"><span class="rk">open(method, url, async)</span><span class="rv">Setup</span></div>
+      <div class="rev-item"><span class="rk">send(data)</span><span class="rv">Send request</span></div>
+      <div class="rev-item"><span class="rk">abort()</span><span class="rv">Cancel</span></div>
+    </div>
+    <div class="rev-card">
+      <h3>Key People & Dates</h3>
+      <div class="rev-item"><span class="rk">AJAX coined</span><span class="rv">J.J. Garrett, 2005</span></div>
+      <div class="rev-item"><span class="rk">First AJAX-like</span><span class="rv">MS OWA, 1999</span></div>
+      <div class="rev-item"><span class="rk">Comet coined</span><span class="rv">Alex Russell, Mar 2006</span></div>
+      <div class="rev-item"><span class="rk">WS Protocol</span><span class="rv">IETF RFC 6455</span></div>
+      <div class="rev-item"><span class="rk">WS API</span><span class="rv">W3C</span></div>
+    </div>
+    <div class="rev-card">
+      <h3>WebSocket API</h3>
+      <div class="rev-item"><span class="rk">new WebSocket(url)</span><span class="rv">Connect</span></div>
+      <div class="rev-item"><span class="rk">onopen</span><span class="rv">Connected</span></div>
+      <div class="rev-item"><span class="rk">onmessage</span><span class="rv">Message from server</span></div>
+      <div class="rev-item"><span class="rk">onerror</span><span class="rv">Error</span></div>
+      <div class="rev-item"><span class="rk">onclose</span><span class="rv">Disconnected</span></div>
+      <div class="rev-item"><span class="rk">ws.send()</span><span class="rv">Send to server</span></div>
+      <div class="rev-item"><span class="rk">ws.close()</span><span class="rv">Disconnect</span></div>
+    </div>
+    <div class="rev-card">
+      <h3>JSON Structure</h3>
+      <div class="rev-item"><span class="rk">Object</span><span class="rv">{ key: value }</span></div>
+      <div class="rev-item"><span class="rk">Array</span><span class="rv">[ val1, val2 ]</span></div>
+      <div class="rev-item"><span class="rk">Separators</span><span class="rv">{ } : , [ ]</span></div>
+      <div class="rev-item"><span class="rk">Values</span><span class="rv">String, Number, Bool, Object, Array</span></div>
+    </div>
+  </div>
+
+  <div class="cheat-sheet">
+    <h3>🎯 Critical Exam Facts (Memorize These!)</h3>
+    <ul class="nice">
+      <li>Success condition in XHR callback: <code>readyState == 4 && status == 200</code></li>
+      <li>WebSocket HTTP status during handshake: <strong>101 Switching Protocols</strong></li>
+      <li>WebSocket magic string: <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code> (concatenated with Sec-WebSocket-Key, SHA-1 hashed, Base64-encoded)</li>
+      <li>AJAX user is NOT blocked, but HTTP Request-Response dependence is still <strong>HIGH</strong></li>
+      <li>Comet needs a <strong>second connection</strong> for client-to-server upload</li>
+      <li>JSON is NOT a technology — it's a <strong>lightweight data interchange format</strong></li>
+      <li>async parameter default in <code>open()</code> is <strong>false</strong> (synchronous!)</li>
+      <li>WebSockets: data exchanged in <strong>frames</strong> (binary or UTF-8)</li>
+      <li>Comet is also called <strong>"server push"</strong> or <strong>"HTTP streaming"</strong></li>
+    </ul>
+  </div>
+</section>
+
+<script>
+// ── THEME ──
+let theme = 'dark';
+function toggleTheme(){
+  theme = theme==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme', theme==='light'?'light':'');
+  document.querySelector('.theme-btn').textContent = theme==='dark'?'☀️ Light':'🌙 Dark';
+}
+
+// ── NAVIGATION ──
+function showSection(id, btn){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+// ── MCQ DATA ──
+const mcqs = [
+  { q:"What is the correct term for the classic web application interaction pattern?", opts:["AJAX model","Click, wait, and refresh paradigm","Server push model","Long-polling approach"], ans:1, diff:"easy", exp:"The synchronous communication model is characterized by the 'click, wait, and refresh' paradigm where every user action triggers a full HTTP request and the entire page is refreshed." },
+  { q:"What does AJAX stand for?", opts:["Advanced JavaScript and XML","Asynchronous JavaScript + XML","Automated JavaScript + XHTML","Asynchronous Java and XML"], ans:1, diff:"easy", exp:"AJAX = Asynchronous JavaScript + XML, coined by Jesse James Garrett in 2005." },
+  { q:"Who coined the term 'AJAX' and in what year?", opts:["Alex Russell, 2006","Tim Berners-Lee, 2000","Jesse James Garrett, 2005","Brendan Eich, 2004"], ans:2, diff:"easy", exp:"Jesse James Garrett coined 'AJAX' in a 2005 article. Alex Russell coined 'Comet' in 2006." },
+  { q:"Which company released the first AJAX-like application, and what was it called?", opts:["Google, Google Maps","Apple, MobileMe","Microsoft, Outlook Web Access","Netscape, Netscape Mail"], ans:2, diff:"medium", exp:"Microsoft released 'Outlook Web Access' in 1999, the first application to use what would become known as AJAX." },
+  { q:"What is the XMLHttpRequest readyState value when all data has been received and the connection is closed?", opts:["2","3","4","5"], ans:2, diff:"easy", exp:"readyState 4 = Complete: all data has been received and the connection has been closed." },
+  { q:"What readyState value means that open() has been called but the request has NOT yet been sent?", opts:["0","1","2","3"], ans:1, diff:"medium", exp:"readyState 1 = Loading: open() has been called but send() has not been called yet." },
+  { q:"What is the default value of the 'async' parameter in the XMLHttpRequest open() method?", opts:["true","false","null","undefined"], ans:1, diff:"hard", exp:"The async parameter defaults to false (synchronous). This is a common exam trap — you must explicitly pass 'true' for non-blocking behavior." },
+  { q:"What condition must be true in an onreadystatechange callback to process a successful response?", opts:["readyState == 3","status == 200 only","readyState == 4 && status == 200","readyState == 4 only"], ans:2, diff:"medium", exp:"Both conditions must be true: readyState==4 (complete) AND status==200 (HTTP success). readyState 4 alone could indicate a 404 or 500 error." },
+  { q:"Which IE versions used ActiveXObject instead of native XMLHttpRequest?", opts:["IE5 and IE6","IE6 and IE7","IE7 and IE8","IE4 and IE5"], ans:0, diff:"medium", exp:"IE5 and IE6 used ActiveXObject (Msxml2.XMLHTTP or Microsoft.XMLHTTP). IE7+ supports native XMLHttpRequest." },
+  { q:"What is the main advantage of JSON over XML in AJAX applications?", opts:["JSON supports more data types","JSON is an official W3C standard","JSON is lighter with less overhead and faster to parse","JSON is more secure"], ans:2, diff:"easy", exp:"JSON creates less overhead compared to XML, and parsing native JSON data structures is faster than parsing XML." },
+  { q:"In AJAX, what is the 'AJAX engine'?", opts:["A server-side processing module","An intermediary between the UI and server that allows async communication","A JavaScript library","A browser plugin"], ans:1, diff:"medium", exp:"The AJAX engine is a client-side intermediary responsible for rendering the UI and communicating with the server asynchronously on the user's behalf." },
+  { q:"What key shortcoming does AJAX still have compared to the truly asynchronous model?", opts:["User is still blocked","High degree of dependence between HTTP Request and Response","It doesn't support XML","It requires server-side Python"], ans:1, diff:"hard", exp:"Although user actions are decoupled from server communication, AJAX still has high dependence between HTTP Request and Response — every server update requires a full request/response cycle." },
+  { q:"Who coined the term 'Comet' and when?", opts:["Jesse James Garrett, 2005","Alex Russell, March 2006","Tim Berners-Lee, 2004","Brendan Eich, 2007"], ans:1, diff:"medium", exp:"Alex Russell, project leader of Dojo Toolkit, coined 'Comet' in a March 2006 blog post." },
+  { q:"In a Comet implementation, how many HTTP connections are typically needed for full bidirectional communication?", opts:["One","Two","Three","None after initial"], ans:1, diff:"hard", exp:"Comet uses one long-lived connection for server→client push. A second connection is required for client→server data upload." },
+  { q:"What HTTP status code is returned during the WebSocket handshake when the server accepts the connection?", opts:["200 OK","301 Moved Permanently","101 Switching Protocols","204 No Content"], ans:2, diff:"medium", exp:"The server returns '101 Switching Protocols' to confirm the WebSocket connection upgrade." },
+  { q:"Which organization defines the WebSocket protocol specification?", opts:["W3C only","IETF only (RFC 6455)","W3C defines the protocol, IETF defines the API","IETF defines the protocol (RFC 6455), W3C defines the JavaScript API"], ans:3, diff:"hard", exp:"IETF RFC 6455 covers the protocol specification (handshake + data exchange), while W3C defines the JavaScript API for browsers." },
+  { q:"What header must a client include to request a WebSocket upgrade?", opts:["Content-Type: websocket","Upgrade: websocket","Accept: websocket","Protocol: websocket"], ans:1, diff:"medium", exp:"The client must include 'Upgrade: websocket' and 'Connection: Upgrade' headers in the HTTP GET request." },
+  { q:"The Sec-WebSocket-Accept value is computed how?", opts:["SHA-256 hash of the client key","MD5 of client key + server nonce","SHA-1 hash of (Sec-WebSocket-Key + magic string), Base64-encoded","Client key XOR'd with server key"], ans:2, diff:"hard", exp:"Server concatenates Sec-WebSocket-Key with '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', computes SHA-1, then Base64-encodes the result." },
+  { q:"What does 'full-duplex' mean in the context of WebSockets?", opts:["Data can only flow from server to client","Data can only flow from client to server","Both client and server can send data simultaneously on a single connection","Data is encrypted in both directions"], ans:2, diff:"medium", exp:"Full-duplex means both parties can send and receive data at the same time on the same connection — unlike HTTP which is strictly request/response." },
+  { q:"In which communication model is the degree of dependence between HTTP Request and HTTP Response at minimum?", opts:["Synchronous model","AJAX (non-blocking) model","Comet / WebSocket (asynchronous) model","All models have equal dependence"], ans:2, diff:"easy", exp:"The asynchronous model (Comet/WebSockets) has minimum dependence — the server can push data without a prior client request." },
+  { q:"What XMLHttpRequest property returns the server response as a plain string?", opts:["responseXML","responseData","responseText","response"], ans:2, diff:"easy", exp:"responseText returns the HTTP response value as a string. responseXML returns it as an XML document." },
+  { q:"Which of the following is NOT one of the five technologies listed in Jesse James Garrett's AJAX definition?", opts:["XHTML and CSS","The Document Object Model","WebSockets","XMLHttpRequest"], ans:2, diff:"medium", exp:"WebSockets were not in Garrett's 2005 AJAX definition. The five are: XHTML/CSS, DOM, XML/XSLT, XMLHttpRequest, and JavaScript." },
+  { q:"What is the XMLHttpRequest method used to cancel an ongoing request?", opts:["cancel()","stop()","abort()","terminate()"], ans:2, diff:"easy", exp:"The abort() method cancels the current request." },
+  { q:"In AJAX's non-blocking model, not every user action requires a server request. What kind of tasks can the AJAX engine handle locally?", opts:["Database queries","Simple data validation, editing in memory, some navigation","Complex server-side rendering","Authentication"], ans:1, diff:"medium", exp:"The AJAX engine can handle simple data validation, editing data in memory, and some navigation without contacting the server." },
+  { q:"Which WebSocket event handler is called when the connection is successfully established?", opts:["onconnect","onready","onopen","onstart"], ans:2, diff:"easy", exp:"The onopen event handler is called as soon as the WebSocket connection is established." },
+  { q:"WebSockets address which two central shortcomings of HTTP-based streaming?", opts:["Security vulnerabilities and lack of caching","HTTP header overhead and unidirectional communication","Slow JSON parsing and XML incompatibility","Missing authentication and unreliable connections"], ans:1, diff:"hard", exp:"WebSockets solve: (1) overhead from HTTP headers in long-polling, and (2) unidirectional nature of HTTP which required separate requests for bidirectional exchange." },
+  { q:"When using the POST method in XMLHttpRequest, what format is data passed to send()?", opts:["JSON string only","Key-value pairs (e.g., page=1&section=4)","XML only","FormData object only"], ans:1, diff:"medium", exp:"For POST requests, data is passed as key-value pairs: 'page=1&section=4'. For GET, data is null (parameters go in the URL)." },
+  { q:"In the hello world AJAX example, which DOM property is used to inject table content into the <div id='present'> element?", opts:["textContent","innerText","innerHTML","appendChild only"], ans:2, diff:"medium", exp:"The innerHTML property is used to set the HTML content of the element: document.getElementById('present').innerHTML = tab_content;" },
+  { q:"What is the main use case for Comet applications?", opts:["Static website generation","Applications where available data should be transmitted in real-time (chat, stocks, live auctions)","Batch data processing","Image rendering"], ans:1, diff:"easy", exp:"Comet is suited for real-time applications: chat systems, stock exchange apps, live auction sites (like next-gen eBay)." },
+  { q:"Which of the following BEST describes how WebSocket data is exchanged after the handshake?", opts:["Full HTTP request/response for each message","Data encapsulated in frames over the established TCP connection","New TCP connection for each message","UDP datagrams"], ans:1, diff:"hard", exp:"After handshake, data is encapsulated in WebSocket frames (binary or UTF-8) exchanged over the existing TCP connection in full-duplex mode." }
+];
+
+let mcqState = {};
+let answered = 0, correct = 0;
+
+function renderMCQ(){
+  const container = document.getElementById('mcq-container');
+  container.innerHTML = '';
+  mcqs.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.innerHTML = `
+      <div class="q-num">Question ${i+1} of ${mcqs.length} <span class="q-diff diff-${q.diff}">${q.diff}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${i}">
+        ${q.opts.map((o,j)=>`<button class="opt-btn" onclick="selectOpt(${i},${j})" id="opt-${i}-${j}"><span class="opt-letter">${String.fromCharCode(65+j)}</span>${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp-${i}">💡 ${q.exp}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function selectOpt(qi, oi){
+  if(mcqState[qi] !== undefined) return;
+  mcqState[qi] = oi;
+  answered++;
+  if(oi === mcqs[qi].ans) correct++;
+  
+  const opts = document.querySelectorAll(`#opts-${qi} .opt-btn`);
+  opts.forEach((btn,j) => {
+    btn.disabled = true;
+    if(j === mcqs[qi].ans) btn.classList.add('correct');
+    else if(j === oi) btn.classList.add('wrong');
+  });
+  document.getElementById(`exp-${qi}`).classList.add('visible');
+  
+  const pct = Math.round((correct/answered)*100);
+  document.getElementById('score-correct').textContent = correct;
+  document.getElementById('score-total').textContent = answered;
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('mcq-progress-bar').style.width = Math.round((answered/mcqs.length)*100)+'%';
+}
+
+function resetMCQ(){
+  mcqState = {}; answered = 0; correct = 0;
+  document.getElementById('score-correct').textContent = 0;
+  document.getElementById('score-total').textContent = 0;
+  document.getElementById('score-pct').textContent = '—';
+  document.getElementById('mcq-progress-bar').style.width = '0%';
+  renderMCQ();
+}
+
+// ── WRITTEN QS DATA ──
+const writtenQs = [
+  {
+    type:"short", label:"Short Answer",
+    q:"What is the 'click, wait, and refresh' paradigm and what are its main shortcomings?",
+    a:`The 'click, wait, and refresh' paradigm describes the synchronous web communication model where every user action that requires server data triggers a complete HTTP Request. The user is blocked from interacting with the page while the server processes the request and sends back a full HTML page, which replaces the entire current page.\n\nMain shortcomings:\n1. Slow performance due to the wait between click and page refresh\n2. Loss of operation context (scroll position, input state) during every page refresh\n3. Excessive server load and bandwidth consumption due to redundant full-page transfers even when only a small piece of data changes\n4. Low interactivity and productivity — user cannot perform any actions while waiting`
+  },
+  {
+    type:"short", label:"Short Answer",
+    q:"Explain the role of the AJAX engine and how it differs from the classic web model.",
+    a:`In the classic web model, user actions directly trigger HTTP Requests to the server. In the AJAX model, an intermediary called the 'AJAX engine' is inserted between the user interface and the server.\n\nThe AJAX engine:\n- Intercepts user actions as JavaScript calls instead of HTTP requests\n- Can handle simple tasks locally without involving the server (data validation, memory editing, basic navigation)\n- When server data is needed, sends HTTP Requests asynchronously — the user is not blocked and can continue interacting with the page\n- Receives partial data (XML or JSON fragments) and updates only the relevant portion of the DOM, without a full page reload\n\nThis decouples user activity from server-side processing, resulting in a faster, more responsive experience.`
+  },
+  {
+    type:"short", label:"Short Answer",
+    q:"List and describe all five readyState values of the XMLHttpRequest object.",
+    a:`0 - Uninitialized: The XMLHttpRequest object has been created but the open() method has not yet been called.\n\n1 - Loading: The open() method has been called to configure the connection, but the request has not yet been sent (send() not called).\n\n2 - Loaded: The send() method has been called and the request has been sent to the server.\n\n3 - Interactive: A partial HTTP Response has been received from the server but data transfer is not yet complete.\n\n4 - Complete: All data has been received and the connection has been closed. This is the state where you can safely process the response.`
+  },
+  {
+    type:"long", label:"Long Answer",
+    q:"Compare and contrast the three web communication models (Synchronous, AJAX, and WebSockets) in terms of user experience, HTTP dependence, and technical implementation.",
+    a:`The three web communication models represent an evolution in how web applications handle interaction:\n\n1. SYNCHRONOUS MODEL: The user clicks and is blocked while a full HTTP request-response cycle completes. The server returns a complete HTML page which replaces the entire browser content. This has high HTTP dependence (every update = one request/response), high server load from redundant data transfer, and poor user experience due to the 'click, wait, refresh' cycle.\n\n2. AJAX (NON-BLOCKING) MODEL: An AJAX engine intermediary decouples user actions from server communication. User actions trigger JavaScript calls to the AJAX engine, not direct HTTP requests. The engine sends requests asynchronously when needed — the user is free to continue interacting. Only partial data (XML/JSON) is returned and the relevant DOM section is updated. While the user experience is vastly improved, there is still HIGH dependence between HTTP Request and Response — every server-side update still requires a full request/response round-trip from the engine.\n\n3. WEBSOCKETS (ASYNCHRONOUS) MODEL: WebSockets establish a persistent, bidirectional, full-duplex TCP connection using an HTTP upgrade handshake. After setup, both client and server can exchange data at any time without new requests. HTTP dependence is minimum — the server can push data without any client request. This eliminates the overhead of HTTP headers per message and enables true real-time communication. The trade-off is implementation complexity and the need for WebSocket-compatible servers.\n\nIn summary: Synchronous = blocked + full reload + high dependence; AJAX = free user + partial update + still high dependence; WebSockets = free + real-time push + minimum dependence + bidirectional.`
+  },
+  {
+    type:"long", label:"Long Answer",
+    q:"Explain the WebSocket connection establishment process (handshake) in detail, including the security mechanism used.",
+    a:`WebSocket connection establishment is a three-step process:\n\nSTEP 1 — HTTP Upgrade Request (Client → Server):\nThe client sends a standard HTTP GET request with special headers signaling the desire to upgrade to the WebSocket protocol:\n- 'Upgrade: websocket' — requests protocol switch\n- 'Connection: Upgrade' — signals connection upgrade\n- 'Sec-WebSocket-Key: [base64 string]' — a randomly generated, Base64-encoded string used for security verification\n- 'Sec-WebSocket-Version: 13' — protocol version\n- Optional: 'Sec-WebSocket-Protocol' — application-specific sub-protocols\n\nSTEP 2 — Server Confirms (Server → Client):\nIf the server accepts, it responds with HTTP status '101 Switching Protocols' and:\n- 'Upgrade: websocket'\n- 'Connection: Upgrade'\n- 'Sec-WebSocket-Accept: [computed value]'\nThe Sec-WebSocket-Accept value is computed by: concatenating the client's Sec-WebSocket-Key with the fixed magic string '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', computing a SHA-1 hash, then Base64-encoding the result. This proves the server genuinely understood the WebSocket handshake.\n\nSTEP 3 — WebSocket Connection Active:\nThe existing TCP connection is now a WebSocket connection. Binary or UTF-8 messages encapsulated in frames can be exchanged in full-duplex mode — both parties can send and receive simultaneously without new HTTP requests.\n\nThis mechanism is defined in IETF RFC 6455, while the JavaScript API is specified by W3C.`
+  },
+  {
+    type:"short", label:"Short Answer",
+    q:"What is Comet? How does it achieve server push, and what are its main drawbacks?",
+    a:`Comet is a web application model (a buzzword, like AJAX, not a specific technology) that enables web servers to push data to the client after only an initial HTTP request, without the client repeatedly polling for updates.\n\nHow it works: Comet uses long-lived HTTP connections — instead of the server closing the connection after responding, it keeps the connection open and pushes data when server-side events occur. This is also called 'server push' or 'HTTP streaming'. A Comet event bus on the server side triggers data transmission.\n\nNote: Comet requires a SECOND HTTP connection for client-to-server data upload, since the long-lived connection is only for the server-push direction.\n\nMain drawbacks:\n1. HTTP header overhead — each interaction still carries HTTP header data\n2. Inefficiency of long-polling approaches — resources are held even during idle periods\n3. These led to the development of WebSockets as a cleaner solution`
+  }
+];
+
+function renderWritten(){
+  const c = document.getElementById('written-container');
+  c.innerHTML = '';
+  writtenQs.forEach((wq, i) => {
+    const div = document.createElement('div');
+    div.className = 'written-q';
+    div.innerHTML = `
+      <div class="written-q-header" onclick="toggleWritten(${i}, this)">
+        <div style="display:flex;gap:10px;align-items:flex-start;flex:1">
+          <span class="tag tag-${wq.type==='short'?'blue':'purple'}" style="margin:0;white-space:nowrap">${wq.label}</span>
+          <h4>${wq.q}</h4>
+        </div>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="written-q-body" id="wb-${i}">
+        <div class="model-answer"><strong>✅ Model Answer</strong>${wq.a.split('\n').filter(l=>l).map(l=>`<p style="margin:4px 0">${l}</p>`).join('')}</div>
+      </div>
+    `;
+    c.appendChild(div);
+  });
+}
+
+function toggleWritten(i, header){
+  const body = document.getElementById(`wb-${i}`);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+}
+
+// ── INIT ──
+renderMCQ();
+renderWritten();
+</script>
+</body>
+</html>
