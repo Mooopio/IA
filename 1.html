@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Internet & Web Applications — Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #e0dbd2;
+    --text: #1a1814;
+    --text2: #5a5650;
+    --text3: #9a958e;
+    --accent: #c8522a;
+    --accent2: #e8703e;
+    --accent-bg: #fdf2ed;
+    --blue: #1e4d8c;
+    --blue-bg: #eef3fb;
+    --green: #2a6b3c;
+    --green-bg: #eef7f1;
+    --amber: #8a5c0a;
+    --amber-bg: #fdf6e8;
+    --red: #8a2020;
+    --red-bg: #fdeaea;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  [data-theme="dark"] {
+    --bg: #131210;
+    --surface: #1e1c18;
+    --surface2: #252320;
+    --border: #302e28;
+    --text: #f0ede6;
+    --text2: #a8a49c;
+    --text3: #6a6660;
+    --accent: #e8703e;
+    --accent2: #f08a58;
+    --accent-bg: #2a1a10;
+    --blue: #6b9dd4;
+    --blue-bg: #0e1f35;
+    --green: #5aaa72;
+    --green-bg: #0e2318;
+    --amber: #d4a040;
+    --amber-bg: #251a08;
+    --red: #e06060;
+    --red-bg: #251010;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.7;
+    transition: background 0.3s, color 0.3s;
+  }
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 60px;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: var(--accent);
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+  }
+  nav {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    flex: 1;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none;
+    border: none;
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active { background: var(--accent-bg); color: var(--accent); }
+  .theme-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  /* TYPOGRAPHY */
+  h1 { font-family: 'DM Serif Display', serif; font-size: 2.2rem; font-weight: 400; color: var(--text); letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+  h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; font-weight: 400; color: var(--text); letter-spacing: -0.02em; margin: 2.5rem 0 1rem; }
+  h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.6rem; }
+  p { color: var(--text2); margin-bottom: 0.85rem; }
+  strong { color: var(--text); font-weight: 600; }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82em;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .card-sm {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.85rem;
+  }
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2em 0.65em;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .badge-accent { background: var(--accent-bg); color: var(--accent); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  /* CALLOUTS */
+  .callout {
+    border-left: 3px solid;
+    padding: 0.85rem 1.1rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .callout-key { border-color: var(--accent); background: var(--accent-bg); }
+  .callout-note { border-color: var(--blue); background: var(--blue-bg); }
+  .callout-tip { border-color: var(--green); background: var(--green-bg); }
+  .callout-warn { border-color: var(--amber); background: var(--amber-bg); }
+  .callout-exam { border-color: var(--red); background: var(--red-bg); }
+  .callout-key p, .callout-note p, .callout-tip p, .callout-warn p, .callout-exam p { margin: 0; }
+  .callout-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  /* COLLAPSIBLE */
+  .collapse-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1.1rem;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+  .collapse-btn:hover { border-color: var(--accent); }
+  .collapse-btn.open { border-color: var(--accent); border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; }
+  .collapse-btn .arrow { transition: transform 0.2s; font-size: 0.85rem; color: var(--text3); }
+  .collapse-btn.open .arrow { transform: rotate(180deg); }
+  .collapse-content {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .collapse-content.open { display: block; }
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
+  th {
+    background: var(--surface2);
+    color: var(--text);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    border-bottom: 2px solid var(--border);
+  }
+  td { padding: 0.55rem 1rem; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  /* MCQ */
+  .mcq-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .mcq-number { font-size: 0.75rem; font-weight: 700; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .mcq-q { font-weight: 500; color: var(--text); margin-bottom: 1rem; line-height: 1.55; }
+  .mcq-opts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .mcq-opt {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--text2);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .mcq-opt:hover { border-color: var(--accent); color: var(--text); }
+  .mcq-opt.correct { background: var(--green-bg); border-color: var(--green); color: var(--green); font-weight: 500; }
+  .mcq-opt.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .mcq-opt.disabled { cursor: default; }
+  .mcq-opt.disabled:hover { border-color: var(--border); color: var(--text2); }
+  .mcq-opt.correct.disabled { border-color: var(--green); color: var(--green); }
+  .mcq-opt.wrong.disabled { border-color: var(--red); color: var(--red); }
+  .mcq-explain {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.85rem 1.1rem;
+    background: var(--blue-bg);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 0.875rem;
+    color: var(--text2);
+  }
+  .mcq-explain.show { display: block; }
+  .mcq-diff { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 4px; margin-left: 0.5rem; letter-spacing: 0.04em; }
+  .diff-easy { background: var(--green-bg); color: var(--green); }
+  .diff-medium { background: var(--amber-bg); color: var(--amber); }
+  .diff-hard { background: var(--red-bg); color: var(--red); }
+  /* SCORE */
+  .score-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .score-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--accent); }
+  .score-label { font-size: 0.85rem; color: var(--text3); }
+  .progress { flex: 1; min-width: 180px; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s ease; }
+  /* WRITTEN Q */
+  .wq-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .wq-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1rem;
+    transition: all 0.15s;
+  }
+  .wq-toggle:hover { border-color: var(--blue); color: var(--blue); }
+  .wq-answer { display: none; margin-top: 1rem; padding: 1rem 1.25rem; background: var(--surface2); border-radius: var(--radius); }
+  .wq-answer.show { display: block; }
+  /* REVISION SHEET */
+  .revision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width:620px) { .revision-grid { grid-template-columns: 1fr; } }
+  .rev-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
+  .rev-card h4 { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.75rem; }
+  .rev-item { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.83rem; }
+  .rev-item::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+  .rev-item span { color: var(--text2); }
+  .rev-item strong { color: var(--text); }
+  /* HERO */
+  .hero { margin-bottom: 2.5rem; }
+  .hero-sub { font-size: 0.9rem; color: var(--text3); margin-top: 0.25rem; }
+  /* FILTER */
+  .filter-row { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+  ul { padding-left: 1.25rem; color: var(--text2); margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.3rem; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0; }
+  .sep { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">IWA Exam Prep</div>
+  <nav>
+    <button class="nav-btn active" onclick="show('explain')">📖 Explanation</button>
+    <button class="nav-btn" onclick="show('summary')">📋 Summary</button>
+    <button class="nav-btn" onclick="show('mcq')">❓ MCQs</button>
+    <button class="nav-btn" onclick="show('written')">✍️ Written</button>
+    <button class="nav-btn" onclick="show('revision')">⚡ Revision</button>
+  </nav>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-label">🌙 Dark</button>
+</header>
+
+<main>
+
+<!-- ========== EXPLANATION ========== -->
+<div id="explain" class="section active">
+  <div class="hero">
+    <h1>Internet & Web Applications</h1>
+    <p class="hero-sub">Chapter 1 — Introduction & Basic Concepts · Deep Study Guide</p>
+  </div>
+
+  <h2>1. The World Wide Web — What Is It?</h2>
+  <div class="card">
+    <p>The <strong>World Wide Web (WWW)</strong> is a system of hypertext documents viewable via a web browser. It runs <em>on top of</em> the Internet — it's not the Internet itself, but a service that uses Internet protocols.</p>
+    <div class="callout callout-key">
+      <div class="callout-label">🔑 Key Definition</div>
+      <p><strong>Hypertext documents</strong> = documents that contain internal cross-references (links) to other documents.</p>
+    </div>
+    <p>The original Web was built on three pillars:</p>
+    <table>
+      <tr><th>Pillar</th><th>Technology</th><th>Purpose</th></tr>
+      <tr><td>Application protocol</td><td><strong>HTTP</strong> (HyperText Transfer Protocol)</td><td>How browsers and servers communicate</td></tr>
+      <tr><td>Document format</td><td><strong>HTML</strong> (HyperText Markup Language)</td><td>How web pages are structured/described</td></tr>
+      <tr><td>Addressing</td><td><strong>URI</strong> (Uniform Resource Identifier)</td><td>How resources are located/addressed</td></tr>
+    </table>
+    <div class="callout callout-exam">
+      <div class="callout-label">⚠️ Exam Trap</div>
+      <p>The Web ≠ The Internet. The Internet is the underlying network infrastructure. The Web is one service that runs on it (like email, FTP, etc.).</p>
+    </div>
+  </div>
+
+  <h2>2. Web Evolution: 1.0 → 2.0 → 3.0</h2>
+  <div class="card">
+    <button class="collapse-btn" onclick="toggleCollapse(this)">Web 2.0 — "Social Web" <span class="arrow">▼</span></button>
+    <div class="collapse-content">
+      <p>Web 2.0 describes modern web applications accessible via browser (wikis, weblogs, social platforms). Key characteristics:</p>
+      <ul>
+        <li><strong>High social component</strong> — user-generated content, communities</li>
+        <li><strong>Appealing UIs</strong> — enhanced interaction models</li>
+        <li><strong>Protocol improvements:</strong> Ajax, Comet/HTTP Streaming, WebSockets</li>
+        <li><strong>New document formats:</strong> RSS, Atom, RDF, HTML5</li>
+        <li><strong>New business models</strong> — advertising, subscription, freemium</li>
+        <li><strong>Increasing client-side logic</strong> — more work done in the browser</li>
+      </ul>
+      <div class="callout callout-note">
+        <div class="callout-label">📝 Note</div>
+        <p>Web 2.0 is a <em>technological evolution</em> of Web 1.0.</p>
+      </div>
+    </div>
+
+    <button class="collapse-btn" onclick="toggleCollapse(this)">Web 3.0 — "Semantic Web" <span class="arrow">▼</span></button>
+    <div class="collapse-content">
+      <p><strong>Web 3.0</strong> (or the <strong>Semantic Web</strong>) is a vision of semantically interconnected data on the Web. It differs from Web 2.0 in a fundamental way:</p>
+      <table>
+        <tr><th></th><th>Web 2.0</th><th>Web 3.0</th></tr>
+        <tr><td>Type</td><td>Technological evolution</td><td>Conceptual evolution</td></tr>
+        <tr><td>Focus</td><td>Documents + social interaction</td><td>Data (Linked Data)</td></tr>
+        <tr><td>Formats</td><td>RSS, Atom, HTML5</td><td>RDF, RDFS, OWL, Microformats</td></tr>
+      </table>
+      <div class="callout callout-key">
+        <div class="callout-label">🔑 Key Quote (Tim Berners-Lee)</div>
+        <p>"A 'Semantic Web'...will make it possible for computers to analyze all data on the Web — content, links, and transactions. The day-to-day mechanisms of trade, bureaucracy and our daily lives will be handled by machines talking to machines."</p>
+      </div>
+      <div class="callout callout-exam">
+        <div class="callout-label">⚠️ Exam Note</div>
+        <p>Web 3.0 focuses on <strong>data</strong> not documents — it becomes <strong>Linked Data</strong>. Key formats: <strong>RDF, RDFS, OWL</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>3. XML — Extensible Markup Language</h2>
+  <div class="card">
+    <p><strong>XML</strong> is a general-purpose meta-language for representation, exchange, and processing of data. It forms the basis of many web-related formats.</p>
+    <div class="callout callout-note">
+      <div class="callout-label">📝 Analogy</div>
+      <p>Think of XML like a universal filing cabinet. You define your own labels (tags) for drawers and folders. Anyone who reads the cabinet knows where everything is because the structure is self-describing.</p>
+    </div>
+
+    <h3>3.1 XML Tree Structure</h3>
+    <p>XML documents are organized as a <strong>tree</strong> with elements as nodes:</p>
+    <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;bookstock&gt;                       ← Root element
+  &lt;book id="42"&gt;                  ← Child element with attribute
+    &lt;title&gt;TCP/IP Illustrated&lt;/title&gt;  ← Simple content
+    &lt;author&gt;W.R. Stevens&lt;/author&gt;
+    &lt;isbn&gt;0201633469&lt;/isbn&gt;
+  &lt;/book&gt;
+  &lt;book id="43"&gt; ... &lt;/book&gt;
+&lt;!-- End of document --&gt;          ← Comment
+&lt;/bookstock&gt;</pre>
+
+    <h3>3.2 XML Terminology (Critical!)</h3>
+    <table>
+      <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+      <tr><td><strong>Root element</strong></td><td>The single top-level element</td><td><code>&lt;bookstock&gt;</code></td></tr>
+      <tr><td><strong>Parent element</strong></td><td>Element containing other elements</td><td><code>&lt;book&gt;</code> is parent of title, author, isbn</td></tr>
+      <tr><td><strong>Child element</strong></td><td>Element nested inside another</td><td><code>&lt;book&gt;</code> is child of <code>&lt;bookstock&gt;</code></td></tr>
+      <tr><td><strong>Sibling elements</strong></td><td>Elements at the same level (same parent)</td><td>title, author, isbn are siblings</td></tr>
+      <tr><td><strong>Attribute</strong></td><td>Name-value pair inside a start tag</td><td><code>id="42"</code></td></tr>
+      <tr><td><strong>Simple content</strong></td><td>Text values</td><td><code>&lt;title&gt;TCP/IP&lt;/title&gt;</code></td></tr>
+      <tr><td><strong>Element content</strong></td><td>Contains further tags</td><td><code>&lt;book&gt;</code> contains child tags</td></tr>
+      <tr><td><strong>Mixed content</strong></td><td>Both text and child elements</td><td>Combination of both</td></tr>
+      <tr><td><strong>Empty content</strong></td><td>No value</td><td><code>&lt;br/&gt;</code></td></tr>
+    </table>
+
+    <h3>3.3 XML Syntax Rules — "Well-Formed"</h3>
+    <div class="callout callout-exam">
+      <div class="callout-label">⚠️ Exam Favourite</div>
+      <p>A syntactically correct XML document is called <strong>well-formed</strong>. Know all the rules:</p>
+    </div>
+    <ul>
+      <li>Non-empty elements need both start and end tags: <code>&lt;X&gt;content&lt;/X&gt;</code></li>
+      <li>Empty elements can be self-closed: <code>&lt;X/&gt;</code></li>
+      <li>Exactly <strong>one root element</strong> must exist</li>
+      <li>All attribute values must be <strong>quoted</strong> (single or double)</li>
+      <li>Tags must not overlap: <code>&lt;X&gt;&lt;Y&gt;&lt;/X&gt;&lt;/Y&gt;</code> is <strong>INVALID</strong></li>
+      <li>XML is <strong>case sensitive</strong>: <code>&lt;X&gt;&lt;/x&gt;</code> is incorrect</li>
+      <li>Content must comply with the charset (default: <strong>UTF-8</strong>)</li>
+    </ul>
+
+    <h3>3.4 XML Namespaces</h3>
+    <p>Problem: Two contributors use the same element name <code>&lt;title&gt;</code> to mean different things. Solution: <strong>XML namespaces</strong>.</p>
+    <div class="callout callout-key">
+      <div class="callout-label">🔑 Key Concept</div>
+      <p>Namespaces are unique identifiers (web addresses) that qualify elements and attributes. A <strong>prefix</strong> is bound to a namespace and applied to elements: <code>xmlns:b="http://example.com/myNs/"</code> then <code>&lt;b:book&gt;</code>.</p>
+    </div>
+    <pre>&lt;datafile xmlns:a="http://www.example.com/doc/"
+          xmlns:b="http://www.example.com/myNs/"&gt;
+  &lt;a:title&gt;Book list&lt;/a:title&gt;     ← doc namespace title
+  &lt;b:title&gt;TCP/IP Illustrated&lt;/b:title&gt;  ← book namespace title
+&lt;/datafile&gt;</pre>
+    <p>The namespace URIs don't need to point to real resources — they're just unique identifiers.</p>
+
+    <h3>3.5 XML Validity</h3>
+    <p>A <strong>valid</strong> XML document conforms to a type definition. Two approaches:</p>
+    <table>
+      <tr><th></th><th>DTD</th><th>XML Schema</th></tr>
+      <tr><td>Full name</td><td>Document Type Definition</td><td>XML Schema</td></tr>
+      <tr><td>Type support</td><td>Limited (PCDATA only)</td><td>Rich (string, integer, sequences, etc.)</td></tr>
+      <tr><td>Itself XML?</td><td>No (different syntax)</td><td>Yes (XML dialect)</td></tr>
+      <tr><td>Complex types</td><td>No</td><td>Yes</td></tr>
+    </table>
+    <div class="callout callout-exam">
+      <div class="callout-label">⚠️ Exam Note</div>
+      <p>DTD's main shortcoming = <strong>limited type definitions</strong>. XML Schema fixes this.</p>
+    </div>
+
+    <h3>3.6 XML Alternatives</h3>
+    <table>
+      <tr><th>Format</th><th>Full Name</th><th>Key Features</th></tr>
+      <tr><td><strong>JSON</strong></td><td>JavaScript Object Notation</td><td>Lightweight, used in web APIs, discussed in Chapter 3</td></tr>
+      <tr><td><strong>YAML</strong></td><td>YAML Ain't Markup Language</td><td>Superset of JSON, human-readable, uses indentation for hierarchy, supports cross-references between nodes</td></tr>
+    </table>
+    <p>YAML offers: lists, associative arrays, scalars. Example of YAML block list:</p>
+    <pre>lectures:
+  - 'Internet and Web Applications'
+  - 'Distributed Systems'
+  - 'Mobile Communication and Computing'</pre>
+  </div>
+
+  <h2>4. XHTML</h2>
+  <div class="card">
+    <p><strong>XHTML</strong> = Extensible HyperText Markup Language. It is an XML reformulation of HTML.</p>
+    <ul>
+      <li>Language constructs deduced from HTML — same expressiveness</li>
+      <li>Stricter syntax → better browser engine standardization</li>
+      <li>Being XML → processable by regular XML tools (e.g., for style or syntax validation)</li>
+      <li>Extensible with other XML languages (e.g., <strong>MathML</strong> for math expressions)</li>
+      <li>Validated by DTD (e.g., XHTML 1.1 DTD)</li>
+      <li>Empty elements must be self-closed: <code>&lt;br/&gt;</code> (unlike HTML: <code>&lt;br&gt;</code>)</li>
+    </ul>
+  </div>
+
+  <h2>5. DOM vs SAX — XML Processing Models</h2>
+  <div class="card">
+    <table>
+      <tr><th></th><th>DOM</th><th>SAX</th></tr>
+      <tr><td>Full name</td><td>Document Object Model</td><td>Simple API for XML</td></tr>
+      <tr><td>Approach</td><td>Tree-based (loads entire document into memory)</td><td>Event-based (sequential read)</td></tr>
+      <tr><td>Memory</td><td>High (whole tree in RAM)</td><td>Low (processes one element at a time)</td></tr>
+      <tr><td>Navigation</td><td>Can traverse tree in any direction, random access by ID</td><td>Sequential only (forward)</td></tr>
+      <tr><td>Standardized by</td><td>W3C</td><td>Community standard</td></tr>
+      <tr><td>Best for</td><td>Complex manipulation, random access</td><td>Large files, stream processing</td></tr>
+    </table>
+
+    <div class="callout callout-note">
+      <div class="callout-label">📝 DOM Analogy</div>
+      <p>DOM = reading the entire book and building an index. SAX = someone reads it aloud and you react to each sentence as you hear it.</p>
+    </div>
+
+    <h3>DOM Example</h3>
+    <pre>var elem = document.getElementById("42")
+var child = elem.getElementsByTagName("author")[0]
+var secondChild = child.childNode
+var value = secondChild.nodeValue</pre>
+
+    <h3>SAX Principle</h3>
+    <p>A program registers <strong>event handlers</strong> at a SAX parser. The parser reads sequentially and fires events (startElement, characters, endElement, etc.) which the handlers react to.</p>
+  </div>
+
+  <h2>6. Web Interaction Model & Content Types</h2>
+  <div class="card">
+    <p>The Web uses a classic <strong>client-server architecture</strong>:</p>
+    <ol style="padding-left:1.25rem;color:var(--text2);margin-bottom:1rem;">
+      <li>Client (browser) requests a document via URI using HTTP</li>
+      <li>Server sends document with content-type metadata</li>
+      <li>Client interprets and renders (HTML + CSS + JS)</li>
+    </ol>
+    <div class="callout callout-key">
+      <div class="callout-label">🔑 Content Type (MIME Type)</div>
+      <p>Format: <code>Content-Type: type/subtype</code><br/>Examples: <code>application/xml</code>, <code>video/mpeg</code>, <code>image/jpeg</code>, <code>text/plain</code></p>
+    </div>
+    <p>If the browser receives an unknown content type, it looks up an appropriate application in its mapping table and delegates the document to it.</p>
+  </div>
+
+  <h2>7. JavaScript</h2>
+  <div class="card">
+    <p><strong>JavaScript</strong> is an object-based scripting language (standardized as <em>ECMAScript</em>) primarily used for <strong>client-side execution</strong>.</p>
+    <ul>
+      <li>Embedded in or linked from (X)HTML documents</li>
+      <li>Executed by the browser's <strong>JavaScript engine</strong></li>
+      <li>Can modify document content or trigger browser actions</li>
+      <li>Often combined with <strong>DOM</strong> for dynamic document manipulation</li>
+    </ul>
+    <div class="callout callout-exam">
+      <div class="callout-label">⚠️ Critical Security Concept</div>
+      <p><strong>Sandbox principle</strong>: JavaScript running inside the engine can ONLY access objects inside the browser (DOM) by default. It cannot directly access the file system or arbitrary network resources.</p>
+    </div>
+  </div>
+
+  <h2>8. CSS — Cascading Style Sheets</h2>
+  <div class="card">
+    <p><strong>CSS</strong> is a client-side language for defining the <strong>layout and visual appearance</strong> of markup language elements.</p>
+    <ul>
+      <li>Can be embedded directly in (X)HTML or linked externally (<code>&lt;link rel="stylesheet" href="main.css"&gt;</code>)</li>
+      <li>One external CSS file can control the layout of <em>all</em> associated pages</li>
+      <li>Structure: <code>selector { property: value; }</code></li>
+    </ul>
+    <h3>CSS Selector Types</h3>
+    <table>
+      <tr><th>Selector</th><th>Syntax</th><th>Example</th><th>Targets</th></tr>
+      <tr><td>Element</td><td><code>p { ... }</code></td><td><code>p { font-size: 16pt; }</code></td><td>All &lt;p&gt; elements</td></tr>
+      <tr><td>Class</td><td><code>.name { ... }</code></td><td><code>.top { padding-top: 20px; }</code></td><td>Elements with class="top"</td></tr>
+      <tr><td>ID</td><td><code>#name { ... }</code></td><td><code>#fat { font-weight: bold; }</code></td><td>Element with id="fat"</td></tr>
+    </table>
+  </div>
+
+  <h2>9. Course Content Overview</h2>
+  <div class="card-sm">
+    <p>The lecture covers these 12 topics:</p>
+    <div class="tag-row">
+      <span class="badge badge-accent">1. Introduction</span>
+      <span class="badge badge-blue">2. Basic Web Aspects</span>
+      <span class="badge badge-blue">3. Interaction Models</span>
+      <span class="badge badge-blue">4. XSL / CSS</span>
+      <span class="badge badge-green">5. Semantic Web</span>
+      <span class="badge badge-green">6. Web App Frameworks</span>
+      <span class="badge badge-amber">7. Subscription Services</span>
+      <span class="badge badge-amber">8. Web Crawling & Search</span>
+      <span class="badge badge-amber">9. Content & Wikis</span>
+      <span class="badge badge-red">10. File Sharing</span>
+      <span class="badge badge-red">11. Load Balancing</span>
+      <span class="badge badge-red">12. Business Models</span>
+    </div>
+    <p style="margin-top:0.75rem">Internet applications covered: <strong>BitTorrent</strong> (file distribution), <strong>Git</strong> (version management), <strong>web search engines</strong>, <strong>weblogs</strong>, <strong>web feeds</strong>.</p>
+  </div>
+</div>
+
+<!-- ========== SUMMARY ========== -->
+<div id="summary" class="section">
+  <div class="hero">
+    <h1>Smart Summary</h1>
+    <p class="hero-sub">High-yield bullet points for exam revision</p>
+  </div>
+
+  <div class="card">
+    <h3>🌐 The Web — Core Pillars</h3>
+    <ul>
+      <li><strong>HTTP</strong> — application protocol (how client and server talk)</li>
+      <li><strong>HTML</strong> — document description format</li>
+      <li><strong>URI</strong> — document addressing mechanism</li>
+      <li>Web runs <em>on top of</em> Internet protocols (not the Internet itself)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>📈 Web Evolution</h3>
+    <ul>
+      <li><strong>Web 2.0</strong>: Social component, Ajax/WebSockets, RSS/Atom, new business models → <em>technological evolution</em></li>
+      <li><strong>Web 3.0</strong>: Semantic Web, data not documents, Linked Data, RDF/RDFS/OWL → <em>conceptual evolution</em></li>
+      <li>Tim Berners-Lee coined the Semantic Web vision — "machines talking to machines"</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>📄 XML Key Facts</h3>
+    <ul>
+      <li><strong>Meta-language</strong> for representation, exchange, and processing of data</li>
+      <li>Tree structure: root → parent → child → sibling</li>
+      <li>Content types: empty / simple (text) / element / mixed</li>
+      <li><strong>Well-formed</strong> = syntactically correct XML (proper tags, quotes, single root, no overlapping)</li>
+      <li><strong>Valid</strong> = well-formed + conforms to DTD or XML Schema</li>
+      <li><strong>DTD</strong>: limited types. <strong>XML Schema</strong>: rich type system (simple + complex types)</li>
+      <li><strong>Namespaces</strong>: solve name conflicts using URI prefixes (<code>xmlns:prefix="URI"</code>)</li>
+      <li>Default charset: <strong>UTF-8</strong></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🔄 DOM vs SAX</h3>
+    <ul>
+      <li><strong>DOM</strong>: Tree-based, W3C standard, loads all into memory, allows random access</li>
+      <li><strong>SAX</strong>: Event-based, sequential, low memory, uses handler functions (startElement, endElement, characters)</li>
+      <li>DOM → <code>getElementById()</code>, <code>getElementsByTagName()</code></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🏷️ XHTML</h3>
+    <ul>
+      <li>XML reformulation of HTML → stricter syntax, same expressive power</li>
+      <li>Empty elements: <strong>must</strong> use <code>&lt;br/&gt;</code> (not <code>&lt;br&gt;</code>)</li>
+      <li>Processable by XML tools, extensible (e.g. MathML)</li>
+      <li>Validated via DTD</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🎨 CSS</h3>
+    <ul>
+      <li>Defines layout and style of markup elements</li>
+      <li>Selectors: element (<code>p</code>), class (<code>.name</code>), ID (<code>#name</code>)</li>
+      <li>External file → change one file to update all linked pages</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ JavaScript</h3>
+    <ul>
+      <li>Object-based client-side scripting (ECMAScript standard)</li>
+      <li>Executed by browser's JavaScript engine</li>
+      <li><strong>Sandbox principle</strong>: only accesses browser objects (DOM) by default — no file system access</li>
+      <li>Combined with DOM → dynamic page manipulation</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>📬 Content Type (MIME)</h3>
+    <ul>
+      <li>Format: <code>type/subtype</code> → e.g. <code>application/xml</code>, <code>image/jpeg</code></li>
+      <li>Sent in HTTP header, tells client how to handle the content</li>
+      <li>If browser can't handle it → delegates to registered application</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🗂️ Alternatives to XML</h3>
+    <ul>
+      <li><strong>JSON</strong>: JavaScript Object Notation — lightweight, web APIs (Chapter 3)</li>
+      <li><strong>YAML</strong>: YAML Ain't Markup Language — superset of JSON, human-readable, indentation-based hierarchy, cross-references supported</li>
+    </ul>
+  </div>
+
+  <hr class="sep"/>
+
+  <div class="callout callout-tip">
+    <div class="callout-label">🧠 Memory Triggers</div>
+    <p><strong>3 Web Pillars</strong>: "HAU" — HTTP, Address (URI), doUment format (HTML)<br/>
+    <strong>XML validity levels</strong>: Well-formed → Valid (DTD or Schema)<br/>
+    <strong>DOM vs SAX</strong>: DOM = Document in Memory | SAX = Sequential Alert eXecutor<br/>
+    <strong>Web generations</strong>: 1.0 = Static | 2.0 = Social | 3.0 = Semantic</p>
+  </div>
+</div>
+
+<!-- ========== MCQ ========== -->
+<div id="mcq" class="section">
+  <div class="hero">
+    <h1>MCQ Practice</h1>
+    <p class="hero-sub">Click an option to reveal the answer and explanation</p>
+  </div>
+
+  <div class="score-bar">
+    <div>
+      <div class="score-num" id="score-display">0 / 0</div>
+      <div class="score-label">Correct answers</div>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <button class="filter-btn" onclick="resetMCQ()">↺ Reset</button>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterMCQ('all',this)">All</button>
+    <button class="filter-btn" onclick="filterMCQ('easy',this)">Easy</button>
+    <button class="filter-btn" onclick="filterMCQ('medium',this)">Medium</button>
+    <button class="filter-btn" onclick="filterMCQ('hard',this)">Hard</button>
+  </div>
+
+  <div id="mcq-container"></div>
+</div>
+
+<!-- ========== WRITTEN ========== -->
+<div id="written" class="section">
+  <div class="hero">
+    <h1>Written Questions</h1>
+    <p class="hero-sub">Short-answer and long-form exam questions with model answers</p>
+  </div>
+
+  <h2>Short Answer Questions</h2>
+  <div id="short-q-container"></div>
+
+  <h2>Long-Form Questions</h2>
+  <div id="long-q-container"></div>
+</div>
+
+<!-- ========== REVISION ========== -->
+<div id="revision" class="section">
+  <div class="hero">
+    <h1>⚡ Rapid Revision Sheet</h1>
+    <p class="hero-sub">Night-before-exam cheat sheet — everything that matters, fast</p>
+  </div>
+
+  <div class="callout callout-exam" style="margin-bottom:1.5rem">
+    <div class="callout-label">🎯 Exam Focus</div>
+    <p>This is your 1-page condensed reference. Read this the night before your exam!</p>
+  </div>
+
+  <div class="revision-grid">
+    <div class="rev-card">
+      <h4>Web Pillars (Original)</h4>
+      <div class="rev-item"><span><strong>HTTP</strong> — Application protocol</span></div>
+      <div class="rev-item"><span><strong>HTML</strong> — Document format</span></div>
+      <div class="rev-item"><span><strong>URI</strong> — Addressing mechanism</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>Web 2.0 vs 3.0</h4>
+      <div class="rev-item"><span>2.0 = <strong>technological</strong> evolution (social, Ajax)</span></div>
+      <div class="rev-item"><span>3.0 = <strong>conceptual</strong> evolution (Semantic Web)</span></div>
+      <div class="rev-item"><span>3.0 formats: <strong>RDF, RDFS, OWL</strong></span></div>
+    </div>
+    <div class="rev-card">
+      <h4>XML Well-Formed Rules</h4>
+      <div class="rev-item"><span>Start+end tags (or self-close <code>&lt;X/&gt;</code>)</span></div>
+      <div class="rev-item"><span>Exactly <strong>one root</strong> element</span></div>
+      <div class="rev-item"><span>Attributes <strong>must be quoted</strong></span></div>
+      <div class="rev-item"><span>No overlapping tags</span></div>
+      <div class="rev-item"><span><strong>Case sensitive</strong></span></div>
+    </div>
+    <div class="rev-card">
+      <h4>XML Validity</h4>
+      <div class="rev-item"><span><strong>DTD</strong>: limited types (PCDATA)</span></div>
+      <div class="rev-item"><span><strong>XML Schema</strong>: simple + complex types</span></div>
+      <div class="rev-item"><span>Well-formed ⊂ Valid</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>XML Namespaces</h4>
+      <div class="rev-item"><span>Solve name conflicts</span></div>
+      <div class="rev-item"><span>URI as unique identifier</span></div>
+      <div class="rev-item"><span><code>xmlns:prefix="URI"</code></span></div>
+      <div class="rev-item"><span>URI need not be real resource</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>DOM vs SAX</h4>
+      <div class="rev-item"><span>DOM = <strong>tree-based</strong>, whole doc in memory</span></div>
+      <div class="rev-item"><span>SAX = <strong>event-based</strong>, sequential</span></div>
+      <div class="rev-item"><span>DOM: W3C standard, random access</span></div>
+      <div class="rev-item"><span>SAX: handlers (start/end/chars)</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>XHTML Key Points</h4>
+      <div class="rev-item"><span>XML reformulation of HTML</span></div>
+      <div class="rev-item"><span>Stricter syntax → <code>&lt;br/&gt;</code> not <code>&lt;br&gt;</code></span></div>
+      <div class="rev-item"><span>Processable by XML tools</span></div>
+      <div class="rev-item"><span>Validated by DTD</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>CSS Selectors</h4>
+      <div class="rev-item"><span><code>p { }</code> → element selector</span></div>
+      <div class="rev-item"><span><code>.name { }</code> → class selector</span></div>
+      <div class="rev-item"><span><code>#name { }</code> → ID selector</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>JavaScript Security</h4>
+      <div class="rev-item"><span><strong>Sandbox principle</strong></span></div>
+      <div class="rev-item"><span>Only accesses browser objects</span></div>
+      <div class="rev-item"><span>No direct file system access</span></div>
+      <div class="rev-item"><span>ECMAScript standard</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>Content Types (MIME)</h4>
+      <div class="rev-item"><span>Format: <code>type/subtype</code></span></div>
+      <div class="rev-item"><span><code>application/xml</code></span></div>
+      <div class="rev-item"><span><code>image/jpeg</code></span></div>
+      <div class="rev-item"><span><code>video/mpeg</code></span></div>
+    </div>
+    <div class="rev-card">
+      <h4>YAML</h4>
+      <div class="rev-item"><span>Superset of JSON</span></div>
+      <div class="rev-item"><span>Indentation = hierarchy</span></div>
+      <div class="rev-item"><span>Supports cross-references</span></div>
+      <div class="rev-item"><span>Lists, associative arrays, scalars</span></div>
+    </div>
+    <div class="rev-card">
+      <h4>XML Formats Built on XML</h4>
+      <div class="rev-item"><span><strong>XSL</strong> — Stylesheet language</span></div>
+      <div class="rev-item"><span><strong>XHTML</strong> — HTML as XML</span></div>
+      <div class="rev-item"><span><strong>RSS</strong> — Really Simple Syndication</span></div>
+      <div class="rev-item"><span><strong>Atom</strong> — Feed format</span></div>
+      <div class="rev-item"><span><strong>RDF</strong> — Resource Description Framework</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-warn" style="margin-top:1.5rem">
+    <div class="callout-label">⚠️ Common Mistakes</div>
+    <p>
+      1. Web ≠ Internet (Web is a service ON the Internet)<br/>
+      2. Well-formed ≠ Valid (valid requires DTD/Schema conformance)<br/>
+      3. Namespace URI doesn't need to be a real resource<br/>
+      4. DOM loads everything to memory; SAX does NOT<br/>
+      5. YAML is a <em>superset</em> of JSON (not competitor)<br/>
+      6. Web 3.0 = conceptual, not technological evolution (unlike 2.0)
+    </p>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ======== THEME ========
+let dark = false;
+function toggleTheme() {
+  dark = !dark;
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : '');
+  document.getElementById('theme-label').textContent = dark ? '☀️ Light' : '🌙 Dark';
+}
+
+// ======== NAVIGATION ========
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ======== COLLAPSE ========
+function toggleCollapse(btn) {
+  btn.classList.toggle('open');
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+// ======== MCQ DATA ========
+const mcqData = [
+  {
+    q: "Which of the following best describes the relationship between the Internet and the World Wide Web?",
+    opts: ["They are the same thing", "The Internet runs on top of the Web", "The Web is a service/application that runs on top of the Internet", "The Web replaces the Internet"],
+    ans: 2, diff: "easy",
+    explain: "The Web is an application/service that uses Internet protocols as its foundation. The Internet is the underlying network infrastructure."
+  },
+  {
+    q: "What are the three fundamental mechanisms on which the original Web was based?",
+    opts: ["HTML, CSS, JavaScript", "HTTP, HTML, URI", "FTP, HTTP, DNS", "XML, HTML, JSON"],
+    ans: 1, diff: "easy",
+    explain: "The original Web was built on HTTP (application protocol), HTML (document format), and URI (document addressing)."
+  },
+  {
+    q: "A syntactically correct XML document that follows all XML syntax rules is called:",
+    opts: ["Valid", "Well-formed", "Schema-compliant", "DTD-compatible"],
+    ans: 1, diff: "easy",
+    explain: "Well-formed refers to syntactic correctness. Valid requires additionally conforming to a DTD or XML Schema."
+  },
+  {
+    q: "Which of the following XML documents is NOT well-formed?",
+    opts: ["<book><title>TCP/IP</title></book>", "<book id='42'><title>Web</title></book>", "<X><Y></X></Y>", "<br/>"],
+    ans: 2, diff: "medium",
+    explain: "Overlapping tags (<X><Y></X></Y>) violate XML syntax. Tags must be properly nested — </Y> should come before </X>."
+  },
+  {
+    q: "What is the main shortcoming of DTD compared to XML Schema?",
+    opts: ["DTD is not standardized", "DTD cannot define complex types or rich data types", "DTD uses XML syntax which is harder to write", "DTD cannot reference external files"],
+    ans: 1, diff: "medium",
+    explain: "DTD has limited type definition capabilities — mainly PCDATA (simple character data). XML Schema supports simple types (string, integer) and complex types (sequences of elements)."
+  },
+  {
+    q: "What do XML namespaces use as unique identifiers?",
+    opts: ["Integer IDs", "Arbitrary short strings", "Web addresses (URIs) that may point to non-existent resources", "File paths on the local system"],
+    ans: 2, diff: "medium",
+    explain: "XML namespaces use URIs as identifiers. Critically, these URIs are used purely as unique identifiers — they do NOT need to point to actual resources."
+  },
+  {
+    q: "Which processing model loads the entire XML document into memory as a tree?",
+    opts: ["SAX", "DOM", "YAML", "DTD"],
+    ans: 1, diff: "easy",
+    explain: "DOM (Document Object Model) interprets the document in its logical tree structure, requiring the entire tree to be loaded into memory."
+  },
+  {
+    q: "In SAX processing, what happens when the parser encounters an element?",
+    opts: ["It builds a tree node", "It validates against a schema", "It fires an event to the registered event handler", "It caches the element in memory"],
+    ans: 2, diff: "medium",
+    explain: "SAX is event-based. When the parser reads an element, attribute, or special character, it generates an event delegated to the registered handler."
+  },
+  {
+    q: "XHTML differs from HTML in that:",
+    opts: ["XHTML supports more tags than HTML", "XHTML uses a different protocol (XHTTP)", "XHTML is an XML reformulation of HTML with stricter syntax", "XHTML does not support CSS styling"],
+    ans: 2, diff: "easy",
+    explain: "XHTML is an XML-based reformulation of HTML. It has the same expressive power but requires strict XML syntax (e.g., empty elements must be self-closed like <br/>)."
+  },
+  {
+    q: "The JavaScript sandbox principle means that:",
+    opts: ["JavaScript can access any file on the server", "JavaScript can only access objects inside the browser by default", "JavaScript is isolated from the DOM", "JavaScript runs on the server, not the client"],
+    ans: 1, diff: "easy",
+    explain: "The sandbox principle restricts JavaScript to only accessing browser objects (DOM) by default. It cannot directly access the file system or arbitrary network resources."
+  },
+  {
+    q: "Web 3.0 differs from Web 2.0 primarily because:",
+    opts: ["Web 3.0 uses faster protocols", "Web 3.0 is a conceptual evolution focused on data (Linked Data), not a technological one", "Web 3.0 eliminates the need for HTTP", "Web 3.0 focuses on social networks"],
+    ans: 1, diff: "medium",
+    explain: "Web 2.0 is a technological evolution. Web 3.0 (Semantic Web) is a conceptual evolution focusing on semantically linked data rather than documents."
+  },
+  {
+    q: "Which format is a superset of JSON?",
+    opts: ["XML", "YAML", "DTD", "RDF"],
+    ans: 1, diff: "medium",
+    explain: "YAML (YAML Ain't Markup Language) is a superset of JSON. It adds features like cross-references, indentation-based hierarchy, and lists/associative arrays."
+  },
+  {
+    q: "The content-type format in HTTP headers follows which pattern?",
+    opts: ["name=value", "type:subtype", "type/subtype", "subtype.type"],
+    ans: 2, diff: "easy",
+    explain: "Content-Type uses the format 'type/subtype', e.g., application/xml, image/jpeg, video/mpeg."
+  },
+  {
+    q: "Which of the following is a valid XML attribute declaration?",
+    opts: ["<book id=42>", "<book id='42'>", "<book 42=id>", "<book {id}=42>"],
+    ans: 1, diff: "medium",
+    explain: "All XML attribute values must be quoted (single or double). id='42' is valid. id=42 without quotes is NOT well-formed."
+  },
+  {
+    q: "In XML, which type of content includes both text values and child elements?",
+    opts: ["Simple content", "Empty content", "Element content", "Mixed content"],
+    ans: 3, diff: "medium",
+    explain: "Mixed content contains both simple content (text values) and element content (further tags)."
+  },
+  {
+    q: "Which of the following correctly describes Web 2.0?",
+    opts: ["A specific W3C standard", "A buzzword describing modern browser-accessible apps with social components and enhanced interaction", "The Semantic Web with linked data", "The replacement protocol for HTTP/1.1"],
+    ans: 1, diff: "easy",
+    explain: "Web 2.0 is a buzzword for modern browser-based applications (wikis, weblogs) with high social components, appealing UIs, and enhanced interaction models."
+  },
+  {
+    q: "What does XHTML stand for?",
+    opts: ["Extended Hypertext Markup Language", "Extensible Hypertext Markup Language", "External Hypertext Markup Language", "Executable Hypertext Markup Language"],
+    ans: 1, diff: "easy",
+    explain: "XHTML = Extensible Hypertext Markup Language. It is an XML reformulation of HTML."
+  },
+  {
+    q: "Which of the following is NOT an event generated by a SAX parser?",
+    opts: ["startElement", "characters", "getElementById", "endDocument"],
+    ans: 2, diff: "hard",
+    explain: "getElementById is a DOM method, not a SAX event. SAX generates events like startDocument, startElement, characters, endElement, endDocument."
+  },
+  {
+    q: "In CSS, which selector type targets an element with id='fat'?",
+    opts: [".fat { }", "#fat { }", "fat { }", "@fat { }"],
+    ans: 1, diff: "easy",
+    explain: "The # prefix is used for ID selectors in CSS. So #fat targets the element with id='fat'."
+  },
+  {
+    q: "Why might a computer program scanning for 'title' elements in XML produce incorrect results without namespaces?",
+    opts: ["XML doesn't support title elements", "Title is a reserved XML keyword", "Different contributors may use 'title' for different things, causing name conflicts", "XML parsers skip title elements by default"],
+    ans: 2, diff: "medium",
+    explain: "Without namespaces, name conflicts occur. For example, a document-level 'title' and a book 'title' would both match, causing the program to confuse them."
+  },
+  {
+    q: "Which Web generation introduced Ajax, WebSockets, and RSS/Atom formats?",
+    opts: ["Web 1.0", "Web 2.0", "Web 3.0", "Web 4.0"],
+    ans: 1, diff: "easy",
+    explain: "Web 2.0 introduced protocol improvements (Ajax, Comet/HTTP Streaming, WebSockets) and new document formats (RSS, Atom, RDF, HTML5)."
+  },
+  {
+    q: "What is the key advantage of storing CSS in an external file rather than embedding it in each HTML page?",
+    opts: ["External CSS loads faster", "External CSS supports more selectors", "One file change updates the layout of all associated pages", "External CSS works without a server"],
+    ans: 2, diff: "easy",
+    explain: "An external CSS file allows you to change the entire site's layout by modifying a single file, greatly simplifying maintenance."
+  },
+  {
+    q: "Which XML Schema type category includes sequences of other types?",
+    opts: ["Simple types", "Complex types", "PCDATA types", "Attribute types"],
+    ans: 1, diff: "medium",
+    explain: "XML Schema defines complex types (such as sequences of other elements) in addition to simple types (string, integer, etc.)."
+  },
+  {
+    q: "In DOM, what does document.getElementsByTagName('author')[0] return?",
+    opts: ["All author elements as a string", "The first element with the tag name 'author'", "The parent of the author element", "The text content of the last author"],
+    ans: 1, diff: "hard",
+    explain: "getElementsByTagName returns a list of all elements with that tag name. Index [0] gets the first one in document order."
+  },
+  {
+    q: "Which of the following is NOT a key format used in Web 3.0 (Semantic Web)?",
+    opts: ["RDF", "RDFS", "OWL", "Ajax"],
+    ans: 3, diff: "medium",
+    explain: "Ajax is a Web 2.0 technology. Web 3.0 uses RDF (Resource Description Framework), RDFS, OWL, and Microformats for semantic data."
+  },
+  {
+    q: "YAML achieves hierarchical structure using:",
+    opts: ["Curly braces { }", "XML tags", "Indentation", "Parentheses ( )"],
+    ans: 2, diff: "medium",
+    explain: "YAML uses indentation (whitespace) to represent hierarchy — unlike XML which uses nested tags."
+  },
+  {
+    q: "If a web browser receives a document with content type 'application/x-custom' which it doesn't recognize, it will:",
+    opts: ["Crash", "Display the raw bytes", "Look up an appropriate application in its mapping table and delegate to it", "Automatically convert it to text/html"],
+    ans: 2, diff: "hard",
+    explain: "The browser manages a content-type to application mapping. For unrecognized types, it looks up a responsible application and delegates handling to it."
+  },
+  {
+    q: "Which JavaScript security feature prevents scripts from accessing the local file system by default?",
+    opts: ["CORS", "The sandbox principle", "The same-origin policy", "Content Security Policy"],
+    ans: 1, diff: "medium",
+    explain: "The sandbox principle limits JavaScript engine execution to browser objects only, preventing direct access to the file system or arbitrary network resources."
+  },
+  {
+    q: "In XML, which statement about the XML declaration is correct?",
+    opts: ["It is mandatory in all XML documents", "It specifies the document's character encoding", "It must come after the root element", "It defines the namespace for the document"],
+    ans: 1, diff: "hard",
+    explain: "The XML declaration (<?xml version='1.0' encoding='UTF-8'?>) specifies the XML version and character encoding. It is recommended but not strictly required."
+  },
+  {
+    q: "Which of the following is a correct XML namespace declaration?",
+    opts: ["ns:book='http://example.com'", "xmlns:b='http://example.com/myNs/'", "namespace b=example.com", "import b from 'http://example.com'"],
+    ans: 1, diff: "hard",
+    explain: "The correct syntax is xmlns:prefix='URI'. So xmlns:b='http://example.com/myNs/' binds prefix 'b' to that namespace URI."
+  }
+];
+
+let mcqScores = { correct: 0, total: 0 };
+let currentFilter = 'all';
+
+function buildMCQ() {
+  const container = document.getElementById('mcq-container');
+  container.innerHTML = '';
+  const filtered = currentFilter === 'all' ? mcqData : mcqData.filter(q => q.diff === currentFilter);
+  filtered.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'mcq-card';
+    card.dataset.diff = q.diff;
+    const diffClass = {easy:'diff-easy',medium:'diff-medium',hard:'diff-hard'}[q.diff];
+    card.innerHTML = `
+      <div class="mcq-number">Question ${i+1} <span class="mcq-diff ${diffClass}">${q.diff}</span></div>
+      <div class="mcq-q">${q.q}</div>
+      <div class="mcq-opts">
+        ${q.opts.map((o,j) => `<div class="mcq-opt" data-idx="${j}" onclick="checkMCQ(this,${q.ans},${i})">${String.fromCharCode(65+j)}. ${o}</div>`).join('')}
+      </div>
+      <div class="mcq-explain" id="explain-${i}">${q.explain}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function checkMCQ(el, correct, qi) {
+  const opts = el.parentElement.querySelectorAll('.mcq-opt');
+  if (el.classList.contains('disabled')) return;
+  const chosen = parseInt(el.dataset.idx);
+  opts.forEach((o,i) => {
+    o.classList.add('disabled');
+    if (i === correct) o.classList.add('correct');
+    else if (i === chosen && chosen !== correct) o.classList.add('wrong');
+  });
+  const filtered = currentFilter === 'all' ? mcqData : mcqData.filter(q => q.diff === currentFilter);
+  const explain = document.getElementById(`explain-${qi}`);
+  if (explain) explain.classList.add('show');
+  mcqScores.total++;
+  if (chosen === correct) mcqScores.correct++;
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('score-display').textContent = `${mcqScores.correct} / ${mcqScores.total}`;
+  const pct = mcqScores.total > 0 ? (mcqScores.correct / mcqScores.total * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function resetMCQ() {
+  mcqScores = { correct: 0, total: 0 };
+  updateScore();
+  buildMCQ();
+}
+
+function filterMCQ(diff, btn) {
+  currentFilter = diff;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  mcqScores = { correct: 0, total: 0 };
+  updateScore();
+  buildMCQ();
+}
+
+// ======== WRITTEN QUESTIONS ========
+const shortQ = [
+  {
+    q: "What is the difference between 'well-formed' and 'valid' XML?",
+    a: "A well-formed XML document is one that obeys all XML syntactical rules: proper start/end tags, single root element, quoted attributes, no overlapping tags, and case-sensitivity. A valid XML document must additionally conform to a type definition language (DTD or XML Schema) that specifies which elements and attributes are allowed and what data types they may contain. Every valid document is necessarily well-formed, but not every well-formed document is valid."
+  },
+  {
+    q: "Explain the purpose of XML namespaces and give an example of when they are needed.",
+    a: "XML namespaces solve the problem of name conflicts when XML documents from different contributors are combined. For example, if both a document metadata schema and a book catalog schema use the element <title>, a parser would be unable to distinguish which 'title' is meant. Namespaces assign a unique URI to each set of element names. Using the prefix syntax (xmlns:a='http://example.com/doc/'), each element is qualified as <a:title> or <b:title>, eliminating ambiguity. The URI acts purely as a unique identifier and does not need to point to a real resource."
+  },
+  {
+    q: "Compare the DOM and SAX approaches to XML processing.",
+    a: "DOM (Document Object Model) is a tree-based approach that loads the entire XML document into memory as a tree structure, allowing random access to any element and bi-directional traversal. It is standardized by the W3C. SAX (Simple API for XML) is an event-based approach that reads the document sequentially from start to end, generating events (startElement, characters, endElement) which registered handlers process. SAX uses far less memory than DOM and is better suited for large files, while DOM is better for complex manipulation requiring random access."
+  },
+  {
+    q: "What is the sandbox principle in JavaScript and why is it important?",
+    a: "The sandbox principle is a security concept that restricts JavaScript code running inside the browser's JavaScript engine to only accessing objects within the browser (primarily the DOM) by default. It cannot directly access the local file system or arbitrary network resources. This is important because it prevents malicious scripts embedded in web pages from reading sensitive local files, executing system commands, or making unauthorized connections to other systems on behalf of the user."
+  },
+  {
+    q: "Describe the CSS selector types and give an example of each.",
+    a: "CSS has three primary selector types: (1) Element selectors target all HTML elements of a given type, e.g., 'p { font-size: 16pt; }' styles all paragraphs. (2) Class selectors (prefixed with '.') target elements with a matching class attribute, e.g., '.top { padding-top: 20px; }' targets elements with class='top'. (3) ID selectors (prefixed with '#') target a unique element with a matching id attribute, e.g., '#fat { font-weight: bold; }' targets the element with id='fat'."
+  }
+];
+
+const longQ = [
+  {
+    q: "Describe the evolution of the Web from Web 1.0 through Web 2.0 to Web 3.0. In your answer, identify the key differences in focus, technologies, and philosophical approach between each generation.",
+    marks: "15 marks",
+    a: `<strong>Web 1.0 (Original Web):</strong> Built on three core pillars: HTTP (application protocol), HTML (document format), and URI (addressing). It was primarily a static, read-only web of hypertext documents viewable via browsers. The focus was on delivering content to users.
+
+<strong>Web 2.0 (Social/Dynamic Web):</strong> Web 2.0 represents a <em>technological evolution</em> of the original Web. Key characteristics include: a strong social component (wikis, weblogs, social platforms), increasing client-side logic, appealing user interfaces, and new protocol improvements (Ajax for asynchronous requests, Comet/HTTP Streaming, WebSockets). New document formats emerged: RSS, Atom, RDF, HTML5. New business models (advertising, freemium) became dominant. The focus shifted from just reading to reading AND writing/participating.
+
+<strong>Web 3.0 (Semantic Web):</strong> Unlike Web 2.0, Web 3.0 is a <em>conceptual evolution</em> — not just better technology, but a fundamentally different vision. Coined by Tim Berners-Lee, it envisions semantically interconnected data where computers can analyze all data on the Web. The focus shifts from documents to <em>data</em>, becoming "Linked Data." Key formats include RDF (Resource Description Framework), RDFS, OWL, and Microformats. The goal is "machines talking to machines" — intelligent agents handling day-to-day tasks automatically. Web 3.0 requires not just new tools but a new conceptual approach to how information is structured and shared on the Web.`
+  },
+  {
+    q: "Explain XML Schema and DTD as XML validation languages. Compare them in terms of capabilities, syntax, and use cases. Provide examples where appropriate.",
+    marks: "12 marks",
+    a: `<strong>DTD (Document Type Definition):</strong> DTD is the older validation approach. It defines a list of legal elements for an XML document and can be referenced from or embedded in the XML document. Example: &lt;!DOCTYPE note [&lt;!ELEMENT book (title,author,isbn)&gt; &lt;!ELEMENT title (#PCDATA)&gt;]&gt;. PCDATA (Parsed Character Data) is essentially simple text. DTD's main shortcomings are its limited type system (cannot define integers, dates, or custom data types) and the fact that it uses a non-XML syntax, meaning it cannot be processed by standard XML tools.
+
+<strong>XML Schema:</strong> XML Schema is itself an XML dialect, meaning it can be written and processed using standard XML tools. It supports two categories of types: Simple types (string, integer, decimal, date, etc.) and Complex types (sequences of other elements, optional elements, repeating elements). Example: &lt;xs:element name="title" type="xs:string"/&gt;. This allows fine-grained data validation.
+
+<strong>Comparison:</strong>
+- Type richness: DTD is limited (PCDATA only) vs. XML Schema (rich type system)
+- Syntax: DTD uses its own syntax vs. XML Schema uses XML syntax
+- Namespace support: DTD has limited namespace support vs. XML Schema has full support
+- Reusability: XML Schema types can be defined and reused across documents
+
+<strong>Use case:</strong> DTD is suitable for simple documents with minimal type requirements. XML Schema is preferred for complex data exchange formats requiring strict type validation.`
+  },
+  {
+    q: "A company is building a web application that needs to process large XML configuration files. Discuss the trade-offs between using DOM and SAX processing, and recommend an approach with justification.",
+    marks: "10 marks",
+    a: `<strong>DOM Processing:</strong> DOM loads the entire XML document into memory as a tree. This allows random access to any element, bi-directional traversal, and easy modification of the document structure. The programmer can call document.getElementById() or getElementsByTagName() to instantly access any element. However, for large files, the memory requirement is significant — a 1GB XML file requires at least 1GB of RAM for the tree, likely more.
+
+<strong>SAX Processing:</strong> SAX reads the document sequentially and fires events (startDocument, startElement, characters, endElement, endDocument) to registered handlers. Only the current element being processed needs to be in memory at any time. This makes SAX highly efficient for large files. The trade-off is that SAX cannot "go back" or access earlier parts of the document once parsed; it is strictly forward-only.
+
+<strong>Recommendation:</strong> For large XML configuration files, <strong>SAX is recommended</strong>. The primary reason is memory efficiency — large files would exhaust available RAM with DOM. SAX allows streaming processing where the application extracts needed data as the parser progresses, never holding the whole document in memory. Configuration files are typically read sequentially and the application usually knows which fields it needs, making SAX's event-handler approach well-suited. If the application needed to frequently jump between sections or modify the XML structure in-place, DOM would be preferable despite the memory cost.`
+  }
+];
+
+function buildWritten() {
+  const shortContainer = document.getElementById('short-q-container');
+  shortQ.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'wq-card';
+    div.innerHTML = `
+      <div class="mcq-number">Short Answer ${i+1}</div>
+      <p style="font-weight:500;color:var(--text);margin-bottom:0.5rem">${q.q}</p>
+      <button class="wq-toggle" onclick="toggleAnswer(this)">Show model answer</button>
+      <div class="wq-answer"><p>${q.a}</p></div>
+    `;
+    shortContainer.appendChild(div);
+  });
+
+  const longContainer = document.getElementById('long-q-container');
+  longQ.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'wq-card';
+    div.innerHTML = `
+      <div class="mcq-number">Long Answer ${i+1} <span class="badge badge-accent" style="margin-left:0.5rem">${q.marks}</span></div>
+      <p style="font-weight:500;color:var(--text);margin-bottom:0.5rem">${q.q}</p>
+      <button class="wq-toggle" onclick="toggleAnswer(this)">Show model answer</button>
+      <div class="wq-answer"><p>${q.a}</p></div>
+    `;
+    longContainer.appendChild(div);
+  });
+}
+
+function toggleAnswer(btn) {
+  const answer = btn.nextElementSibling;
+  answer.classList.toggle('show');
+  btn.textContent = answer.classList.contains('show') ? 'Hide model answer' : 'Show model answer';
+}
+
+// ======== INIT ========
+buildMCQ();
+buildWritten();
+</script>
+</body>
+</html>
