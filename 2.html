@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Applications — Exam Prep System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --bg2: #1a1828;
+    --bg3: #22203a;
+    --surface: #2a2845;
+    --surface2: #342f5c;
+    --accent: #7c6af7;
+    --accent2: #b5abff;
+    --accent3: #ff8c61;
+    --gold: #f5c842;
+    --text: #e8e6f9;
+    --text2: #a09dc0;
+    --text3: #6b688a;
+    --border: rgba(124,106,247,0.18);
+    --border2: rgba(124,106,247,0.35);
+    --correct: #4ade80;
+    --wrong: #f87171;
+    --tag-bg: rgba(124,106,247,0.15);
+    --tag-text: #b5abff;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --mono: 'DM Mono', monospace;
+    --heading: 'Syne', sans-serif;
+    --body: 'Lora', serif;
+  }
+  .light {
+    --bg: #f7f6ff;
+    --bg2: #eeedfb;
+    --bg3: #e5e3f7;
+    --surface: #ffffff;
+    --surface2: #ede9ff;
+    --accent: #5b48e8;
+    --accent2: #3d2ec4;
+    --accent3: #d64f1a;
+    --gold: #b8860b;
+    --text: #1a1735;
+    --text2: #3d3870;
+    --text3: #7a759e;
+    --border: rgba(91,72,232,0.15);
+    --border2: rgba(91,72,232,0.3);
+    --correct: #166534;
+    --wrong: #991b1b;
+    --tag-bg: rgba(91,72,232,0.1);
+    --tag-text: #3d2ec4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 20px; height: 58px;
+    overflow-x: auto; flex-wrap: nowrap;
+  }
+  nav::-webkit-scrollbar { height: 3px; }
+  nav::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+  .nav-brand {
+    font-family: var(--heading); font-weight: 800; font-size: 15px;
+    color: var(--accent2); white-space: nowrap; margin-right: 12px;
+    letter-spacing: -0.5px;
+  }
+  .nav-btn {
+    font-family: var(--heading); font-size: 12px; font-weight: 600;
+    padding: 6px 14px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--border2); background: transparent; color: var(--text2);
+    white-space: nowrap; transition: all 0.2s; letter-spacing: 0.3px;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .nav-spacer { flex: 1; }
+  .theme-toggle {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--border2); background: var(--surface);
+    cursor: pointer; color: var(--text2); font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .theme-toggle:hover { background: var(--surface2); }
+
+  /* SECTIONS */
+  section { display: none; }
+  section.active { display: block; }
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* HERO */
+  .hero {
+    text-align: center; padding: 60px 0 30px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .hero-tag {
+    display: inline-block; font-family: var(--heading); font-size: 11px;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent3); background: rgba(255,140,97,0.12);
+    padding: 5px 14px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: var(--heading); font-size: clamp(28px,5vw,52px);
+    font-weight: 800; line-height: 1.1; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, var(--accent2) 0%, var(--gold) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .hero p { color: var(--text2); font-size: 17px; max-width: 540px; margin: 0 auto; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    display: flex; gap: 8px; justify-content: center; margin-top: 30px; flex-wrap: wrap;
+  }
+  .progress-pill {
+    font-family: var(--heading); font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--border2); color: var(--text3);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card-title {
+    font-family: var(--heading); font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .card h2 {
+    font-family: var(--heading); font-size: 22px; font-weight: 700;
+    margin-bottom: 12px; color: var(--text); letter-spacing: -0.5px;
+  }
+  .card h3 {
+    font-family: var(--heading); font-size: 17px; font-weight: 700;
+    margin: 22px 0 10px; color: var(--accent2); letter-spacing: -0.3px;
+  }
+  .card p { color: var(--text2); line-height: 1.8; font-size: 15px; margin-bottom: 12px; }
+  .card ul { padding-left: 20px; color: var(--text2); line-height: 1.9; font-size: 15px; }
+  .card li { margin-bottom: 6px; }
+  .card li::marker { color: var(--accent); }
+
+  /* HIGHLIGHT BOXES */
+  .hl-box {
+    border-radius: var(--radius-sm); padding: 16px 20px; margin: 16px 0;
+    border-left: 3px solid;
+  }
+  .hl-def {
+    background: rgba(124,106,247,0.08); border-color: var(--accent);
+  }
+  .hl-key {
+    background: rgba(245,200,66,0.08); border-color: var(--gold);
+  }
+  .hl-warn {
+    background: rgba(255,140,97,0.08); border-color: var(--accent3);
+  }
+  .hl-box .hl-label {
+    font-family: var(--heading); font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  .hl-def .hl-label { color: var(--accent); }
+  .hl-key .hl-label { color: var(--gold); }
+  .hl-warn .hl-label { color: var(--accent3); }
+  .hl-box p { margin: 0; color: var(--text); font-size: 14px; line-height: 1.75; }
+
+  /* KEYWORD */
+  .kw { color: var(--accent2); font-weight: 500; }
+  .kw2 { color: var(--gold); font-weight: 500; }
+  .kw3 { color: var(--accent3); font-weight: 500; }
+
+  /* CODE */
+  code {
+    font-family: var(--mono); font-size: 13px;
+    background: var(--bg3); color: var(--accent3);
+    padding: 2px 7px; border-radius: 4px;
+  }
+  pre {
+    font-family: var(--mono); font-size: 13px;
+    background: var(--bg3); color: var(--text2);
+    padding: 18px; border-radius: var(--radius-sm);
+    overflow-x: auto; line-height: 1.7; margin: 14px 0;
+    border: 1px solid var(--border);
+  }
+
+  /* COLLAPSIBLE */
+  .collapsible-header {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none; padding: 4px 0;
+  }
+  .collapsible-header h3 { margin: 0; }
+  .collapse-icon {
+    font-size: 18px; color: var(--accent); transition: transform 0.3s;
+    font-family: var(--heading); font-weight: 700; flex-shrink: 0;
+  }
+  .collapse-icon.open { transform: rotate(180deg); }
+  .collapsible-body { overflow: hidden; transition: max-height 0.4s ease; max-height: 0; }
+  .collapsible-body.open { max-height: 2000px; }
+
+  /* COMPARISON TABLE */
+  .cmp-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .cmp-table th {
+    background: var(--surface2); color: var(--accent2);
+    font-family: var(--heading); font-weight: 700; font-size: 12px;
+    letter-spacing: 1px; text-transform: uppercase; padding: 10px 14px;
+    text-align: left;
+  }
+  .cmp-table td {
+    padding: 9px 14px; border-bottom: 1px solid var(--border);
+    color: var(--text2); line-height: 1.6;
+  }
+  .cmp-table tr:last-child td { border-bottom: none; }
+  .cmp-table tr:hover td { background: var(--bg3); }
+
+  /* SUMMARY BULLETS */
+  .summary-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .summary-item:last-child { border-bottom: none; }
+  .summary-bullet {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--tag-bg); color: var(--accent);
+    font-family: var(--heading); font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .summary-item p { color: var(--text2); font-size: 14px; line-height: 1.7; margin: 0; }
+  .summary-item strong { color: var(--text); }
+
+  /* MNEMONIC */
+  .mnemonic {
+    display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0;
+  }
+  .mnemonic-letter {
+    width: 44px; height: 44px; border-radius: var(--radius-sm);
+    background: var(--surface2); border: 1px solid var(--border2);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .mnemonic-letter span:first-child {
+    font-family: var(--heading); font-size: 18px; font-weight: 800; color: var(--accent);
+  }
+  .mnemonic-letter span:last-child {
+    font-size: 9px; color: var(--text3); font-family: var(--heading); font-weight: 600;
+  }
+  .mnemonic-word {
+    display: flex; align-items: center;
+    font-family: var(--heading); font-size: 13px; color: var(--text2);
+    padding: 0 10px;
+  }
+
+  /* MCQ */
+  .mcq-container { display: flex; flex-direction: column; gap: 20px; }
+  .mcq-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .mcq-meta {
+    display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .mcq-num {
+    font-family: var(--heading); font-size: 11px; font-weight: 700;
+    color: var(--text3); letter-spacing: 1px;
+  }
+  .difficulty-tag {
+    font-family: var(--heading); font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .easy { background: rgba(74,222,128,0.12); color: #4ade80; }
+  .medium { background: rgba(245,200,66,0.12); color: var(--gold); }
+  .hard { background: rgba(248,113,113,0.12); color: #f87171; }
+  .mcq-question {
+    font-size: 15px; color: var(--text); line-height: 1.65; margin-bottom: 16px;
+  }
+  .mcq-options { display: flex; flex-direction: column; gap: 8px; }
+  .mcq-option {
+    display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.2s; font-size: 14px; color: var(--text2);
+    background: var(--bg2);
+  }
+  .mcq-option:hover { border-color: var(--border2); background: var(--bg3); }
+  .mcq-option .opt-letter {
+    font-family: var(--heading); font-size: 12px; font-weight: 700;
+    color: var(--accent); width: 18px; flex-shrink: 0; margin-top: 1px;
+  }
+  .mcq-option.correct { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.4); color: var(--text); }
+  .mcq-option.correct .opt-letter { color: var(--correct); }
+  .mcq-option.wrong { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.4); color: var(--text); }
+  .mcq-option.wrong .opt-letter { color: var(--wrong); }
+  .mcq-explanation {
+    margin-top: 14px; padding: 14px 16px;
+    background: rgba(124,106,247,0.08); border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 13px; color: var(--text2); line-height: 1.7;
+    display: none;
+  }
+  .mcq-explanation.show { display: block; }
+  .mcq-explanation strong { color: var(--accent2); }
+  .mcq-filter {
+    display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; align-items: center;
+  }
+  .mcq-filter span {
+    font-family: var(--heading); font-size: 12px; font-weight: 600;
+    color: var(--text3); margin-right: 4px;
+  }
+  .filter-btn {
+    font-family: var(--heading); font-size: 11px; font-weight: 700;
+    padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border2);
+    background: transparent; color: var(--text2); cursor: pointer; transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .score-counter {
+    display: flex; gap: 16px; margin-bottom: 24px;
+  }
+  .score-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 20px; text-align: center;
+  }
+  .score-box .val {
+    font-family: var(--heading); font-size: 24px; font-weight: 800; color: var(--accent);
+  }
+  .score-box .lbl {
+    font-family: var(--heading); font-size: 10px; font-weight: 600;
+    color: var(--text3); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .reset-btn {
+    font-family: var(--heading); font-size: 12px; font-weight: 700;
+    padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border2);
+    background: transparent; color: var(--text2); cursor: pointer; transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  /* WRITTEN Q */
+  .written-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 18px;
+  }
+  .written-card .q-type {
+    font-family: var(--heading); font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--accent3);
+    margin-bottom: 8px;
+  }
+  .written-card .question {
+    font-size: 16px; color: var(--text); font-weight: 500; margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .show-answer-btn {
+    font-family: var(--heading); font-size: 12px; font-weight: 700;
+    padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border2);
+    background: var(--tag-bg); color: var(--accent2); cursor: pointer; transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .show-answer-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .answer-body {
+    margin-top: 16px; padding: 18px;
+    background: var(--bg3); border-radius: var(--radius-sm);
+    border: 1px solid var(--border); display: none;
+  }
+  .answer-body.show { display: block; }
+  .answer-body p { color: var(--text2); font-size: 14px; line-height: 1.8; margin-bottom: 10px; }
+  .answer-body ul { color: var(--text2); font-size: 14px; line-height: 1.9; padding-left: 18px; }
+  .answer-body li { margin-bottom: 6px; }
+  .answer-body li::marker { color: var(--accent); }
+  .answer-body strong { color: var(--accent2); }
+
+  /* REVISION */
+  .revision-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;
+    margin-bottom: 20px;
+  }
+  .rev-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .rev-card h4 {
+    font-family: var(--heading); font-size: 13px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--accent3);
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rev-card ul { padding-left: 16px; list-style: none; }
+  .rev-card li {
+    font-size: 13px; color: var(--text2); line-height: 1.75;
+    padding: 4px 0; position: relative;
+  }
+  .rev-card li::before {
+    content: '→'; color: var(--accent); position: absolute; left: -16px;
+    font-size: 12px;
+  }
+  .rev-card li strong { color: var(--accent2); }
+  .cheatsheet {
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+    border: 1px solid var(--border2); border-radius: var(--radius);
+    padding: 28px; position: relative; overflow: hidden;
+  }
+  .cheatsheet::before {
+    content: 'NIGHT BEFORE';
+    position: absolute; top: 16px; right: 20px;
+    font-family: var(--heading); font-size: 10px; font-weight: 800;
+    letter-spacing: 3px; color: var(--gold); opacity: 0.5;
+  }
+  .cheatsheet h3 {
+    font-family: var(--heading); font-size: 20px; font-weight: 800;
+    color: var(--gold); margin-bottom: 20px; letter-spacing: -0.5px;
+  }
+  .cheat-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width:600px) { .cheat-cols { grid-template-columns: 1fr; } }
+  .cheat-section h4 {
+    font-family: var(--heading); font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .cheat-item {
+    display: flex; gap: 8px; align-items: flex-start; margin-bottom: 7px;
+  }
+  .cheat-item .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    margin-top: 6px; flex-shrink: 0;
+  }
+  .cheat-item p { font-size: 13px; color: var(--text2); line-height: 1.6; margin: 0; }
+  .cheat-item strong { color: var(--text); }
+
+  /* STEP FLOW */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+  .flow-step {
+    display: flex; gap: 16px; align-items: flex-start; position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: ''; position: absolute; left: 17px; top: 38px;
+    width: 2px; height: calc(100% - 6px); background: var(--border2);
+  }
+  .flow-num {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-family: var(--heading); font-size: 13px; font-weight: 800; color: var(--accent);
+    background: var(--bg);
+  }
+  .flow-content { padding: 6px 0 20px; }
+  .flow-content p { color: var(--text2); font-size: 14px; line-height: 1.7; margin: 4px 0 0; }
+  .flow-content strong { font-family: var(--heading); font-size: 15px; color: var(--text); }
+
+  /* SECTION HEADINGS */
+  .section-hero {
+    margin-bottom: 36px; padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-hero h2 {
+    font-family: var(--heading); font-size: 36px; font-weight: 800;
+    letter-spacing: -1px; color: var(--text);
+  }
+  .section-hero p { color: var(--text2); font-size: 16px; margin-top: 8px; }
+  .section-tag {
+    font-family: var(--heading); font-size: 10px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--accent3);
+    margin-bottom: 12px; display: block;
+  }
+
+  /* MISC */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .badge {
+    display: inline-block; font-family: var(--heading); font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+  }
+  .badge-purple { background: var(--tag-bg); color: var(--tag-text); }
+  .badge-gold { background: rgba(245,200,66,0.12); color: var(--gold); }
+
+  /* SCROLL FADE IN */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card, .mcq-card, .written-card, .rev-card {
+    animation: fadeUp 0.4s ease both;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">⚡ WebApps Exam</div>
+  <button class="nav-btn active" onclick="showSection('explain',this)">📖 Deep Dive</button>
+  <button class="nav-btn" onclick="showSection('summary',this)">🧾 Summary</button>
+  <button class="nav-btn" onclick="showSection('memory',this)">🧩 Memory</button>
+  <button class="nav-btn" onclick="showSection('mcq',this)">❓ MCQs</button>
+  <button class="nav-btn" onclick="showSection('written',this)">✍️ Written</button>
+  <button class="nav-btn" onclick="showSection('revision',this)">⚡ Revision</button>
+  <div class="nav-spacer"></div>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">☀</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ EXPLAIN ══ -->
+<section id="explain" class="active">
+<div class="container">
+  <div class="section-hero">
+    <span class="section-tag">Phase 1 — Deep Understanding</span>
+    <h2>Web Applications</h2>
+    <p>Complete concept-by-concept breakdown with analogies and exam-critical details</p>
+  </div>
+
+  <!-- REST MODEL -->
+  <div class="card">
+    <div class="card-title">01 — REST Model</div>
+    <h2>Representational State Transfer</h2>
+    <p>REST is an <span class="kw">architectural style</span> for distributed hypermedia systems, especially the Web. Think of it like ordering food at a restaurant — the menu is the interface, each dish is a resource, and every order message contains <em>everything</em> the waiter needs.</p>
+    <div class="hl-box hl-def">
+      <div class="hl-label">📌 Definition</div>
+      <p><strong>REST</strong> = Representational State Transfer. A model based on <strong>client/server</strong> architecture with <strong>stateless</strong> communication, where requests target <strong>resources</strong> (not procedures) via a generic interface.</p>
+    </div>
+    <h3>Key REST Principles</h3>
+    <ul>
+      <li><strong>Stateless:</strong> Every message must contain all necessary context. The server stores no session state between requests.</li>
+      <li><strong>Resources not procedures:</strong> Unlike RPC (Remote Procedure Call) which calls functions, REST targets <em>documents/resources</em>.</li>
+      <li><strong>Unique identifiers:</strong> Every resource has a unique URI.</li>
+      <li><strong>Client/Server separation:</strong> Clear division of concerns.</li>
+    </ul>
+    <div class="hl-box hl-key">
+      <div class="hl-label">🔑 Exam Alert — REST vs RPC</div>
+      <p>REST requests are directed to <strong>resources (documents)</strong> using standard HTTP methods. RPC requests are directed to <strong>procedures (functions)</strong>. This is a classic MCQ trap.</p>
+    </div>
+    <h3>REST Interaction Flow</h3>
+    <div class="flow">
+      <div class="flow-step"><div class="flow-num">1</div><div class="flow-content"><strong>GET document</strong><p>Client requests a resource using its unique URI. Server returns its representation.</p></div></div>
+      <div class="flow-step"><div class="flow-num">2</div><div class="flow-content"><strong>Client manipulates</strong><p>Client processes the received representation locally.</p></div></div>
+      <div class="flow-step"><div class="flow-num">3</div><div class="flow-content"><strong>PUT document</strong><p>Client sends the modified representation back to the server at the same URI.</p></div></div>
+    </div>
+  </div>
+
+  <!-- WEB ARCHITECTURE -->
+  <div class="card">
+    <div class="card-title">02 — Web App Architecture</div>
+    <h2>Three-Tier Architecture</h2>
+    <p>A web application has three logical layers. Think of it like a restaurant: the <span class="kw">waiter</span> (presentation), the <span class="kw">chef</span> (logic), and the <span class="kw">pantry</span> (data).</p>
+    <table class="cmp-table">
+      <tr><th>Layer</th><th>Location</th><th>Responsibility</th></tr>
+      <tr><td><strong>Presentation</strong></td><td>Client (browser)</td><td>Render UI, handle user interaction</td></tr>
+      <tr><td><strong>Logic</strong></td><td>Server-side</td><td>Process requests, business rules, authentication</td></tr>
+      <tr><td><strong>Data</strong></td><td>Server-side</td><td>Persistent storage, databases</td></tr>
+    </table>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">⚠️ Evolution Trend</div>
+      <p>Modern web apps shift logic increasingly to the <strong>client-side</strong> (JavaScript frameworks). Classical apps kept almost everything server-side. This is a classic exam trajectory question.</p>
+    </div>
+  </div>
+
+  <!-- WEB SERVER -->
+  <div class="card">
+    <div class="card-title">03 — Web Server Architecture</div>
+    <h2>Hierarchical Processing Pipeline</h2>
+    <p>A web server makes resources available via HTTP. For performance under high load, it uses a <span class="kw">pool of pre-created processing entities</span> — like a fast-food chain staffing multiple cashiers.</p>
+    <div class="hl-box hl-def">
+      <div class="hl-label">📌 Definition</div>
+      <p>A <strong>web server</strong> is software that makes resources available through an HTTP-accessible interface. It uses a hierarchical, parallel structure for low latency and high throughput.</p>
+    </div>
+    <h3>Request Handling Steps</h3>
+    <div class="flow">
+      <div class="flow-step"><div class="flow-num">1</div><div class="flow-content"><strong>Startup: Pool creation</strong><p>Server creates a pool of <strong>processing entities</strong> and opens a port for incoming connections.</p></div></div>
+      <div class="flow-step"><div class="flow-num">2</div><div class="flow-content"><strong>Browser connects via TCP</strong><p>Browser initiates a TCP connection to the <strong>Connector Entity</strong>.</p></div></div>
+      <div class="flow-step"><div class="flow-num">3</div><div class="flow-content"><strong>Client Descriptor created</strong><p>The Connector Entity creates a <strong>client descriptor</strong> (the communication endpoint) and passes it to the Delegation Process.</p></div></div>
+      <div class="flow-step"><div class="flow-num">4</div><div class="flow-content"><strong>Delegation assigns work</strong><p>Delegation Process selects an <strong>available processing entity</strong> from the pool and forwards the client descriptor.</p></div></div>
+      <div class="flow-step"><div class="flow-num">5</div><div class="flow-content"><strong>HTTP communication</strong><p>The selected processing entity handles full HTTP communication with the browser.</p></div></div>
+    </div>
+    <h3>Dynamic Content Generation</h3>
+    <p>Static content: server just reads from filesystem. Dynamic content uses:</p>
+    <ul>
+      <li><strong>CGI scripts</strong> — Simple external programs</li>
+      <li><strong>Java Servlet Container</strong> — Java-based processing</li>
+      <li><strong>Application Server</strong> — Full services: transactions, security, directory</li>
+    </ul>
+    <p>An <span class="kw">(X)HTML engine</span> can merge dynamic content with <span class="kw">templates</span> to produce final HTML pages.</p>
+  </div>
+
+  <!-- WEB BROWSER -->
+  <div class="card">
+    <div class="card-title">04 — Web Browser Architecture</div>
+    <h2>Browser Subsystems</h2>
+    <p>Modern browsers are complex platforms. Think of them as an operating system within an operating system, with multiple specialized engines.</p>
+    <table class="cmp-table">
+      <tr><th>Subsystem</th><th>Function</th></tr>
+      <tr><td><strong>User Interface</strong></td><td>Front-end display, address bar, buttons</td></tr>
+      <tr><td><strong>Browser Engine</strong></td><td>High-level interface to query/control the rendering engine</td></tr>
+      <tr><td><strong>Rendering Engine</strong></td><td>Parses HTML/CSS, performs layout, renders page visually</td></tr>
+      <tr><td><strong>Networking</strong></td><td>Handles HTTP communication</td></tr>
+      <tr><td><strong>XML Parser</strong></td><td>Parses XML content</td></tr>
+      <tr><td><strong>Script Engine</strong></td><td>Executes embedded JavaScript</td></tr>
+      <tr><td><strong>Display Backend</strong></td><td>Drawing/windowing primitives, fonts (e.g. GTK+)</td></tr>
+      <tr><td><strong>Data Persistence</strong></td><td>Cached pages, cookies, localStorage</td></tr>
+      <tr><td><strong>Plug-in Engine</strong></td><td>Dynamic extension point (e.g. web feed reader)</td></tr>
+    </table>
+    <div class="hl-box hl-key">
+      <div class="hl-label">🔑 Exam Favourite</div>
+      <p>Browsers also include an <strong>XSLT processor</strong> (Extensible Stylesheet Transformation) though not shown in the main diagram. Know all 9 components listed above.</p>
+    </div>
+  </div>
+
+  <!-- HTTP -->
+  <div class="card">
+    <div class="card-title">05 — HTTP Protocol</div>
+    <h2>Hypertext Transfer Protocol</h2>
+    <p>HTTP is the communication protocol of the Web. It runs <span class="kw">on top of TCP</span> using a <span class="kw2">request-response</span> pattern. Think of it like sending a formal letter: every letter has a header (to, from, subject) and a body (content).</p>
+    <div class="hl-box hl-def">
+      <div class="hl-label">📌 Structure of Every HTTP Message</div>
+      <p><strong>Header:</strong> specifies the operation, resource URI, and parameters (key-value pairs)<br>
+      <strong>Body:</strong> optional content (HTML, form data, file, etc.)<br>
+      Separated by a blank line (CRLF)</p>
+    </div>
+    <h3>URI Addressing</h3>
+    <ul>
+      <li><code>*</code> — No resource associated (e.g. OPTIONS *)</li>
+      <li><code>http://www.serv.com/index.html</code> — Absolute URI (includes server address)</li>
+      <li><code>/index.html</code> — Absolute Path (relative to server, requires Host header)</li>
+    </ul>
+    <h3>HTTP 1.0 vs HTTP 1.1 — Critical Differences</h3>
+    <table class="cmp-table">
+      <tr><th>Feature</th><th>HTTP 1.0</th><th>HTTP 1.1</th></tr>
+      <tr><td>Connection</td><td>Close after each request</td><td><strong>Persistent (keep-alive) by default</strong></td></tr>
+      <tr><td>Pipelining</td><td>Not available</td><td>Available (but not universally supported)</td></tr>
+      <tr><td>Host header</td><td>Optional</td><td><strong>Required</strong> with absolute paths</td></tr>
+      <tr><td>Methods</td><td>GET, HEAD, POST</td><td>+PUT, DELETE, OPTIONS, TRACE, CONNECT</td></tr>
+      <tr><td>Efficiency (packets)</td><td>497 packets total</td><td>223 (persistent), 83 (pipelining)</td></tr>
+    </table>
+    <div class="hl-box hl-key">
+      <div class="hl-label">🔑 Pipelining</div>
+      <p>HTTP/1.1 pipelining: send multiple requests <strong>without waiting for responses</strong>. Responses are returned <strong>in order</strong>. Reduces from 497 packets (HTTP/1.0) to just 83 packets with pipelining.</p>
+    </div>
+    <h3>HTTP Methods</h3>
+    <table class="cmp-table">
+      <tr><th>Method</th><th>Purpose</th><th>HTTP 1.0?</th></tr>
+      <tr><td><code>GET</code></td><td>Retrieve a resource</td><td>✓</td></tr>
+      <tr><td><code>HEAD</code></td><td>GET without body (metadata only)</td><td>✓</td></tr>
+      <tr><td><code>POST</code></td><td>Submit data to a resource</td><td>✓</td></tr>
+      <tr><td><code>PUT</code></td><td>Store content at a URL</td><td>✗ (1.1 only)</td></tr>
+      <tr><td><code>DELETE</code></td><td>Delete a resource</td><td>✗</td></tr>
+      <tr><td><code>OPTIONS</code></td><td>Query server capabilities</td><td>✗</td></tr>
+      <tr><td><code>TRACE</code></td><td>Echo request (diagnostic)</td><td>✗</td></tr>
+      <tr><td><code>CONNECT</code></td><td>Reserved for proxy servers</td><td>✗</td></tr>
+    </table>
+    <h3>HTTP Status Codes</h3>
+    <table class="cmp-table">
+      <tr><th>Range</th><th>Category</th><th>Example</th></tr>
+      <tr><td><strong>1xx</strong></td><td>Informational — continue</td><td>100 Continue</td></tr>
+      <tr><td><strong>2xx</strong></td><td>Success</td><td>200 OK</td></tr>
+      <tr><td><strong>3xx</strong></td><td>Redirection</td><td>301 Moved Permanently</td></tr>
+      <tr><td><strong>4xx</strong></td><td>Client Error</td><td>404 Not Found</td></tr>
+      <tr><td><strong>5xx</strong></td><td>Server Error</td><td>501 Not Implemented</td></tr>
+    </table>
+    <h3>Request Message Structure</h3>
+    <pre>Request Line:   GET /news/index.html HTTP/1.1
+General Header: Connection: keep-alive | Date: ...
+Request Header: Accept-Encoding: gzip | User-Agent: Mozilla
+Entity Header:  Content-Length: 41
+[blank CRLF]
+Message Body:   (parameters, form data, etc.)</pre>
+    <h3>Response Message Structure</h3>
+    <pre>Status Line:    HTTP/1.1 200 OK
+General Header: Date: Fri, 12 Jan 12:26:16 GMT
+Response Header: Server: Apache
+Entity Header:  Content-Type: text/html | Content-Length: 1922
+[blank CRLF]
+Message Body:   (HTML content, compressed data, etc.)</pre>
+    <h3>User-Agent Detection</h3>
+    <p>Servers can adapt content to different devices by reading the <span class="kw">User-Agent</span> header. Similarly, <code>Accept-Language</code> enables language-specific responses.</p>
+    <pre>User-Agent: Mozilla (compatible; MSIE; Windows)
+User-Agent: Mozilla [en] (Android)
+User-Agent: Mozilla (compatible; MSIE; Windows Mobile; PPC; 240x320)</pre>
+  </div>
+
+  <!-- SESSION -->
+  <div class="card">
+    <div class="card-title">06 — Session Handling</div>
+    <h2>Maintaining State in Stateless HTTP</h2>
+    <p>HTTP is stateless — each request is independent. But web apps need to remember users (shopping carts, login state). The solution: <span class="kw">Sessions</span> + <span class="kw2">Cookies</span>.</p>
+    <div class="hl-box hl-def">
+      <div class="hl-label">📌 How It Works</div>
+      <p>Server creates a <strong>session data structure</strong> and assigns a <strong>session ID (SID)</strong>. The SID is sent to the browser as a <strong>cookie</strong>. Browser includes the cookie in all future requests. Server uses the SID to retrieve the right session data.</p>
+    </div>
+    <h3>Cookies</h3>
+    <p>Small pieces of data stored <strong>client-side</strong> in the browser's data persistence layer. Each cookie has a <strong>name, value, and source domain</strong>. Same-origin policy applies.</p>
+  </div>
+
+  <!-- HTTP/2 -->
+  <div class="card">
+    <div class="card-title">07 — HTTP/2</div>
+    <h2>Next-Generation Protocol</h2>
+    <p>HTTP/1.1 wasn't designed for performance. HTTP/2 fixes this — think of HTTP/1.1 as a single-lane road vs HTTP/2 as a multi-lane highway.</p>
+    <table class="cmp-table">
+      <tr><th>Feature</th><th>HTTP/1.1</th><th>HTTP/2</th></tr>
+      <tr><td>Multiplexing</td><td>One request at a time per connection</td><td><strong>Multiple parallel channels per TCP connection</strong></td></tr>
+      <tr><td>Header Compression</td><td>None</td><td>Yes (HPACK)</td></tr>
+      <tr><td>Framing</td><td>Text messages</td><td><strong>Binary frames (HEADER + DATA frames)</strong></td></tr>
+      <tr><td>Prioritization</td><td>Not available</td><td>Frames can be prioritized</td></tr>
+      <tr><td>Semantics</td><td>HTTP methods/codes</td><td><strong>Same — no change to HTTP semantics</strong></td></tr>
+    </table>
+    <div class="hl-box hl-key">
+      <div class="hl-label">🔑 Critical Detail</div>
+      <p>HTTP/2 does <strong>NOT change</strong> HTTP methods, status codes, or semantics. It only optimizes transport. Approved as IETF standard in <strong>February 2015</strong>.</p>
+    </div>
+    <p>Two messages are split into 4 interleaved frames: two HEADER frames and two DATA frames, transmitted over one TCP connection via separate channels.</p>
+  </div>
+
+  <!-- HTML5 -->
+  <div class="card">
+    <div class="card-title">08 — HTML5</div>
+    <h2>The Modern Web Platform</h2>
+    <p>HTML5 = Enhanced HTML + CSS3 + JavaScript APIs. It bridges client-side and server-side capabilities.</p>
+    <div class="hl-box hl-def">
+      <div class="hl-label">📌 HTML5 = 3 Parts</div>
+      <p><strong>Enhanced HTML</strong> — New structural elements and attributes<br>
+      <strong>CSS3</strong> — Improved styling, animations, responsive design<br>
+      <strong>JavaScript APIs</strong> — Web Storage, Web Workers, Geolocation, IndexedDB</p>
+    </div>
+    <h3>Structural Elements</h3>
+    <table class="cmp-table">
+      <tr><th>Element</th><th>Purpose</th></tr>
+      <tr><td><code>&lt;header&gt;</code></td><td>Introductory or navigational aids</td></tr>
+      <tr><td><code>&lt;nav&gt;</code></td><td>Navigation section</td></tr>
+      <tr><td><code>&lt;section&gt;</code></td><td>Generic grouping element</td></tr>
+      <tr><td><code>&lt;article&gt;</code></td><td>Independent content (blog post, news)</td></tr>
+      <tr><td><code>&lt;aside&gt;</code></td><td>Tangentially related content (sidebar)</td></tr>
+      <tr><td><code>&lt;footer&gt;</code></td><td>Footer info (author, copyright)</td></tr>
+    </table>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">⚠️ Trap</div>
+      <p>These elements are for <strong>grouping/structure</strong>, NOT for positioning. Positioning is done with <strong>CSS</strong>.</p>
+    </div>
+    <h3>Audio & Video</h3>
+    <p>HTML5 introduces <code>&lt;audio&gt;</code> and <code>&lt;video&gt;</code> elements with built-in JS APIs. Key features: multiple source formats, text track support (WebVTT subtitles), JavaScript play/pause control.</p>
+    <h3>Web Workers</h3>
+    <div class="hl-box hl-def">
+      <div class="hl-label">📌 Definition</div>
+      <p>A <strong>Web Worker</strong> is JavaScript that runs in the <strong>background, independently of the UI thread</strong>. Communication is <strong>event-based</strong> using <code>postMessage()</code>. Used for computationally expensive tasks that would otherwise freeze the UI.</p>
+    </div>
+    <pre>// Main thread
+var worker = new Worker("counter_code.js");
+worker.onmessage = function(event) { /* handle result */ };
+
+// Worker file
+postMessage(value); // sends back to main thread</pre>
+    <h3>Client-Side Storage (HTML5)</h3>
+    <table class="cmp-table">
+      <tr><th>Storage Type</th><th>Description</th><th>Advantage</th><th>Disadvantage</th></tr>
+      <tr><td><strong>Web Storage</strong></td><td>Key/value pairs</td><td>Simple API, wide support</td><td>No queries, no schemas, no transactions</td></tr>
+      <tr><td><strong>IndexedDB</strong></td><td>Object stores with indexes/cursors</td><td>Powerful, simplifies DB programming</td><td>Not in all browsers (historically)</td></tr>
+      <tr><td><strong>Web SQL Database</strong></td><td>SQL in browser</td><td>Full SQL (joins, selects)</td><td><strong>Spec STOPPED by W3C</strong></td></tr>
+    </table>
+    <div class="hl-box hl-key">
+      <div class="hl-label">🔑 Web Storage Details</div>
+      <p><strong>sessionStorage</strong>: Lives as long as the browser tab/window is open. NOT shared across tabs.<br>
+      <strong>localStorage</strong>: No time limit. Shared across tabs/windows from the same origin. Fires a <code>storage</code> event when modified.</p>
+    </div>
+    <p>All HTML5 storage uses the <span class="kw">same-origin policy</span>: scripts can only access data stored by scripts from the same <strong>protocol + hostname + port</strong>.</p>
+    <h3>IndexedDB</h3>
+    <p>For larger structured data with high-performance key/index/cursor-based searches. Operations are <strong>asynchronous</strong> — results come via <strong>DOM events</strong> (onsuccess, onerror handlers).</p>
+    <pre>var request = window.indexedDB.open("BookDB");
+request.onsuccess = function(event) {
+  var database = event.result;
+};</pre>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ SUMMARY ══ -->
+<section id="summary">
+<div class="container">
+  <div class="section-hero">
+    <span class="section-tag">Phase 2 — Smart Summary</span>
+    <h2>High-Yield Summary</h2>
+    <p>Structured bullets for rapid review — every point is exam-relevant</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🌐 REST Model</div>
+    <div class="summary-item"><div class="summary-bullet">①</div><p><strong>Client/Server + Stateless</strong> — every message self-contained; no context stored by server between requests</p></div>
+    <div class="summary-item"><div class="summary-bullet">②</div><p><strong>Resources not procedures</strong> — requests target URIs (documents), not functions (contrast with RPC)</p></div>
+    <div class="summary-item"><div class="summary-bullet">③</div><p><strong>Every resource has a unique URI</strong> — this is mandatory</p></div>
+    <div class="summary-item"><div class="summary-bullet">④</div><p>REST interaction: <strong>GET → manipulate → PUT</strong></p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🖥️ Web Server Architecture</div>
+    <div class="summary-item"><div class="summary-bullet">①</div><p>Uses <strong>pool of processing entities</strong> created at startup for parallel handling</p></div>
+    <div class="summary-item"><div class="summary-bullet">②</div><p>Flow: <strong>Connector → Client Descriptor → Delegation → Processing Entity</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">③</div><p>Dynamic content via: <strong>CGI, Servlet Container, Application Server</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">④</div><p><strong>(X)HTML engine</strong> merges dynamic content with templates</p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🌍 Browser Architecture (9 Components)</div>
+    <div class="summary-item"><div class="summary-bullet">①</div><p><strong>UI → Browser Engine → Rendering Engine</strong> (parses HTML/CSS, performs layout)</p></div>
+    <div class="summary-item"><div class="summary-bullet">②</div><p><strong>Networking</strong> (HTTP) · <strong>XML Parser</strong> · <strong>Script Engine</strong> (JS)</p></div>
+    <div class="summary-item"><div class="summary-bullet">③</div><p><strong>Display Backend</strong> (GTK+) · <strong>Data Persistence</strong> (cookies, cache) · <strong>Plug-in Engine</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">④</div><p>Also includes XSLT processor (not in main diagram)</p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📡 HTTP Protocol</div>
+    <div class="summary-item"><div class="summary-bullet">①</div><p>Runs on <strong>TCP</strong>, request-response model, header + body structure, CRLF separator</p></div>
+    <div class="summary-item"><div class="summary-bullet">②</div><p><strong>HTTP 1.1 key improvements:</strong> persistent connections (keep-alive), pipelining, Host header required</p></div>
+    <div class="summary-item"><div class="summary-bullet">③</div><p>Methods: GET/HEAD/POST (1.0 + 1.1) | PUT/DELETE/OPTIONS/TRACE/CONNECT (1.1 only)</p></div>
+    <div class="summary-item"><div class="summary-bullet">④</div><p>Status codes: 1xx info, 2xx success, 3xx redirect, <strong>4xx client error, 5xx server error</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">⑤</div><p>Packet efficiency: <strong>HTTP/1.0 = 497 packets | HTTP/1.1 persistent = 223 | pipelining = 83</strong></p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📦 HTTP/2</div>
+    <div class="summary-item"><div class="summary-bullet">①</div><p><strong>Multiplexing</strong> — multiple parallel channels per single TCP connection</p></div>
+    <div class="summary-item"><div class="summary-bullet">②</div><p><strong>Binary framing</strong> — HEADER frames + DATA frames interleaved</p></div>
+    <div class="summary-item"><div class="summary-bullet">③</div><p><strong>Header compression</strong> (HPACK), frame prioritization</p></div>
+    <div class="summary-item"><div class="summary-bullet">④</div><p>HTTP methods/status codes/semantics <strong>UNCHANGED</strong> — transport only optimized</p></div>
+    <div class="summary-item"><div class="summary-bullet">⑤</div><p>Approved IETF standard: <strong>February 2015</strong></p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧱 HTML5</div>
+    <div class="summary-item"><div class="summary-bullet">①</div><p>= <strong>Enhanced HTML + CSS3 + JavaScript APIs</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">②</div><p>Structural elements: header, nav, section, article, aside, footer — for <strong>grouping, not positioning</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">③</div><p>Media: <code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code> with WebVTT subtitle support</p></div>
+    <div class="summary-item"><div class="summary-bullet">④</div><p><strong>Web Workers</strong> — background JS, event-based communication via postMessage()</p></div>
+    <div class="summary-item"><div class="summary-bullet">⑤</div><p>Storage: <strong>sessionStorage</strong> (tab-scoped) | <strong>localStorage</strong> (cross-tab, fires storage events) | <strong>IndexedDB</strong> (structured) | ~~Web SQL~~ (abandoned)</p></div>
+    <div class="summary-item"><div class="summary-bullet">⑥</div><p>All storage: <strong>same-origin policy</strong> = protocol + hostname + port</p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🍪 Session Handling</div>
+    <div class="summary-item"><div class="summary-bullet">①</div><p>HTTP stateless → sessions provide state; server stores session data structure</p></div>
+    <div class="summary-item"><div class="summary-bullet">②</div><p>Session identified by <strong>Session ID (SID)</strong> exchanged via <strong>cookies</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">③</div><p>Cookies: small data stored <strong>client-side</strong>, name + value + source domain</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ MEMORY ══ -->
+<section id="memory">
+<div class="container">
+  <div class="section-hero">
+    <span class="section-tag">Phase 3 — Memory Optimization</span>
+    <h2>Mnemonics & Memory Tricks</h2>
+    <p>Chunking, mnemonics, comparison tables, and common traps</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔤 Mnemonics</div>
+    <h2>Browser Components — "UBRE XSDP"</h2>
+    <div class="mnemonic">
+      <div class="mnemonic-letter"><span>U</span><span>UI</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>B</span><span>Browser</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>R</span><span>Render</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>E</span><span>Net</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>X</span><span>XML</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>S</span><span>Script</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>D</span><span>Display</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>P</span><span>Persist</span></div>
+    </div>
+    <p style="color:var(--text2);font-size:14px;margin-top:12px;">Plug-in engine comes last. XSLT processor exists but is additional.</p>
+
+    <hr class="divider">
+    <h2>HTTP Status Codes — "I See Roger Carry Snacks"</h2>
+    <div class="mnemonic">
+      <div class="mnemonic-letter"><span>I</span><span>1xx</span></div>
+      <div class="mnemonic-word">Informational</div>
+      <div class="mnemonic-letter"><span>S</span><span>2xx</span></div>
+      <div class="mnemonic-word">Success</div>
+      <div class="mnemonic-letter"><span>R</span><span>3xx</span></div>
+      <div class="mnemonic-word">Redirect</div>
+      <div class="mnemonic-letter"><span>C</span><span>4xx</span></div>
+      <div class="mnemonic-word">Client error</div>
+      <div class="mnemonic-letter"><span>S</span><span>5xx</span></div>
+      <div class="mnemonic-word">Server error</div>
+    </div>
+
+    <hr class="divider">
+    <h2>HTTP Methods Added in 1.1 — "PUT DELETE OPTIONS TRACE CONNECT"</h2>
+    <p style="color:var(--text2);font-size:14px;">Memory hook: <span class="kw">"Please Don't Open That Cabinet"</span> — P(ut) D(elete) O(ptions) T(race) C(onnect)</p>
+    <hr class="divider">
+    <h2>Web Server Flow — "CCDP" (Connect, Create, Delegate, Process)</h2>
+    <div class="mnemonic">
+      <div class="mnemonic-letter"><span>C</span><span>Connect</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>C</span><span>Create</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>D</span><span>Delegate</span></div>
+      <div class="mnemonic-word">→</div>
+      <div class="mnemonic-letter"><span>P</span><span>Process</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ Common Traps & Mistakes</div>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">Trap 1</div>
+      <p><strong>REST vs RPC:</strong> REST targets <strong>resources (documents)</strong>. RPC targets <strong>procedures (functions)</strong>. Many students confuse these.</p>
+    </div>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">Trap 2</div>
+      <p><strong>HTML5 structural elements</strong> are for <strong>structure/grouping only</strong> — NOT for visual positioning. CSS handles layout.</p>
+    </div>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">Trap 3</div>
+      <p><strong>HTTP/2 changes NOTHING</strong> about HTTP semantics, methods, or status codes. It only changes how messages are <em>transported</em>.</p>
+    </div>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">Trap 4</div>
+      <p><strong>sessionStorage ≠ localStorage:</strong> sessionStorage is tab-scoped (gone when tab closes). localStorage is permanent and cross-tab within same origin.</p>
+    </div>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">Trap 5</div>
+      <p><strong>Web SQL Database was ABANDONED</strong> by W3C. Don't recommend it. IndexedDB is the current standard.</p>
+    </div>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">Trap 6</div>
+      <p><strong>Pipelining order:</strong> Responses must come back <strong>in the same order</strong> as requests were sent. This is a known limitation.</p>
+    </div>
+    <div class="hl-box hl-warn">
+      <div class="hl-label">Trap 7</div>
+      <p><strong>HEAD method:</strong> Identical to GET but the <strong>response body is empty</strong>. Use case: get file metadata (size, type) without downloading the file.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔗 Comparison Tables</div>
+    <h3>HTTP 1.0 vs 1.1 vs 2.0</h3>
+    <table class="cmp-table">
+      <tr><th>Feature</th><th>1.0</th><th>1.1</th><th>2.0</th></tr>
+      <tr><td>Connection</td><td>New per request</td><td>Persistent (keep-alive)</td><td>Multiplexed channels</td></tr>
+      <tr><td>Pipelining</td><td>❌</td><td>✓ (limited support)</td><td>Full multiplexing</td></tr>
+      <tr><td>Methods</td><td>3</td><td>8</td><td>Same as 1.1</td></tr>
+      <tr><td>Format</td><td>Text</td><td>Text</td><td>Binary frames</td></tr>
+      <tr><td>Header compression</td><td>❌</td><td>❌</td><td>✓ HPACK</td></tr>
+      <tr><td>Efficiency</td><td>497 packets</td><td>83-223 packets</td><td>Even better</td></tr>
+    </table>
+    <h3>Storage Technologies</h3>
+    <table class="cmp-table">
+      <tr><th>Technology</th><th>Scope</th><th>Persistence</th><th>Queries</th><th>Status</th></tr>
+      <tr><td>Cookies</td><td>Site</td><td>Configurable</td><td>None</td><td>Active</td></tr>
+      <tr><td>sessionStorage</td><td>Tab</td><td>Tab lifetime</td><td>None</td><td>Active</td></tr>
+      <tr><td>localStorage</td><td>Origin</td><td>Permanent</td><td>None</td><td>Active</td></tr>
+      <tr><td>IndexedDB</td><td>Origin</td><td>Permanent</td><td>Key/Index/Cursor</td><td>Active</td></tr>
+      <tr><td>Web SQL</td><td>Origin</td><td>Permanent</td><td>Full SQL</td><td><strong>Abandoned</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧠 Spaced Repetition Schedule</div>
+    <div class="summary-item"><div class="summary-bullet">D1</div><p>Read all concepts once, focus on <strong>definitions and the REST model</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">D2</div><p>Review <strong>HTTP methods and status codes</strong>, do 10 MCQs</p></div>
+    <div class="summary-item"><div class="summary-bullet">D3</div><p>Focus on <strong>HTML5 storage differences</strong> and Web Workers</p></div>
+    <div class="summary-item"><div class="summary-bullet">D5</div><p>Full MCQ session, draw <strong>browser architecture from memory</strong></p></div>
+    <div class="summary-item"><div class="summary-bullet">D7</div><p>Practice written answers, review traps, use revision sheet only</p></div>
+    <div class="summary-item"><div class="summary-bullet">Eve</div><p>Cheat sheet review only — no new material</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ MCQ ══ -->
+<section id="mcq">
+<div class="container">
+  <div class="section-hero">
+    <span class="section-tag">Phase 4 — Exam Training</span>
+    <h2>Multiple Choice Questions</h2>
+    <p>30 questions — click an option to reveal the answer</p>
+  </div>
+
+  <div class="score-counter">
+    <div class="score-box"><div class="val" id="score-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="score-box"><div class="val" id="score-wrong">0</div><div class="lbl">Wrong</div></div>
+    <div class="score-box"><div class="val" id="score-total">0</div><div class="lbl">Answered</div></div>
+    <button class="reset-btn" onclick="resetMCQ()">↺ Reset</button>
+  </div>
+
+  <div class="mcq-filter">
+    <span>Filter:</span>
+    <button class="filter-btn active" onclick="filterMCQ('all',this)">ALL</button>
+    <button class="filter-btn" onclick="filterMCQ('easy',this)">Easy</button>
+    <button class="filter-btn" onclick="filterMCQ('medium',this)">Medium</button>
+    <button class="filter-btn" onclick="filterMCQ('hard',this)">Hard</button>
+  </div>
+
+  <div class="mcq-container" id="mcq-list">
+    <!-- MCQs injected by JS -->
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ WRITTEN ══ -->
+<section id="written">
+<div class="container">
+  <div class="section-hero">
+    <span class="section-tag">Phase 4 — Written Questions</span>
+    <h2>Written Exam Questions</h2>
+    <p>Short and long-form questions with model answers — click "Show Answer" to reveal</p>
+  </div>
+
+  <div id="written-list"><!-- Injected by JS --></div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ REVISION ══ -->
+<section id="revision">
+<div class="container">
+  <div class="section-hero">
+    <span class="section-tag">Phase 5 — Rapid Revision</span>
+    <h2>Quick Revision Sheet</h2>
+    <p>One-page style ultra-fast review for exam day</p>
+  </div>
+
+  <div class="revision-grid">
+    <div class="rev-card">
+      <h4>🌐 REST</h4>
+      <ul>
+        <li>Client/Server + <strong>Stateless</strong></li>
+        <li>Targets <strong>resources</strong> (not procedures)</li>
+        <li>Every resource = unique <strong>URI</strong></li>
+        <li>Flow: <strong>GET → manipulate → PUT</strong></li>
+        <li>vs RPC: REST=docs, RPC=functions</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>🖥️ Web Server</h4>
+      <ul>
+        <li>Pool of processing entities at startup</li>
+        <li>Connector → Client Descriptor</li>
+        <li>Delegation Process → Processing Entity</li>
+        <li>Dynamic: CGI / Servlet / App Server</li>
+        <li>(X)HTML engine merges templates</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>🌍 Browser (9 parts)</h4>
+      <ul>
+        <li>UI → Browser Engine → Rendering Engine</li>
+        <li>Networking (HTTP)</li>
+        <li>XML Parser + Script Engine</li>
+        <li>Display Backend (GTK+)</li>
+        <li>Data Persistence + Plug-in Engine</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>📡 HTTP Methods</h4>
+      <ul>
+        <li><strong>GET</strong> — retrieve resource</li>
+        <li><strong>HEAD</strong> — GET, no body</li>
+        <li><strong>POST</strong> — submit data</li>
+        <li><strong>PUT/DELETE/OPTIONS/TRACE/CONNECT</strong> — 1.1 only</li>
+        <li>Trick: "Please Don't Open That Cabinet"</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>📊 Status Codes</h4>
+      <ul>
+        <li><strong>1xx</strong> Informational (100 Continue)</li>
+        <li><strong>2xx</strong> Success (200 OK)</li>
+        <li><strong>3xx</strong> Redirect (301 Moved)</li>
+        <li><strong>4xx</strong> Client Error (404 Not Found)</li>
+        <li><strong>5xx</strong> Server Error (501 Not Implemented)</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>⚡ HTTP Versions</h4>
+      <ul>
+        <li>1.0: new TCP per request, 497 pkt</li>
+        <li>1.1: persistent + pipelining, 83 pkt</li>
+        <li>2.0: multiplexing + binary frames</li>
+        <li>HTTP/2 approved: <strong>Feb 2015</strong></li>
+        <li>HTTP/2 semantics: <strong>unchanged</strong></li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>📦 HTML5 Storage</h4>
+      <ul>
+        <li><strong>sessionStorage</strong>: tab-scoped only</li>
+        <li><strong>localStorage</strong>: permanent, cross-tab</li>
+        <li><strong>IndexedDB</strong>: key/index/cursor queries</li>
+        <li>Web SQL: <strong>ABANDONED by W3C</strong></li>
+        <li>All: same-origin policy</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>🔧 HTML5 APIs</h4>
+      <ul>
+        <li><strong>Web Workers</strong>: background JS, no UI block</li>
+        <li>Communication: <strong>postMessage()</strong></li>
+        <li>Doctype: <strong>&lt;!doctype html&gt;</strong></li>
+        <li>Media: &lt;video&gt; + &lt;audio&gt; + WebVTT</li>
+        <li>Geolocation, Web Storage, Workers</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <h4>🍪 Sessions & Cookies</h4>
+      <ul>
+        <li>HTTP stateless → sessions add state</li>
+        <li>Session ID (SID) stored in cookie</li>
+        <li>Cookie: client-side storage</li>
+        <li>Server holds session data structure</li>
+        <li>Cookie: name + value + source domain</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cheatsheet">
+    <h3>⚡ Night Before Cheat Sheet</h3>
+    <div class="cheat-cols">
+      <div class="cheat-section">
+        <h4>Critical Facts</h4>
+        <div class="cheat-item"><div class="dot"></div><p><strong>REST stateless:</strong> no server-side context between requests</p></div>
+        <div class="cheat-item"><div class="dot"></div><p><strong>HTTP 1.1 default:</strong> persistent connection (keep-alive)</p></div>
+        <div class="cheat-item"><div class="dot"></div><p><strong>Pipelining:</strong> send requests without waiting, responses in order</p></div>
+        <div class="cheat-item"><div class="dot"></div><p><strong>HTTP/2:</strong> multiplexing, binary frames, semantics unchanged</p></div>
+        <div class="cheat-item"><div class="dot"></div><p><strong>HEAD:</strong> same as GET but empty body</p></div>
+        <div class="cheat-item"><div class="dot"></div><p><strong>404</strong> = Not Found | <strong>200</strong> = OK | <strong>301</strong> = Moved</p></div>
+      </div>
+      <div class="cheat-section">
+        <h4>Key Differences</h4>
+        <div class="cheat-item"><div class="dot"></div><p>sessionStorage = tab only | localStorage = cross-tab permanent</p></div>
+        <div class="cheat-item"><div class="dot"></div><p>REST targets resources | RPC targets procedures</p></div>
+        <div class="cheat-item"><div class="dot"></div><p>HTML5 structural = grouping only, NOT positioning</p></div>
+        <div class="cheat-item"><div class="dot"></div><p>Web Workers = background JS via postMessage</p></div>
+        <div class="cheat-item"><div class="dot"></div><p>Web SQL = DEAD | IndexedDB = current standard</p></div>
+        <div class="cheat-item"><div class="dot"></div><p>Same-origin = protocol + hostname + port</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+// ── THEME ──────────────────────────────────────────────────────────
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const btn = document.querySelector('.theme-toggle');
+  btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀';
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────
+function showSection(id, btn) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── COLLAPSIBLE ────────────────────────────────────────────────────
+function toggleCollapse(id) {
+  const body = document.getElementById(id);
+  const icon = document.getElementById('icon-' + id);
+  body.classList.toggle('open');
+  icon.classList.toggle('open');
+}
+
+// ── MCQ DATA ───────────────────────────────────────────────────────
+const mcqs = [
+  {
+    q: "What does REST stand for?",
+    opts: ["Remote Execution State Transfer","Representational State Transfer","Resource Endpoint Service Transfer","Redundant State Transfer"],
+    ans: 1, diff: "easy",
+    exp: "<strong>Representational State Transfer (REST)</strong> is an architectural style for distributed hypermedia systems proposed by Roy Fielding."
+  },
+  {
+    q: "In REST architecture, client requests are directed to:",
+    opts: ["Procedures (functions)","Remote objects","Resources (documents) via URIs","Database tables directly"],
+    ans: 2, diff: "easy",
+    exp: "REST targets <strong>resources (documents)</strong> using standard URIs, not procedures. This is the key distinction from RPC."
+  },
+  {
+    q: "What is the key characteristic of REST's communication protocol?",
+    opts: ["It is connection-oriented","It is stateless — every message contains all necessary context","It stores session data on the server","It requires a persistent TCP connection"],
+    ans: 1, diff: "easy",
+    exp: "REST is <strong>stateless</strong>: every message is self-contained with all needed context. Neither server nor client stores context between messages."
+  },
+  {
+    q: "What is the default behavior in HTTP 1.1 regarding connections?",
+    opts: ["A new TCP connection is created for each request","Connection: close is the default","Persistent connection (keep-alive) is the default","UDP connections are used"],
+    ans: 2, diff: "easy",
+    exp: "HTTP 1.1 defaults to <strong>Connection: keep-alive</strong> (persistent connection), allowing multiple requests over one TCP connection. HTTP 1.0 closes after each request."
+  },
+  {
+    q: "Which HTTP method retrieves only metadata (headers) without the message body?",
+    opts: ["GET","OPTIONS","HEAD","TRACE"],
+    ans: 2, diff: "easy",
+    exp: "<strong>HEAD</strong> is identical to GET except the response body is empty. It's used to get file metadata (type, size) without downloading the file."
+  },
+  {
+    q: "Which HTTP status code means the resource was not found?",
+    opts: ["200","301","403","404"],
+    ans: 3, diff: "easy",
+    exp: "<strong>404</strong> means 'Not Found' — the server found nothing matching the Request-URI. 200=OK, 301=Moved Permanently, 403=Forbidden."
+  },
+  {
+    q: "What is pipelining in HTTP 1.1?",
+    opts: ["Compressing HTTP headers","Encrypting requests with SSL","Sending multiple requests without waiting for previous responses","Splitting one request into multiple TCP packets"],
+    ans: 2, diff: "medium",
+    exp: "<strong>Pipelining</strong> allows clients to send multiple requests before receiving any responses. Responses return in the same order as requests. This reduces packet overhead significantly."
+  },
+  {
+    q: "How many packets are required using HTTP 1.1 with pipelining compared to HTTP 1.0 (from the lecture data)?",
+    opts: ["497 vs 83","83 vs 497","223 vs 497","70 vs 226"],
+    ans: 1, diff: "medium",
+    exp: "HTTP 1.0 used <strong>497 total packets</strong>. HTTP 1.1 with pipelining reduced this to <strong>83 packets</strong>. HTTP 1.1 persistent (no pipelining) = 223 packets."
+  },
+  {
+    q: "Which HTTP methods were introduced in HTTP 1.1 (NOT in HTTP 1.0)?",
+    opts: ["GET, POST, HEAD","PUT, DELETE, OPTIONS, TRACE, CONNECT","GET, PUT, POST","DELETE, HEAD, OPTIONS"],
+    ans: 1, diff: "medium",
+    exp: "HTTP 1.0 only had GET, HEAD, POST. HTTP 1.1 added <strong>PUT, DELETE, OPTIONS, TRACE, CONNECT</strong>. Memory hook: 'Please Don't Open That Cabinet'."
+  },
+  {
+    q: "What does the 'Connector Entity' do in a web server?",
+    opts: ["Executes application logic","Creates a client descriptor and passes it to the delegation process","Chooses a processing entity from the pool","Opens the file system to fetch resources"],
+    ans: 1, diff: "medium",
+    exp: "The <strong>Connector Entity</strong> handles the incoming TCP connection from the browser, creates a <strong>client descriptor</strong>, and passes it to the Delegation Process."
+  },
+  {
+    q: "What is the role of the Rendering Engine in a web browser?",
+    opts: ["Executes JavaScript","Handles HTTP networking","Parses HTML/CSS and performs layout","Stores cookies and cached data"],
+    ans: 2, diff: "medium",
+    exp: "The <strong>Rendering Engine</strong> performs parsing and layout for (X)HTML documents, including CSS styling. It is distinct from the Script Engine (JS) and Networking component."
+  },
+  {
+    q: "What is a Web Worker in HTML5?",
+    opts: ["A server-side process for handling requests","JavaScript that runs in the background independently of the UI thread","A CSS thread that handles animations","A Java Servlet that processes HTTP requests"],
+    ans: 1, diff: "medium",
+    exp: "A <strong>Web Worker</strong> is background JavaScript that runs independently, preventing expensive computations from freezing the UI. It communicates via events using <code>postMessage()</code>."
+  },
+  {
+    q: "What is the scope of HTML5 sessionStorage?",
+    opts: ["All windows from the same domain","Only the current browser tab/window session","Permanent, shared across all tabs","Only the current HTTP session on the server"],
+    ans: 1, diff: "medium",
+    exp: "<strong>sessionStorage</strong> is valid only as long as the top-level browsing context (tab/window) is active. Data is NOT shared across tabs. localStorage is cross-tab."
+  },
+  {
+    q: "What happens to HTTP methods and status codes in HTTP/2?",
+    opts: ["They are completely replaced by binary codes","They are extended with new methods","They remain unchanged — only transport is optimized","They are deprecated in favor of REST semantics"],
+    ans: 2, diff: "medium",
+    exp: "HTTP/2 does <strong>NOT modify</strong> HTTP methods, status codes, or semantics. It only changes how messages are transported (binary framing, multiplexing, header compression)."
+  },
+  {
+    q: "Which HTML5 storage technology was abandoned by the W3C?",
+    opts: ["localStorage","IndexedDB","Web Workers","Web SQL Database"],
+    ans: 3, diff: "medium",
+    exp: "<strong>Web SQL Database</strong> specification effort was stopped by W3C due to lack of implementation. <strong>IndexedDB</strong> is the current recommended standard for structured client-side data."
+  },
+  {
+    q: "In HTTP/2, what are 'frames'?",
+    opts: ["HTML page sections marked with <frame> tags","Binary units that HTTP messages are split into for transport","Independent CSS animation keyframes","Individual TCP packets"],
+    ans: 1, diff: "medium",
+    exp: "HTTP/2 splits messages into <strong>HEADER frames</strong> and <strong>DATA frames</strong>. Two messages create 4 interleaved frames. Frames from different messages can be interleaved on the same TCP connection."
+  },
+  {
+    q: "What is the 'same-origin policy' in HTML5 storage?",
+    opts: ["Only scripts on HTTPS can use storage","Scripts can only access data stored by scripts from the same protocol+hostname+port","Data must be stored in the same browser session","Only first-party cookies are accessible"],
+    ans: 1, diff: "medium",
+    exp: "Same-origin = <strong>protocol + hostname + port</strong> must all match. A script from http://example.com:80 cannot access data stored by https://example.com:443, even though the domain is the same."
+  },
+  {
+    q: "Which component in the web browser manages the high-level interface to the rendering engine?",
+    opts: ["User Interface","Browser Engine","Script Engine","Display Backend"],
+    ans: 1, diff: "medium",
+    exp: "The <strong>Browser Engine</strong> is an embedded component that provides a high-level interface for querying and manipulating the Rendering Engine."
+  },
+  {
+    q: "What is the purpose of the Host header in HTTP 1.1?",
+    opts: ["Specifies content encoding type","Required when using absolute path URIs to identify the server","Indicates whether to keep the connection alive","Specifies the browser version"],
+    ans: 1, diff: "hard",
+    exp: "The <strong>Host header is required</strong> in HTTP 1.1 when the resource is specified by absolute path (e.g., /index.html). It tells the server which domain is being addressed, enabling virtual hosting."
+  },
+  {
+    q: "In the web server architecture, what is a 'client descriptor'?",
+    opts: ["A description of the client's browser capabilities","An endpoint of the communication path to the client, created by the Connector Entity","A cookie containing the client's session ID","A file in the server's file system"],
+    ans: 1, diff: "hard",
+    exp: "A <strong>client descriptor</strong> is created by the Connector Entity and represents the endpoint of the communication path to a specific client. It is passed to the Delegation Process for assignment."
+  },
+  {
+    q: "Which HTTP method is reserved exclusively for use by proxy servers?",
+    opts: ["OPTIONS","TUNNEL","CONNECT","PROXY"],
+    ans: 2, diff: "hard",
+    exp: "<strong>CONNECT</strong> is 'a reserved name for use by proxy servers.' The others (OPTIONS, TRACE) have different purposes. There is no TUNNEL or PROXY method in HTTP 1.1."
+  },
+  {
+    q: "How does localStorage notify other browser tabs of data changes?",
+    opts: ["It uses WebSockets to broadcast","It fires a 'storage' event that other tabs can listen for","It uses a SharedWorker to communicate","It refreshes all open tabs automatically"],
+    ans: 1, diff: "hard",
+    exp: "When localStorage data is modified, a <strong>storage event</strong> is fired. Other windows/tabs on the same origin can register an event listener on 'window' to handle this event."
+  },
+  {
+    q: "What is the key architectural difference between REST and classical RPC?",
+    opts: ["REST uses TCP, RPC uses UDP","REST uses XML, RPC uses JSON","REST directs requests to resources via URIs; RPC directs requests to procedures","REST is stateful, RPC is stateless"],
+    ans: 2, diff: "hard",
+    exp: "REST: requests target <strong>resources (documents)</strong> via standard URIs with generic interface. RPC: requests target <strong>procedures (functions)</strong> by name. This fundamentally changes how the interface is designed."
+  },
+  {
+    q: "In the web server pool model, what happens if all processing entities are busy?",
+    opts: ["The server returns a 503 error immediately","The delegation process holds the client descriptor until an entity is free","A new processing entity is created immediately","The connector entity handles the request directly"],
+    ans: 1, diff: "hard",
+    exp: "The <strong>Delegation Process</strong> selects an <strong>available pre-generated processing entity</strong> and forwards the client descriptor. If none are free, the request waits. The pool is pre-created at startup for efficiency."
+  },
+  {
+    q: "What is the HTTP/1.1 request structure in the correct order?",
+    opts: ["Message Body → Request Header → Status Line","Request Line → General Header → Request Header → Entity Header → CRLF → Body","General Header → Request Line → Body → Entity Header","Status Line → Body → Headers"],
+    ans: 1, diff: "hard",
+    exp: "HTTP 1.1 request order: <strong>Request Line</strong> (method, URI, version) → <strong>General Header</strong> → <strong>Request Header</strong> → <strong>Entity Header</strong> → <strong>CRLF</strong> → <strong>Message Body</strong>. Order of headers is irrelevant within their sections."
+  },
+  {
+    q: "An application requires complex queries, joins, and transactional safety for client-side storage. Which HTML5 storage should be used?",
+    opts: ["localStorage","sessionStorage","Web SQL Database","IndexedDB"],
+    ans: 3, diff: "hard",
+    exp: "Despite Web SQL being abandoned, <strong>IndexedDB</strong> is the correct modern answer — it provides a powerful persistence layer with key, index, and cursor-based access. Web SQL was stopped by W3C and should not be used."
+  },
+  {
+    q: "Which statement about HTTP pipelining is TRUE?",
+    opts: ["Responses can arrive in any order","Only GET and POST can be pipelined","Pipelining is supported by all major browsers","Responses must be transmitted in the order requests were sent"],
+    ans: 3, diff: "hard",
+    exp: "HTTP pipelining requires responses in the <strong>same order as requests</strong>. This is a key limitation (head-of-line blocking). Also, pipelining is <strong>not supported by all browsers</strong>."
+  },
+  {
+    q: "What does the TRACE HTTP method do?",
+    opts: ["Tracks packet routes through routers","Echoes the sent request back to the client for diagnostic purposes","Traces file access logs on the server","Monitors real-time server performance"],
+    ans: 1, diff: "hard",
+    exp: "<strong>TRACE</strong> echoes back the received request to the client. It is used for diagnostic purposes to see what changes or additions have been made by intermediate servers (proxies)."
+  },
+  {
+    q: "In HTML5, which structural element should you use for a news article that is independent and self-contained?",
+    opts: ["<section>","<aside>","<article>","<main>"],
+    ans: 2, diff: "medium",
+    exp: "<strong>&lt;article&gt;</strong> represents an independent piece of content like a blog post, news article, or forum post. &lt;section&gt; is for generic grouping, &lt;aside&gt; for tangentially related content."
+  },
+  {
+    q: "When was HTTP/2 approved as a standards-track RFC by the IETF?",
+    opts: ["January 2012","March 2018","February 2015","December 2019"],
+    ans: 2, diff: "medium",
+    exp: "HTTP/2 was approved by the IETF steering group for publication as a standards-track RFC in <strong>February 2015</strong>."
+  }
+];
+
+// ── WRITTEN Q DATA ─────────────────────────────────────────────────
+const writtenQs = [
+  {
+    type: "SHORT ANSWER",
+    q: "What are the three main tiers of a web application and what is the responsibility of each?",
+    ans: `<p><strong>1. Presentation Tier (Client-side / Browser):</strong> Responsible for rendering the user interface and handling user interaction. It runs in the web browser.</p>
+    <p><strong>2. Logic Tier (Server-side):</strong> Contains the business logic — processing requests, applying rules, authentication, authorization, and generating dynamic content. Implemented via CGI, Servlets, or Application Servers.</p>
+    <p><strong>3. Data Tier (Server-side):</strong> Handles persistent data storage, typically databases. Provides data to the logic tier on demand.</p>
+    <p><em>Key trend: Modern web applications move increasing amounts of logic to the client-side (JavaScript frameworks), blurring the client/server boundary.</em></p>`
+  },
+  {
+    type: "SHORT ANSWER",
+    q: "Explain the difference between sessionStorage and localStorage in HTML5. Give one use case for each.",
+    ans: `<ul>
+    <li><strong>sessionStorage:</strong> Scoped to a single browser tab/window. Data is lost when the tab is closed. Not shared across tabs. Use case: storing a multi-step form's progress that should reset when the user closes the tab.</li>
+    <li><strong>localStorage:</strong> Persistent with no time limit. Shared across all windows/tabs from the same origin. Fires a 'storage' event when modified. Use case: remembering user preferences (dark mode setting) that persist across visits.</li>
+    <li>Both use the same-origin policy (protocol + hostname + port must match) and have the same get/set API.</li>
+    </ul>`
+  },
+  {
+    type: "SHORT ANSWER",
+    q: "List the five HTTP status code categories and give one example code with its meaning for each.",
+    ans: `<ul>
+    <li><strong>1xx — Informational:</strong> 100 Continue — client should continue sending the request</li>
+    <li><strong>2xx — Success:</strong> 200 OK — request succeeded</li>
+    <li><strong>3xx — Redirection:</strong> 301 Moved Permanently — resource moved to a new URI</li>
+    <li><strong>4xx — Client Error:</strong> 404 Not Found — no resource matching the URI</li>
+    <li><strong>5xx — Server Error:</strong> 501 Not Implemented — server lacks required functionality</li>
+    </ul>`
+  },
+  {
+    type: "SHORT ANSWER",
+    q: "What is a Web Worker in HTML5? Why are they needed and how do they communicate with the main page?",
+    ans: `<p>A <strong>Web Worker</strong> is a JavaScript script that runs in the background independently of the user interface (UI) thread.</p>
+    <p><strong>Why needed:</strong> JavaScript is single-threaded. Computationally expensive tasks (sorting large datasets, processing images) would freeze the UI. Web Workers solve this by running in a separate background thread.</p>
+    <p><strong>Communication:</strong> Via <strong>event-based messaging</strong>. The main thread creates a worker: <code>new Worker("file.js")</code> and listens for messages: <code>worker.onmessage = function(event) {...}</code>. The worker sends results back using <code>postMessage(value)</code>. Messages can be sent in both directions.</p>`
+  },
+  {
+    type: "LONG ANSWER",
+    q: "Explain how a web server handles an incoming client request. Describe the complete flow from the browser connecting to the final HTTP response, including all key components involved.",
+    ans: `<p><strong>Step 1 — Startup:</strong> When the web server starts, it creates a <strong>pool of processing entities</strong> (pre-generated for efficiency) and opens an interface for incoming connections.</p>
+    <p><strong>Step 2 — TCP Connection:</strong> The web browser initiates a <strong>TCP connection</strong> to the server's interface. This is handled by the <strong>Connector Entity</strong>.</p>
+    <p><strong>Step 3 — Client Descriptor:</strong> The Connector Entity creates a <strong>client descriptor</strong> — a communication endpoint object — and passes it to the <strong>Delegation Process</strong>.</p>
+    <p><strong>Step 4 — Assignment:</strong> The Delegation Process selects an available, pre-generated <strong>Processing Entity</strong> from the pool and forwards the client descriptor to it.</p>
+    <p><strong>Step 5 — HTTP Communication:</strong> The assigned Processing Entity handles all HTTP communication with the browser — parsing the request, generating a response, and transmitting it.</p>
+    <p><strong>Dynamic Content:</strong> If the request requires dynamic content, the processing entity invokes the <strong>Application Engine</strong> (CGI / Servlet / Application Server). An (X)HTML engine may merge dynamic data with HTML templates before returning the final document.</p>
+    <p>This hierarchical, pooled architecture allows <strong>parallel request processing</strong>, ensuring low latency under high load.</p>`
+  },
+  {
+    type: "LONG ANSWER",
+    q: "Compare HTTP 1.0, HTTP 1.1, and HTTP/2. What key improvements did each version introduce? Use specific data where possible.",
+    ans: `<p><strong>HTTP 1.0:</strong> The baseline version. Each request/response requires a <strong>new TCP connection</strong> that is closed immediately after. This is extremely inefficient — for a page with images and CSS, multiple connections must be established. Total packet count: approximately 497 packets.</p>
+    <p><strong>HTTP 1.1:</strong> Introduced two major optimizations:</p>
+    <ul>
+    <li><strong>Persistent connections (keep-alive):</strong> Default behavior. TCP connection stays open for multiple requests. Reduces TCP handshake overhead. Packet count drops to ~223.</li>
+    <li><strong>Pipelining:</strong> Client can send multiple requests without waiting for responses. Responses must return in order. Packet count drops to ~83. (Not supported by all browsers.)</li>
+    <li>Also introduced new methods: PUT, DELETE, OPTIONS, TRACE, CONNECT. Required Host header for virtual hosting.</li>
+    </ul>
+    <p><strong>HTTP/2</strong> (approved February 2015):</p>
+    <ul>
+    <li><strong>Multiplexing:</strong> Multiple parallel channels per TCP connection (no head-of-line blocking)</li>
+    <li><strong>Binary framing:</strong> Messages split into HEADER and DATA frames that can be interleaved</li>
+    <li><strong>Header compression:</strong> Reduces overhead from repetitive headers</li>
+    <li><strong>Prioritization:</strong> Frames can be prioritized for faster delivery</li>
+    <li><strong>Critical:</strong> HTTP methods, status codes, and semantics are UNCHANGED — only transport is optimized</li>
+    </ul>`
+  },
+  {
+    type: "LONG ANSWER",
+    q: "Explain the REST architectural model. How does it differ from RPC? What makes an API truly RESTful?",
+    ans: `<p><strong>REST (Representational State Transfer)</strong> is an architectural style for distributed hypermedia systems, particularly suited to the Web.</p>
+    <p><strong>Core principles:</strong></p>
+    <ul>
+    <li><strong>Client/Server:</strong> Clear separation of concerns between client (presentation) and server (logic/data)</li>
+    <li><strong>Stateless:</strong> Every message contains all necessary context. The server stores no session state. This makes REST scalable.</li>
+    <li><strong>Resource-oriented:</strong> Requests target resources (documents) identified by URIs, not procedures</li>
+    <li><strong>Uniform interface:</strong> Standard HTTP methods (GET, PUT, POST, DELETE) provide standard semantics</li>
+    <li><strong>Every resource has a unique URI</strong></li>
+    </ul>
+    <p><strong>REST vs RPC:</strong></p>
+    <ul>
+    <li>RPC (Remote Procedure Call): client calls a named function on the server. The interface is procedure-specific. E.g., <code>getUser(id)</code></li>
+    <li>REST: client manipulates resources via standard methods. E.g., <code>GET /users/42</code></li>
+    <li>REST is more flexible and decoupled — the client doesn't need to know about server procedures</li>
+    </ul>
+    <p><strong>REST interaction flow:</strong> 1) Client GETs a document. 2) Client manipulates the representation locally. 3) Client PUTs the modified document back to the same URI.</p>`
+  },
+  {
+    type: "SHORT ANSWER",
+    q: "Name all nine components of a web browser's reference architecture and describe the role of the Rendering Engine specifically.",
+    ans: `<p><strong>Nine components:</strong></p>
+    <ul>
+    <li>User Interface, Browser Engine, Rendering Engine, Networking, XML Parser, Script Engine, Display Backend, Data Persistence, Plug-in Engine</li>
+    </ul>
+    <p><strong>Rendering Engine:</strong> The Rendering Engine performs <strong>parsing and layout</strong> for (X)HTML documents enriched with other languages such as CSS. It takes raw HTML/CSS and calculates the visual representation — where elements appear on screen, how they are styled, how they reflow when the window is resized. Examples include WebKit (Safari), Blink (Chrome), Gecko (Firefox).</p>`
+  }
+];
+
+// ── BUILD MCQ ──────────────────────────────────────────────────────
+let correct = 0, wrong = 0, total = 0;
+
+function buildMCQs(filter) {
+  const container = document.getElementById('mcq-list');
+  container.innerHTML = '';
+  mcqs.forEach((q, i) => {
+    if (filter !== 'all' && q.diff !== filter) return;
+    const card = document.createElement('div');
+    card.className = 'mcq-card'; card.dataset.diff = q.diff; card.dataset.idx = i;
+    const diffLabel = {easy:'🟢 Easy', medium:'🟡 Medium', hard:'🔴 Hard'}[q.diff];
+    card.innerHTML = `
+      <div class="mcq-meta">
+        <span class="mcq-num">Q${i+1}</span>
+        <span class="difficulty-tag ${q.diff}">${diffLabel}</span>
+      </div>
+      <div class="mcq-question">${q.q}</div>
+      <div class="mcq-options">
+        ${q.opts.map((o,j) => `<div class="mcq-option" data-q="${i}" data-opt="${j}" onclick="answerMCQ(${i},${j})"><span class="opt-letter">${'ABCD'[j]}</span><span>${o}</span></div>`).join('')}
+      </div>
+      <div class="mcq-explanation" id="exp-${i}">✅ <strong>Explanation:</strong> ${q.exp}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function answerMCQ(qi, opt) {
+  const q = mcqs[qi];
+  const allOpts = document.querySelectorAll(`[data-q="${qi}"]`);
+  if (allOpts[0].classList.contains('correct') || allOpts[0].classList.contains('wrong')) return;
+  total++;
+  allOpts.forEach((el, j) => {
+    if (j === q.ans) el.classList.add('correct');
+    else if (j === opt) el.classList.add('wrong');
+    el.style.pointerEvents = 'none';
+  });
+  if (opt === q.ans) correct++; else wrong++;
+  document.getElementById(`exp-${qi}`).classList.add('show');
+  document.getElementById('score-correct').textContent = correct;
+  document.getElementById('score-wrong').textContent = wrong;
+  document.getElementById('score-total').textContent = total;
+}
+
+function filterMCQ(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildMCQs(f);
+}
+
+function resetMCQ() {
+  correct = 0; wrong = 0; total = 0;
+  document.getElementById('score-correct').textContent = 0;
+  document.getElementById('score-wrong').textContent = 0;
+  document.getElementById('score-total').textContent = 0;
+  buildMCQs('all');
+  document.querySelectorAll('.filter-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+}
+
+// ── BUILD WRITTEN ──────────────────────────────────────────────────
+function buildWritten() {
+  const container = document.getElementById('written-list');
+  writtenQs.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'written-card';
+    card.innerHTML = `
+      <div class="q-type">${q.type}</div>
+      <div class="question">Q${i+1}. ${q.q}</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(${i})">Show Model Answer</button>
+      <div class="answer-body" id="ans-${i}">${q.ans}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleAnswer(i) {
+  const body = document.getElementById('ans-'+i);
+  const btn = body.previousElementSibling;
+  body.classList.toggle('show');
+  btn.textContent = body.classList.contains('show') ? 'Hide Answer' : 'Show Model Answer';
+}
+
+// ── INIT ───────────────────────────────────────────────────────────
+buildMCQs('all');
+buildWritten();
+</script>
+</body>
+</html>
