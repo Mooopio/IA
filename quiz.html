@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IS 345 – Internet Applications Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0d14;
+  --surface: #111520;
+  --card: #161b2e;
+  --border: #1e2640;
+  --accent: #4f8cff;
+  --accent2: #a78bfa;
+  --green: #22d3a5;
+  --red: #ff5c6a;
+  --text: #e8ecf4;
+  --muted: #7a85a3;
+  --mono: 'DM Mono', monospace;
+  --body: 'DM Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,140,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(79,140,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,13,20,0.92);backdrop-filter:blur(14px);}
+.logo{font-family:var(--display);font-weight:800;font-size:1.15rem;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-right{display:flex;align-items:center;gap:14px;}
+.badge{font-family:var(--mono);font-size:0.68rem;color:var(--muted);border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
+.score-pill{font-family:var(--mono);font-size:0.78rem;padding:5px 14px;border-radius:20px;border:1px solid rgba(79,140,255,0.3);background:rgba(79,140,255,0.08);color:var(--accent);display:none;}
+
+/* SCREENS */
+.screen{display:none;position:relative;z-index:2;}
+.screen.active{display:block;}
+#home.active{display:flex;}
+
+/* HOME */
+#home{min-height:calc(100vh - 57px);flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;gap:28px;}
+.home-title{font-family:var(--display);font-size:clamp(2.2rem,5.5vw,4rem);font-weight:800;line-height:1.05;letter-spacing:-2px;}
+.home-title span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.home-sub{font-size:1rem;color:var(--muted);max-width:500px;line-height:1.7;}
+.exam-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;width:100%;max-width:880px;margin-top:8px;}
+.exam-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px 28px;text-align:left;cursor:pointer;transition:all .22s ease;position:relative;overflow:hidden;}
+.exam-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .22s;}
+.exam-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 36px rgba(79,140,255,0.12);}
+.exam-card:hover::before{opacity:1;}
+.card-tag{font-family:var(--mono);font-size:0.65rem;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.card-title{font-family:var(--display);font-size:1.2rem;font-weight:700;margin-bottom:6px;}
+.card-meta{color:var(--muted);font-size:0.82rem;line-height:1.6;}
+.card-count{margin-top:16px;font-family:var(--mono);font-size:0.77rem;color:var(--accent2);}
+.start-all-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;font-family:var(--display);font-size:0.98rem;font-weight:700;padding:13px 38px;border-radius:12px;cursor:pointer;letter-spacing:-0.3px;transition:all .2s;box-shadow:0 0 28px rgba(79,140,255,0.25);}
+.start-all-btn:hover{transform:scale(1.04);box-shadow:0 0 40px rgba(79,140,255,0.4);}
+
+/* QUIZ - SCROLL MODE */
+#quiz{padding:32px 20px 80px;}
+.quiz-wrap{max-width:760px;margin:0 auto;}
+
+/* sticky progress bar */
+.sticky-progress{position:sticky;top:57px;z-index:50;background:rgba(10,13,20,0.9);backdrop-filter:blur(10px);padding:10px 0 12px;margin-bottom:28px;border-bottom:1px solid var(--border);}
+.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-family:var(--mono);font-size:0.72rem;color:var(--muted);}
+.prog-counts span{margin-left:14px;}
+.prog-counts .c-ok{color:var(--green);}
+.prog-counts .c-bad{color:var(--red);}
+.progress-bar{height:3px;background:var(--border);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .4s ease;}
+
+.back-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:8px;cursor:pointer;font-family:var(--body);font-size:0.83rem;transition:all .2s;margin-bottom:20px;}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Q CARD */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px 32px;margin-bottom:18px;transition:border-color .2s;}
+.q-card.answered-ok{border-color:rgba(34,211,165,0.35);}
+.q-card.answered-bad{border-color:rgba(255,92,106,0.35);}
+.q-card.essay-card{border-color:rgba(167,139,250,0.25);}
+
+.q-meta{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.q-num{font-family:var(--mono);font-size:0.7rem;color:var(--accent);background:rgba(79,140,255,0.1);border:1px solid rgba(79,140,255,0.2);padding:3px 10px;border-radius:6px;}
+.q-type-tag{font-family:var(--mono);font-size:0.66rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.q-status{margin-left:auto;font-size:1rem;}
+
+.q-text{font-size:1rem;line-height:1.65;font-weight:500;margin-bottom:22px;color:var(--text);}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:9px;}
+.option{display:flex;align-items:flex-start;gap:13px;padding:12px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;cursor:pointer;transition:all .16s ease;font-size:0.9rem;line-height:1.5;text-align:left;}
+.option:hover:not(.disabled){border-color:var(--accent);background:rgba(79,140,255,0.06);}
+.opt-letter{font-family:var(--mono);font-size:0.75rem;color:var(--muted);background:var(--border);border-radius:5px;padding:2px 7px;min-width:28px;text-align:center;flex-shrink:0;transition:all .16s;}
+.option.correct{border-color:var(--green);background:rgba(34,211,165,0.08);}
+.option.correct .opt-letter{background:var(--green);color:#000;}
+.option.wrong{border-color:var(--red);background:rgba(255,92,106,0.08);}
+.option.wrong .opt-letter{background:var(--red);color:#fff;}
+.option.reveal-correct{border-color:var(--green);background:rgba(34,211,165,0.05);}
+.option.reveal-correct .opt-letter{background:var(--green);color:#000;}
+.option.disabled{cursor:default;}
+
+/* FEEDBACK */
+.feedback{margin-top:14px;padding:12px 16px;border-radius:10px;font-size:0.87rem;line-height:1.6;display:none;}
+.feedback.show{display:block;}
+.feedback.ok{background:rgba(34,211,165,0.07);border:1px solid rgba(34,211,165,0.22);color:var(--green);}
+.feedback.bad{background:rgba(255,92,106,0.07);border:1px solid rgba(255,92,106,0.22);color:var(--red);}
+.feedback strong{display:block;margin-bottom:3px;font-family:var(--display);font-size:0.95rem;}
+
+/* ESSAY */
+.essay-area{width:100%;min-height:120px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--body);font-size:0.9rem;padding:14px;resize:vertical;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:12px;}
+.essay-area:focus{border-color:var(--accent2);}
+.btn-show-ans{background:transparent;border:1.5px solid var(--accent2);color:var(--accent2);font-family:var(--display);font-weight:700;font-size:0.85rem;padding:9px 22px;border-radius:9px;cursor:pointer;transition:all .18s;}
+.btn-show-ans:hover{background:rgba(167,139,250,0.1);}
+.model-answer{display:none;margin-top:14px;background:rgba(79,140,255,0.05);border:1px solid rgba(79,140,255,0.18);border-radius:11px;padding:16px 18px;font-size:0.86rem;line-height:1.75;color:var(--text);}
+.model-answer.show{display:block;}
+.model-answer h4{font-family:var(--display);font-size:0.8rem;color:var(--accent);margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase;}
+
+/* PAGERANK */
+.diagram-hint{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:13px 18px;margin-bottom:14px;font-size:0.83rem;color:var(--accent2);line-height:1.6;}
+.diagram-svg-wrap{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:18px;margin-bottom:16px;display:flex;justify-content:center;overflow-x:auto;}
+.pr-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:0.8rem;margin:10px 0;}
+.pr-table th{background:rgba(79,140,255,0.13);color:var(--accent);padding:7px 12px;text-align:left;border-bottom:1px solid var(--border);}
+.pr-table td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text);}
+.pr-table tr:last-child td{border-bottom:none;}
+
+/* RESULTS */
+#results{padding:60px 20px;min-height:calc(100vh - 57px);}
+.results-wrap{max-width:640px;margin:0 auto;text-align:center;}
+.results-title{font-family:var(--display);font-size:2.2rem;font-weight:800;margin-bottom:6px;letter-spacing:-1px;}
+.score-circle{width:150px;height:150px;border-radius:50%;border:4px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(135deg,var(--accent),var(--accent2)) border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:28px auto;}
+.score-pct{font-family:var(--display);font-size:2.2rem;font-weight:800;}
+.score-lbl{font-size:0.72rem;color:var(--muted);font-family:var(--mono);}
+.grade-msg{font-size:1rem;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.stats-row{display:flex;gap:14px;justify-content:center;margin-bottom:36px;flex-wrap:wrap;}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 26px;text-align:center;}
+.stat-val{font-family:var(--display);font-size:1.5rem;font-weight:800;}
+.stat-key{font-size:0.72rem;color:var(--muted);margin-top:2px;font-family:var(--mono);}
+.stat-box.sg .stat-val{color:var(--green);}
+.stat-box.sr .stat-val{color:var(--red);}
+.results-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.r-btn{font-family:var(--display);font-weight:700;font-size:0.93rem;padding:11px 30px;border-radius:11px;cursor:pointer;border:none;transition:all .2s;}
+.r-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.r-btn.secondary{background:var(--surface);border:1.5px solid var(--border);color:var(--text);}
+.r-btn:hover{transform:scale(1.03);}
+
+/* quiz section header */
+.section-hdr{font-family:var(--display);font-size:0.78rem;font-weight:700;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin:32px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media(max-width:600px){header{padding:12px 16px;}.q-card{padding:20px 16px;}.exam-cards{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">IS 345 // Quiz</div>
+  <div class="hdr-right">
+    <div class="score-pill" id="score-pill">✓ 0 &nbsp;✗ 0</div>
+    <div class="badge">Internet Applications · Capital Univ.</div>
+  </div>
+</header>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div class="home-title">Practice.<br><span>Master.</span> Pass.</div>
+  <p class="home-sub">All IS 345 midterm questions — scroll through, answer, get instant feedback. Essays show model answers.</p>
+  <div class="exam-cards">
+    <div class="exam-card" onclick="startQuiz('exam1')">
+      <div class="card-tag">Midterm · May 2026</div>
+      <div class="card-title">Exam A – Full Midterm</div>
+      <div class="card-meta">Dr. Hanan Fahmy<br>MCQ + PageRank open question</div>
+      <div class="card-count">📋 31 questions</div>
+    </div>
+    <div class="exam-card" onclick="startQuiz('exam2')">
+      <div class="card-tag">Midterm · March 2026</div>
+      <div class="card-title">Exam B – Short Midterm</div>
+      <div class="card-meta">Dr. Hanan Fahmy<br>MCQ + Essay Questions</div>
+      <div class="card-count">📋 22 questions</div>
+    </div>
+    <div class="exam-card" onclick="startQuiz('exam3')">
+      <div class="card-tag">Midterm · 2025</div>
+      <div class="card-title">Exam C – 2025 Midterm</div>
+      <div class="card-meta">Software Engineering Program<br>MCQ + Essays + True/False</div>
+      <div class="card-count">📋 30 questions</div>
+    </div>
+  </div>
+  <button class="start-all-btn" onclick="startQuiz('all')">🚀 Practice All Questions</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="quiz-wrap">
+    <button class="back-btn" onclick="goHome()">← Back to Home</button>
+    <div class="sticky-progress">
+      <div class="prog-row">
+        <span id="prog-label">Question 0 of 0</span>
+        <span class="prog-counts">
+          <span class="c-ok" id="cnt-ok">✓ 0</span>
+          <span class="c-bad" id="cnt-bad">✗ 0</span>
+        </span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div id="question-area"></div>
+    <div id="results-btn-wrap" style="display:none;text-align:center;margin-top:24px;">
+      <button class="r-btn primary" onclick="showResults()">See Final Results 🎯</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen">
+  <div class="results-wrap">
+    <div class="results-title">Quiz Complete! 🎯</div>
+    <div class="score-circle">
+      <div class="score-pct" id="res-pct">0%</div>
+      <div class="score-lbl">Score</div>
+    </div>
+    <p class="grade-msg" id="res-msg"></p>
+    <div class="stats-row">
+      <div class="stat-box sg"><div class="stat-val" id="res-ok">0</div><div class="stat-key">Correct</div></div>
+      <div class="stat-box sr"><div class="stat-val" id="res-bad">0</div><div class="stat-key">Wrong</div></div>
+      <div class="stat-box"><div class="stat-val" id="res-tot">0</div><div class="stat-key">MCQ Total</div></div>
+    </div>
+    <div class="results-btns">
+      <button class="r-btn primary" id="res-retry">Retry</button>
+      <button class="r-btn secondary" onclick="goHome()">Choose Another</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  QUESTION BANK  — answers verified from green marks
+// ══════════════════════════════════════════════════════
+
+const EXAMS = {
+
+// ── EXAM A: May 2026 — answers from green checkmarks ──
+exam1: {
+  name:"Exam A – Full Midterm (May 2026)",
+  questions:[
+    // Q1 — green on B
+    {type:'mcq',text:"What is the primary purpose of the World Wide Web as a system?",
+     opts:["A database management system for structured internet data","A system of hypertext documents viewable by a web browser","A collection of interconnected hardware devices for data storage","A network protocol for secure file transfer across the globe"],ans:1},
+    // Q2 — green on D
+    {type:'mcq',text:"What is the primary performance benefit of using HTTP/1.1 pipelining?",
+     opts:["Improvement in client-side rendering speed via parallel parsing","Increase in total server throughput by increasing CPU utilization","Decrease in memory consumption on the client's browser engine","Reduction of network latency by minimizing round-trip wait times"],ans:3},
+    // Q3 — green on D
+    {type:'mcq',text:"What is the relationship between JavaScript and DOM?",
+     opts:["JavaScript is a subset of the DOM specification.","JavaScript replaces the DOM for accessing XML nodes.","DOM is a language used to write JavaScript functions.","JavaScript is used with DOM to change document structure."],ans:3},
+    // Q4 — green on B
+    {type:'mcq',text:"What is the primary function of XML namespaces?",
+     opts:["To automatically validate the structure of an XML file.","To qualify elements and attributes by unique identifiers.","To compress the XML document for faster network transmission.","To define the character encoding of an XML document."],ans:1},
+    // Q5 — green on A
+    {type:'mcq',text:"Which of the following is true about YAML?",
+     opts:["It is a compact, human-readable data serialization format.","It does not support associative arrays or scalar values.","It is only used in documentation, not data exchange.","It is a subset of XML designed for better performance."],ans:0},
+    // Q6 — green on D
+    {type:'mcq',text:"What is the primary conceptual distinction between Web 2.0 and Web 3.0?",
+     opts:["Web 2.0 is a technological evolution, while Web 3.0 is a conceptual evolution.","Web 2.0 uses Linked Data, while Web 3.0 uses hypertext documents.","Web 2.0 relies on machine agents, while Web 3.0 relies on human users.","Web 2.0 focuses on social interaction while Web 3.0 focuses on semantically interconnected data."],ans:3},
+    // Q7 — green on B
+    {type:'mcq',text:"What is the primary goal of introducing HTTP/2 compared to HTTP/1.1?",
+     opts:["To change existing HTTP methods","To optimize transport via multiplexing","To replace all status code definitions","To simplify the protocol for developers"],ans:1},
+    // Q8 — green on D
+    {type:'mcq',text:"In HTTP 1.1, what does the 'Connection: keep-alive' header indicate?",
+     opts:["The connection will close immediately","The server is currently overloaded","The client requires a secure session","The use of a persistent connection"],ans:3},
+    // Q9 — green on B
+    {type:'mcq',text:"What is the main function of the 'Connector entity' in the web server architecture?",
+     opts:["To execute server-side business logic","To handle incoming connection requests","To render the final HTML document","To manage the database connection pool"],ans:1},
+    // Q10 — green on C
+    {type:'mcq',text:"Which entity handles the incoming connection requests from the web browser?",
+     opts:["Delegation process","Client descriptor","Connector entity","Processing entity"],ans:2},
+    // Q11 — green on A
+    {type:'mcq',text:"Which of the following best describes the relationship between URIs, URLs, and URNs?",
+     opts:["URIs are the superset of URLs and URNs","URNs are the superset of URIs and URLs","URLs are the superset of URIs and URNs","All three are distinct, disjoint sets"],ans:0},
+    // Q12 — green on B (Asynchronous background fetches...)
+    {type:'mcq',text:"Which of the following best describes a communication pattern involving asynchronous background fetches that never block user actions and sometimes receive server pushes?",
+     opts:["Client-side caching to avoid repeated requests for the same data","Asynchronous background fetches that never block user actions and sometimes receive pushes","Long polling with repeated synchronous HTTP requests","Server-initiated WebSockets that stream data continuously without any client request"],ans:1},
+    // Q13 — green on D
+    {type:'mcq',text:"What happens to the execution flow of a client-side application during a synchronous HTTP call?",
+     opts:["The execution flow terminates and restarts upon receiving the data.","The execution flow jumps to an error handler if the server is slow.","The execution flow continues while the request processes in parallel.","The execution flow pauses until the server response is fully received."],ans:3},
+    // Q14 — green on B
+    {type:'mcq',text:"Why is Comet considered to have low-latency characteristics for real-time applications?",
+     opts:["It utilizes local browser storage to cache incoming data for faster retrieval.","It eliminates the overhead of repeated client requests for updated information.","It bypasses the standard TCP handshake process for every incoming data packet.","It compresses HTTP headers to minimize the payload size during transmission."],ans:1},
+    // Q15 — green on D
+    {type:'mcq',text:"What is the fundamental assumption behind the PageRank algorithm?",
+     opts:["PageRank is based solely on keyword density","Quality is determined by the page's load time","Page quality is based on the number of images","A hyperlink is a recommendation of content"],ans:3},
+    // Q16 — green on D
+    {type:'mcq',text:"What is the primary purpose of 'Information Extraction' in the context of the Deep Web?",
+     opts:["To delete illegal content online","To block access to private servers","To index standard public websites","To retrieve data for meta search"],ans:3},
+    // Q17 — green on A
+    {type:'mcq',text:"What is the primary purpose of a web crawler module in a search engine architecture?",
+     opts:["To detect and collect web data for the repository","To transform HTML into a DOM representation","To process user queries and return relevant results","To calculate the ranking of indexed web pages"],ans:0},
+    // Q18 — green on D
+    {type:'mcq',text:"What role do ontologies play within the Semantic Web framework?",
+     opts:["They manage server load balancing","They encrypt sensitive data files","They store user browsing history","They define relations among terms"],ans:3},
+    // Q19 — green on D (as written in exam)
+    {type:'mcq',text:"Which of the following is an example of a Deep Web site address format?",
+     opts:["http://hidden.web.database/","http://NameWebSite.onion/","https://www.onion-site.com/","https://secure.internal.server/"],
+     ans:3,
+     expl:"The exam marks D as correct. A secure internal server requiring authentication (not publicly linked or indexed) is a classic Deep Web resource. The .onion addresses refer to the Dark Web (Tor), not the general Deep Web."},
+    // Q20 — green on B
+    {type:'mcq',text:"What is the primary function of the 'Frontier' in a crawl architecture?",
+     opts:["To store the final indexed web documents","To hold the list of unvisited URIs","To fetch the pages based on their content","To display the results to the end user"],ans:1},
+    // Q21 — green on A
+    {type:'mcq',text:"What is the main function of the Robots Exclusion Standard?",
+     opts:["To prevent crawlers from accessing specific parts of a website","To encrypt sensitive data on a website","To validate the HTML structure of a webpage","To force crawlers to index subdirectories"],ans:0},
+    // Q22 — green on A
+    {type:'mcq',text:"What is the primary function of the Private Web?",
+     opts:["High-security closed systems","Publicly accessible social media","General purpose search engines","Standard university blog sites"],ans:0},
+    // Q23 — green on D
+    {type:'mcq',text:"Which software is commonly used to access the Dark Web?",
+     opts:["Standard commercial web browsers","Basic email client applications","Standard database management tools","TOR or I2P software platforms"],ans:3},
+    // Q24 — green on A
+    {type:'mcq',text:"What is a primary characteristic of the Surface Web?",
+     opts:["It is indexed by search engines","It requires specialized browsers","It contains mostly illicit data","It is hidden from public access"],ans:0},
+    // Q25 — green on A
+    {type:'mcq',text:"What is a defining feature of the Site-level Information Extraction task?",
+     opts:["It populates databases from sites","It manages user access permissions","It extracts data from single pages","It creates new web templates"],ans:0},
+    // Q26 — green on C
+    {type:'mcq',text:"What is a 'focused crawler'?",
+     opts:["A crawler that only follows internal links","A crawler that only visits .com domains","A crawler focusing on special web areas","A crawler that ignores all robots.txt files"],ans:2},
+    // Q27 — green on C
+    {type:'mcq',text:"Why is the Deep Web not typically indexed by standard search engines?",
+     opts:["They lack any meaningful information","They are only accessible via satellite","They use dynamic database generation","They are strictly prohibited by law"],ans:2},
+    // Q28 — green on C
+    {type:'mcq',text:"Which of these is considered a component of the 'Clear Web' or Level 0?",
+     opts:["Advanced hacking group forums","Private supercomputing systems","Common internet content services","Restricted access web archives"],ans:2},
+    // Q29 — green on A
+    {type:'mcq',text:"What does 'composability' mean in the context of OWL (Web Ontology Language)?",
+     opts:["Concepts are defined for reuse","Data is stored in one location","Interfaces are built for mobile","Queries are executed in parallel"],ans:0},
+    // Q30 — green on C
+    {type:'mcq',text:"What is the primary reason that standard search engines cannot index most Deep Web pages?",
+     opts:["They are blocked by firewalls","They have robots files","They are not directly linked","They use only static HTML files"],ans:2},
+    // Q31 — PageRank open question
+    {type:'pagerank',text:"Using the standard PageRank algorithm for the nodes in the network figure: Begin with Iteration 0 (equal initial value for each node), Calculate Iteration 1, and Compute the PageRank scores (rank the pages)."}
+  ]
+},
+
+// ── EXAM B: March 2026 ──
+exam2:{
+  name:"Exam B – Short Midterm (March 2026)",
+  questions:[
+    {type:'mcq',text:"What is the primary advantage of using XML Schema over DTD?",
+     opts:["It reduces the overall file size of documents","It is faster for browsers to parse and render","It enables the definition of various data types","It is mandatory for all XHTML 1.1 documents"],ans:2},
+    {type:'mcq',text:"How does the server associate a specific request with a user's session data?",
+     opts:["By parsing the session ID included in the request","By verifying the client's IP address against a list","By checking the timestamp of the incoming connection","By analyzing the browser fingerprint of the client"],ans:0},
+    {type:'mcq',text:"What is the fundamental principle of the Simple API for XML (SAX)?",
+     opts:["It allows random access to any element by its unique ID.","It loads the entire XML document tree into memory for access.","It uses a declarative approach to define data structures.","It is an event-based mechanism for sequential XML processing."],ans:3},
+    {type:'mcq',text:"How does DOM handle an XML document?",
+     opts:["It parses the document into a logical tree structure in memory.","It only accesses elements that are currently visible on screen.","It converts the XML document directly into a JSON format.","It processes the document as a stream of events sequentially."],ans:0},
+    {type:'mcq',text:"What is the role of the JavaScript engine in a web browser?",
+     opts:["It executes script logic and influences document content.","It validates the XML structure of the downloaded page.","It renders the XHTML document into a visual layout.","It manages the network connections to the web server."],ans:0},
+    {type:'mcq',text:"What is the purpose of the 'Content-Type' header in a web response?",
+     opts:["To specify the type of content for appropriate interpretation.","To define the size of the message in bytes for the client.","To provide the URL of the document being requested by user.","To indicate the server's security protocol for the transfer."],ans:0},
+    {type:'mcq',text:"What is the core focus of Web 3.0?",
+     opts:["Transitioning entirely to mobile applications","Focusing on semantically interconnected data","Enhancing the social component of websites","Improving the speed of document rendering"],ans:1},
+    {type:'mcq',text:"How does HTTP 1.1 pipelining improve performance?",
+     opts:["By caching responses on the client","By sending requests without waiting for each response","By using a binary frame format","By compressing the HTTP headers"],ans:1},
+    {type:'mcq',text:"What is the primary role of the 'Rendering engine' in a web browser?",
+     opts:["To handle network communication","To perform parsing and document layout","To manage persistent data storage","To execute embedded script code"],ans:1},
+    {type:'mcq',text:"What is the purpose of the 'Delegation process' in the web server architecture?",
+     opts:["To generate the final HTML response","To store session data in the database","To parse incoming HTTP request headers","To choose an available processing entity"],ans:3},
+    {type:'mcq',text:"What does the web server create on start-up to handle client requests?",
+     opts:["A single processing thread","A pool of entities","A database connection","A file system cache"],ans:1},
+    {type:'mcq',text:"What is the role of the client descriptor created by the connector entity?",
+     opts:["To open a new communication interface","To act as the endpoint of the communication path to the client","To generate HTTP responses","To delegate connection requests"],ans:1},
+    {type:'mcq',text:"For a system that must guarantee every piece of server data is requested immediately before being sent, which pattern matches?",
+     opts:["Long polling or repeated synchronous HTTP requests where each response is preceded by an explicit request.","Server-initiated WebSockets that stream data continuously without client requests.","Client-side caching to avoid repeated requests for the same data.","Asynchronous background fetches that never block user actions and sometimes receive pushes."],ans:0},
+    {type:'mcq',text:"Which statement accurately reflects the relationship between HTTP requests and data transfer in a synchronous system?",
+     opts:["Multiple data transfers can occur after a single initial request.","Every server-to-client transfer requires a direct preceding request.","Requests are only sent when the client detects a network change.","Data transfers are decoupled from the request-response lifecycle."],ans:1},
+    {type:'mcq',text:"How does the dependency model of AJAX differ from the Comet methodology?",
+     opts:["AJAX requires a high degree of dependence between HTTP request and response.","AJAX is inherently server-push while Comet is strictly a client-pull mechanism.","AJAX relies on persistent streams while Comet uses short-lived request cycles.","AJAX uses asynchronous callbacks while Comet uses synchronous blocking calls."],ans:0},
+    {type:'mcq',text:"Which mechanism is a standard technique for exchanging session IDs between client and server?",
+     opts:["The implementation of server-side hidden form fields","The injection of metadata into the TCP packet headers","The transmission of credentials via URL query strings","The utilization of browser-side persistent cookie storage"],ans:3},
+    {type:'mcq',text:"What is the distinction between a URL and a URN?",
+     opts:["URLs denote names while URNs denote location","URLs are absolute while URNs are relative","URLs denote location while URNs denote names","URLs require protocols while URNs are opaque"],ans:2},
+    {type:'mcq',text:"What happens if a server does not support pipelining but receives a pipelined request?",
+     opts:["The server buffers all requests and processes them in parallel","The server processes the requests sequentially as standard requests","The server returns a 400 Bad Request error for all pending items","The server terminates the TCP connection immediately upon receipt"],ans:1},
+    {type:'mcq',text:"Why is the sequence <A><B></A></B> considered invalid in XML?",
+     opts:["The tags overlap in an improper hierarchy","The tags are missing a required attribute","The tags are not defined in the document","The tags are using incorrect case letters"],ans:0},
+    {type:'mcq',text:"What is the relationship between Comet and existing web technologies?",
+     opts:["It relies on proprietary server-side extensions for handling asynchronous data.","It functions as a standalone protocol that operates independently of HTTP.","It requires a custom browser plugin to facilitate persistent connection states.","It utilizes existing web technologies to implement server-push functionalities."],ans:3},
+    {type:'essay',text:"Explain why web crawlers are important for search engines.",
+     model:"Web crawlers are essential because the web is self-regulated — there is no central registry of all pages. Crawlers automatically discover and collect web pages by following hyperlinks, enabling search engines to build a searchable repository of content. Without crawlers, search engines could not keep their indexes updated or discover new content. They bring order to the unstructured, ever-growing web so that search engines can sort, filter, and rank pages to deliver meaningful results."},
+    {type:'essay',text:"Explain the disadvantages of long polling compared to Web Sockets.",
+     model:"Long polling forces the client to send repeated HTTP requests — the server holds each connection open until data is ready, then responds, and the cycle repeats. Disadvantages: (1) Not truly real-time due to round-trip latency between cycles. (2) Bandwidth-inefficient — full HTTP headers are sent with every request/response pair. (3) Slower and less reliable than persistent connections. (4) Higher server resource usage from many half-open connections. WebSockets establish a single persistent bi-directional TCP connection over HTTP, enabling true real-time, low-overhead communication with far less latency — making long polling largely obsolete for real-time applications."}
+  ]
+},
+
+// ── EXAM C: 2025 ──
+exam3:{
+  name:"Exam C – 2025 Midterm",
+  questions:[
+    {type:'mcq',text:"Which traversal strategy starts at the tree root and explores all neighbor nodes at the present depth before moving to the next depth level?",
+     opts:["Breadth first","Depth first","Frontier","Link extraction"],ans:0},
+    {type:'mcq',text:"Which technology provides standards-based TCP bidirectional communication channels, avoiding drawbacks of HTTP polling?",
+     opts:["HTTP/2","Comet","Web Socket","AJAX"],ans:2},
+    {type:'mcq',text:"Which process in a search engine architecture collects and organizes fetched web content?",
+     opts:["Indexing","Link extraction","Ranking","Crawling"],ans:0},
+    {type:'mcq',text:"What is the convention used to prevent cooperating web crawlers from accessing specified parts of a website?",
+     opts:["Robots Exclusion Standard","Sitemap","HTTP 1.1 pipelining","Web Socket"],ans:0},
+    {type:'mcq',text:"A standardized way that allows websites to inform web crawlers about available URIs and some of their properties is called:",
+     opts:["robots.txt","Sitemap","Frontier","Link extraction"],ans:1},
+    {type:'mcq',text:"A page is a good hub if it points to good authorities, and a good authority if it is pointed to by good hubs. This process is called:",
+     opts:["Mutual reinforcement","Semantic Web","Ontology","PageRank"],ans:0},
+    {type:'mcq',text:"Which language is written in XML and built on top of RDF?",
+     opts:["JSON","OWL","SPARQL","RIF"],ans:1},
+    {type:'mcq',text:"In the non-blocking model, user actions generate a call to:",
+     opts:["AJAX engine","XML Parser","Rendering Engine","Browser Engine"],ans:0},
+    {type:'mcq',text:"Which component performs parsing and layout for (X)HTML documents?",
+     opts:["Browser engine","AJAX engine","Rendering Engine","XML Parser"],ans:2},
+    {type:'mcq',text:"Which is a standard for describing resources on the web?",
+     opts:["RIF","OWL","RDF","SPARQL"],ans:2},
+    {type:'mcq',text:"What is the primary purpose of the TF-IDF algorithm?",
+     opts:["Determine web page authority","Measure term importance in documents","Rank pages based on incoming links","Index HTML documents"],ans:1},
+    {type:'mcq',text:"A page with many in-links is called a:",
+     opts:["Hub","Authority","Web","HITS"],ans:1},
+    {type:'mcq',text:"A page with many out-links is called a:",
+     opts:["HITS","Hub","Authority","RDF"],ans:1},
+    {type:'mcq',text:"Which algorithm uses the hub and authority scoring model?",
+     opts:["HITS","PageRank","TF-IDF","Mutual reinforcement"],ans:0},
+    {type:'mcq',text:"Which is an object-oriented language that defines classes, hierarchy of classes, attributes, and relations?",
+     opts:["RIF","OWL","RDF","SPARQL"],ans:1},
+    {type:'mcq',text:"Which part of the internet contains content you should not be visiting?",
+     opts:["Deep Web","Dark Web","Surface Web","Private Web"],ans:1},
+    {type:'mcq',text:"Which layer includes websites filled with data indexed by search engines?",
+     opts:["Dark Web","Private Web","Surface Web","Deep Web"],ans:2},
+    {type:'mcq',text:"Which statement about AJAX is INCORRECT?",
+     opts:["Enables asynchronous data retrieval","Combines multiple technologies","Is a single programming language","Uses JavaScript for communication"],ans:2},
+    {type:'mcq',text:"Which file gives instructions to web crawlers about allowed access?",
+     opts:["sitemap.xml","readme.txt","robots.txt","index.html"],ans:2},
+    {type:'mcq',text:"HTTP 1.1 can reuse a connection multiple times to download images, scripts, and stylesheets after the page has been delivered. This feature is:",
+     opts:["HTTP 1.0","HTTP 1.1 pipelining","HTTP 1.1 persistent connection (keep-alive)","HTTP/2 multiplexing"],ans:2},
+    {type:'mcq',text:"An HTTP status code starting with 3XX means the requested resource has:",
+     opts:["A server error","Been moved permanently or temporarily to a new URL","A client-side error","Been successfully returned"],ans:1},
+    {type:'mcq',text:"Which is used to talk about a resource without implying its location or how to access it?",
+     opts:["URL","URN","URI","HTTP"],ans:1},
+    // True/False as MCQ
+    {type:'mcq',text:"The delegation process chooses an available regenerated processing entity and forwards the client descriptor to it. (True or False?)",
+     opts:["True","False"],ans:0},
+    {type:'mcq',text:"Drug Dealers is an example of Bergie Web data. (True or False?)",
+     opts:["True","False"],ans:0,
+     expl:"The Bergie Web (Level 1 of the hidden web) includes content like drug dealers — accessible without special tools but not indexed by standard search engines."},
+    {type:'mcq',text:"The deep web forms a small part of the dark web. (True or False?)",
+     opts:["True","False"],ans:1,
+     expl:"FALSE. It is the opposite — the Dark Web is a small subset of the Deep Web, not the other way around."},
+    {type:'mcq',text:"The dark web is considered a subset of the deep web. (True or False?)",
+     opts:["True","False"],ans:0},
+    {type:'mcq',text:"Accessing the Surface Web uses software that connects to an overlay network masking your IP behind layers of other IPs with no way to trace you. (True or False?)",
+     opts:["True","False"],ans:1,
+     expl:"FALSE. This describes accessing the Dark Web via TOR. The Surface Web is accessed through normal browsers without any anonymizing overlay network."},
+    {type:'essay',text:"Explain why web crawlers are important for search engines.",
+     model:"Web crawlers are essential because the web is self-regulated — there is no central index of all pages. Crawlers automatically discover and collect web pages by following hyperlinks, enabling search engines to build a searchable repository. Without them, search engines could not keep their indexes updated or discover new content. Crawlers bring semantic order to the unstructured, ever-growing web so that search engines can sort, filter, and rank pages to deliver meaningful results to users."},
+    {type:'essay',text:"Explain the disadvantages of long polling compared to Web Sockets.",
+     model:"Long polling requires repeated asynchronous HTTP requests — the client asks, the server holds the connection open until it has data, responds, then the client immediately asks again. Disadvantages: (1) Not truly real-time — latency exists between each request-response cycle. (2) Bandwidth-inefficient — full HTTP headers are retransmitted every cycle. (3) Slower and less reliable. (4) Higher server resource usage. WebSockets establish a single persistent bi-directional TCP connection over HTTP, enabling true real-time low-overhead communication, making long polling largely inferior."},
+    {type:'pagerank',text:"Using the standard PageRank algorithm for the given network (P1→P3, P2→P1, P2→P3, P3→P4, P4→P5, P4→P6, P5→P4, P5→P6, P6→P4, P6→P5): Calculate Iteration 0, Iteration 1, and rank the pages."}
+  ]
+}
+};
+
+EXAMS.all={
+  name:"All Questions",
+  questions:[...EXAMS.exam1.questions,...EXAMS.exam2.questions,...EXAMS.exam3.questions]
+};
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let curExam=null, curKey='', cntOk=0, cntBad=0, mcqTotal=0, answered=0;
+
+function goHome(){showScreen('home');document.getElementById('score-pill').style.display='none';}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function startQuiz(key){
+  curKey=key; curExam=EXAMS[key];
+  cntOk=0; cntBad=0; answered=0;
+  mcqTotal=curExam.questions.filter(q=>q.type==='mcq').length;
+  showScreen('quiz');
+  document.getElementById('score-pill').style.display='flex';
+  document.getElementById('results-btn-wrap').style.display='none';
+  renderAll();
+  window.scrollTo(0,0);
+}
+
+function updateStats(){
+  document.getElementById('prog-label').textContent=`${answered} of ${curExam.questions.length} answered`;
+  document.getElementById('cnt-ok').textContent=`✓ ${cntOk}`;
+  document.getElementById('cnt-bad').textContent=`✗ ${cntBad}`;
+  document.getElementById('score-pill').textContent=`✓ ${cntOk}  ✗ ${cntBad}`;
+  const pct=Math.round((answered/curExam.questions.length)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  if(answered===curExam.questions.length){
+    document.getElementById('results-btn-wrap').style.display='block';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER ALL QUESTIONS AT ONCE (scroll mode)
+// ══════════════════════════════════════════════════════
+function renderAll(){
+  const area=document.getElementById('question-area');
+  area.innerHTML='';
+  curExam.questions.forEach((q,i)=>{
+    // section divider
+    if(i===0||(i>0 && q.type!==curExam.questions[i-1].type)){
+      if(q.type==='essay'){const h=document.createElement('div');h.className='section-hdr';h.textContent='── Essay Questions';area.appendChild(h);}
+      if(q.type==='pagerank'){const h=document.createElement('div');h.className='section-hdr';h.textContent='── Open Question: PageRank';area.appendChild(h);}
+    }
+    area.appendChild(buildCard(q,i));
+  });
+  updateStats();
+}
+
+function buildCard(q,i){
+  const card=document.createElement('div');
+  card.className='q-card'+(q.type==='essay'||q.type==='pagerank'?' essay-card':'');
+  card.id='card-'+i;
+
+  const meta=document.createElement('div');meta.className='q-meta';
+  const letters=['A','B','C','D','E'];
+  meta.innerHTML=`<span class="q-num">Q${i+1}</span><span class="q-type-tag">${q.type==='mcq'?'Multiple Choice':q.type==='essay'?'Essay':'Open – PageRank'}</span><span class="q-status" id="status-${i}"></span>`;
+  card.appendChild(meta);
+
+  const qt=document.createElement('div');qt.className='q-text';qt.textContent=q.text;card.appendChild(qt);
+
+  if(q.type==='mcq'){
+    const opts=document.createElement('div');opts.className='options';opts.id='opts-'+i;
+    q.opts.forEach((o,j)=>{
+      const btn=document.createElement('div');btn.className='option';
+      btn.innerHTML=`<span class="opt-letter">${letters[j]}</span><span>${o}</span>`;
+      btn.onclick=()=>pickOpt(btn,j,q,i,opts,card);
+      opts.appendChild(btn);
+    });
+    card.appendChild(opts);
+    const fb=document.createElement('div');fb.className='feedback';fb.id='fb-'+i;card.appendChild(fb);
+
+  } else if(q.type==='essay'){
+    const ta=document.createElement('textarea');ta.className='essay-area';ta.placeholder='Write your answer here...';card.appendChild(ta);
+    const ma=document.createElement('div');ma.className='model-answer';ma.id='ma-'+i;
+    ma.innerHTML=`<h4>📖 Model Answer</h4>${q.model}`;card.appendChild(ma);
+    const btn=document.createElement('button');btn.className='btn-show-ans';btn.textContent='Show Model Answer';
+    btn.onclick=()=>{
+      ma.classList.toggle('show');
+      btn.textContent=ma.classList.contains('show')?'Hide Model Answer':'Show Model Answer';
+      if(!ma._counted){ma._counted=true;answered++;updateStats();}
+    };
+    card.appendChild(btn);
+
+  } else if(q.type==='pagerank'){
+    card.appendChild(buildPageRankContent(i));
+  }
+  return card;
+}
+
+function pickOpt(btn,j,q,i,optsEl,card){
+  if(optsEl.querySelector('.correct,.wrong')) return; // already answered
+  const all=optsEl.querySelectorAll('.option');
+  all.forEach(o=>o.classList.add('disabled'));
+  const fb=document.getElementById('fb-'+i);
+  const status=document.getElementById('status-'+i);
+
+  if(j===q.ans){
+    btn.classList.add('correct');
+    fb.className='feedback show ok';
+    fb.innerHTML=`<strong>✓ Correct!</strong>${q.expl||'Well done!'}`;
+    card.classList.add('answered-ok');
+    status.textContent='✓';
+    cntOk++;
+  } else {
+    btn.classList.add('wrong');
+    all[q.ans].classList.add('reveal-correct');
+    fb.className='feedback show bad';
+    fb.innerHTML=`<strong>✗ Incorrect</strong>Correct answer: <strong>${q.opts[q.ans]}</strong>${q.expl?'<br><br>💡 '+q.expl:''}`;
+    card.classList.add('answered-bad');
+    status.textContent='✗';
+    cntBad++;
+  }
+  answered++;
+  updateStats();
+}
+
+// ══════════════════════════════════════════════════════
+//  PAGERANK CONTENT
+// ══════════════════════════════════════════════════════
+function buildPageRankContent(idx){
+  const wrap=document.createElement('div');
+
+  const hint=document.createElement('div');hint.className='diagram-hint';
+  hint.innerHTML='📊 <strong>Network links:</strong> P1→P3 &nbsp;|&nbsp; P2→P1, P2→P3 &nbsp;|&nbsp; P3→P4 &nbsp;|&nbsp; P4→P5, P4→P6 &nbsp;|&nbsp; P5→P4, P5→P6 &nbsp;|&nbsp; P6→P4, P6→P5';
+  wrap.appendChild(hint);
+
+  const svgWrap=document.createElement('div');svgWrap.className='diagram-svg-wrap';
+  svgWrap.innerHTML=`<svg width="380" height="210" viewBox="0 0 380 210" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="ar${idx}" markerWidth="8" markerHeight="6" refX="7.5" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f8cff" opacity="0.8"/></marker></defs>
+  <circle cx="60" cy="105" r="26" fill="#161b2e" stroke="#4f8cff" stroke-width="1.5"/>
+  <text x="60" y="110" text-anchor="middle" fill="#e8ecf4" font-size="13" font-family="Syne,sans-serif" font-weight="700">P1</text>
+  <circle cx="60" cy="175" r="26" fill="#161b2e" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="60" y="180" text-anchor="middle" fill="#e8ecf4" font-size="13" font-family="Syne,sans-serif" font-weight="700">P2</text>
+  <circle cx="165" cy="105" r="26" fill="#161b2e" stroke="#4f8cff" stroke-width="1.5"/>
+  <text x="165" y="110" text-anchor="middle" fill="#e8ecf4" font-size="13" font-family="Syne,sans-serif" font-weight="700">P3</text>
+  <circle cx="265" cy="105" r="26" fill="#161b2e" stroke="#4f8cff" stroke-width="1.5"/>
+  <text x="265" y="110" text-anchor="middle" fill="#e8ecf4" font-size="13" font-family="Syne,sans-serif" font-weight="700">P4</text>
+  <circle cx="340" cy="45" r="26" fill="#161b2e" stroke="#22d3a5" stroke-width="1.5"/>
+  <text x="340" y="50" text-anchor="middle" fill="#e8ecf4" font-size="13" font-family="Syne,sans-serif" font-weight="700">P5</text>
+  <circle cx="340" cy="170" r="26" fill="#161b2e" stroke="#22d3a5" stroke-width="1.5"/>
+  <text x="340" y="175" text-anchor="middle" fill="#e8ecf4" font-size="13" font-family="Syne,sans-serif" font-weight="700">P6</text>
+  <line x1="87" y1="105" x2="137" y2="105" stroke="#4f8cff" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="60" y1="149" x2="60" y2="133" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="84" y1="162" x2="143" y2="118" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="192" y1="105" x2="237" y2="105" stroke="#4f8cff" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="283" y1="83" x2="324" y2="61" stroke="#4f8cff" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="283" y1="127" x2="322" y2="153" stroke="#4f8cff" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="320" y1="65" x2="282" y2="87" stroke="#22d3a5" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="342" y1="71" x2="342" y2="144" stroke="#22d3a5" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="320" y1="152" x2="283" y2="122" stroke="#22d3a5" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  <line x1="338" y1="144" x2="338" y2="71" stroke="#22d3a5" stroke-width="1.5" marker-end="url(#ar${idx})" opacity=".75"/>
+  </svg>`;
+  wrap.appendChild(svgWrap);
+
+  const ta=document.createElement('textarea');ta.className='essay-area';ta.placeholder='Write your PageRank calculations here (Iteration 0, Iteration 1, Rankings)...';
+  wrap.appendChild(ta);
+
+  const ma=document.createElement('div');ma.className='model-answer';ma.id='ma-pr-'+idx;
+  ma.innerHTML=`<h4>📖 Step-by-Step Solution</h4>
+  <p style="margin-bottom:10px;"><strong>Step 1 – Out-links per node:</strong></p>
+  <ul style="margin:0 0 14px 18px;line-height:2;font-size:0.84rem;">
+    <li>P1 → P3 &nbsp;<em style="color:var(--muted)">(1 out-link)</em></li>
+    <li>P2 → P1, P3 &nbsp;<em style="color:var(--muted)">(2 out-links)</em></li>
+    <li>P3 → P4 &nbsp;<em style="color:var(--muted)">(1 out-link)</em></li>
+    <li>P4 → P5, P6 &nbsp;<em style="color:var(--muted)">(2 out-links)</em></li>
+    <li>P5 → P4, P6 &nbsp;<em style="color:var(--muted)">(2 out-links)</em></li>
+    <li>P6 → P4, P5 &nbsp;<em style="color:var(--muted)">(2 out-links)</em></li>
+  </ul>
+  <p style="margin-bottom:8px;"><strong>Step 2 – Iteration 0 (equal distribution, N=6):</strong></p>
+  <table class="pr-table" style="margin-bottom:16px;">
+    <tr><th>Page</th><th>PR (Iter 0)</th></tr>
+    <tr><td>P1</td><td>1/6 ≈ 0.167</td></tr>
+    <tr><td>P2</td><td>1/6 ≈ 0.167</td></tr>
+    <tr><td>P3</td><td>1/6 ≈ 0.167</td></tr>
+    <tr><td>P4</td><td>1/6 ≈ 0.167</td></tr>
+    <tr><td>P5</td><td>1/6 ≈ 0.167</td></tr>
+    <tr><td>P6</td><td>1/6 ≈ 0.167</td></tr>
+  </table>
+  <p style="margin-bottom:8px;"><strong>Step 3 – Iteration 1: PR(X) = Σ [ PR(in-node) ÷ out-degree(in-node) ]</strong></p>
+  <table class="pr-table" style="margin-bottom:16px;">
+    <tr><th>Page</th><th>In-links</th><th>Calculation</th><th>Result</th></tr>
+    <tr><td>P1</td><td>P2</td><td>(1/6) ÷ 2</td><td><strong>1/12</strong></td></tr>
+    <tr><td>P2</td><td>—</td><td>no in-links</td><td><strong>0</strong></td></tr>
+    <tr><td>P3</td><td>P1, P2</td><td>(1/6)÷1 + (1/6)÷2 = 1/6 + 1/12</td><td><strong>3/12 = 1/4</strong></td></tr>
+    <tr><td>P4</td><td>P3, P5, P6</td><td>(1/6)÷1 + (1/6)÷2 + (1/6)÷2 = 1/6+1/12+1/12</td><td><strong>4/12 = 1/3</strong></td></tr>
+    <tr><td>P5</td><td>P4, P6</td><td>(1/6)÷2 + (1/6)÷2</td><td><strong>2/12 = 1/6</strong></td></tr>
+    <tr><td>P6</td><td>P4, P5</td><td>(1/6)÷2 + (1/6)÷2</td><td><strong>2/12 = 1/6</strong></td></tr>
+  </table>
+  <p style="margin-bottom:8px;"><strong>Step 4 – Rankings (highest PR first):</strong></p>
+  <table class="pr-table">
+    <tr><th>Rank</th><th>Page</th><th>Score</th></tr>
+    <tr><td>🥇 1st</td><td>P4</td><td>1/3 ≈ 0.333</td></tr>
+    <tr><td>🥈 2nd</td><td>P3</td><td>1/4 = 0.250</td></tr>
+    <tr><td>🥉 3rd</td><td>P1, P5, P6</td><td>1/6 ≈ 0.167</td></tr>
+    <tr><td>Last</td><td>P2</td><td>0</td></tr>
+  </table>
+  <p style="margin-top:12px;font-size:0.8rem;color:var(--muted);">💡 P4 ranks highest because 3 pages point to it (P3, P5, P6). P2 has no in-links so scores 0 in Iteration 1.</p>`;
+  wrap.appendChild(ma);
+
+  const btn=document.createElement('button');btn.className='btn-show-ans';btn.textContent='Show Model Solution';
+  btn.onclick=()=>{
+    ma.classList.toggle('show');
+    btn.textContent=ma.classList.contains('show')?'Hide Solution':'Show Model Solution';
+    if(!ma._counted){ma._counted=true;answered++;updateStats();}
+  };
+  wrap.appendChild(btn);
+  return wrap;
+}
+
+// ══════════════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════════════
+function showResults(){
+  showScreen('results');
+  const pct=mcqTotal>0?Math.round((cntOk/mcqTotal)*100):100;
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-ok').textContent=cntOk;
+  document.getElementById('res-bad').textContent=cntBad;
+  document.getElementById('res-tot').textContent=mcqTotal;
+  let msg='';
+  if(pct>=90) msg='🏆 Outstanding! You have mastered Internet Applications.';
+  else if(pct>=75) msg='🎯 Great work! Solid understanding of the material.';
+  else if(pct>=60) msg='📚 Good effort. Review the topics you missed and try again.';
+  else msg='💪 Keep practicing! Read the feedback on each question carefully.';
+  document.getElementById('res-msg').textContent=msg;
+  document.getElementById('res-retry').onclick=()=>startQuiz(curKey);
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
